@@ -1,6 +1,8 @@
 # Primo codice in R per telerilevamento
 # install.packages("raster")
+# install.packages("RStoolbox")
 library(raster) #richiamo il pacchetto raster
+library(RStoolbox) #richiamo il pacchetto RStoolbox
 
 setwd("C:/lab/") #imposto la working directory
 
@@ -50,4 +52,33 @@ plot(p224r63_2011$B1_sre,col=clb)
 plot(p224r63_2011$B2_sre,col=clv)
 plot(p224r63_2011$B3_sre,col=clr)
 plot(p224r63_2011$B4_sre,col=clnir)
+
+
+
+### PLOT IN RGB
+
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin") # immagine a colori naturali
+plotRGB(p224r63_2011, r=4, g3=3, b=2, stretch="Lin") # immagine in falsi colori con infrarosso in rosso
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin") # immagine in falsi colori con infrarosso in verde
+plotRGB(p224r63_2011, r=3, g=2, b=4, stretch="Lin") # immagine in falsi colori con infrarosso in blu
+
+#altre funzioni per stretch:
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="hist") #stretch histogram
+
+# plottare in un 2x2 le 4 immagine precedenti
+pdf("pdf1") #salvo il risultato come pdf nella wd
+par(mfrow=c(2,2))
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin") # immagine a colori naturali
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin") # immagine in falsi colori con infrarosso in rosso
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin") # immagine in falsi colori con infrarosso in verde
+plotRGB(p224r63_2011, r=3, g=2, b=4, stretch="Lin") # immagine in falsi colori con infrarosso in blu
+dev.off()
+
+#plot di immagine a colori naturali e in falsi colori (nir in verde) con stretch lin e his
+par(mfrow=c(3,1))
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin") # immagine a colori naturali
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin") # immagine in falsi colori con infrarosso in verde
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="hist") # immagine in falsi colori con infrarosso in verde con stretch his
+
+
 
