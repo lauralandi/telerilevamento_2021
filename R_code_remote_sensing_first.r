@@ -1,8 +1,10 @@
 # Primo codice in R per telerilevamento
 # install.packages("raster")
 # install.packages("RStoolbox")
+# install.packages("ggplot2")
 library(raster) #richiamo il pacchetto raster
 library(RStoolbox) #richiamo il pacchetto RStoolbox
+library(ggplot2) #richiamo il pacchetto ggplot2
 
 setwd("C:/lab/") #imposto la working directory
 
