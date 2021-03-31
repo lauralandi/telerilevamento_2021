@@ -56,7 +56,6 @@ plot(p224r63_2011$B3_sre,col=clr)
 plot(p224r63_2011$B4_sre,col=clnir)
 
 
-
 ### PLOT IN RGB
 
 plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin") # immagine a colori naturali
@@ -82,5 +81,30 @@ plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin") # immagine a colori naturali
 plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin") # immagine in falsi colori con infrarosso in verde
 plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="hist") # immagine in falsi colori con infrarosso in verde con stretch his
 
+
+### OSSERVARE CAMBIAMENTI NEL TEMPO DELLA STESSA ZONA
+
+p224r63_1988 <- brick("p224r63_1988_masked.grd") #carico l'immagine del 1988
+plot(p224r63_1988) #plotta tutte le bande
+plotRGB(p224r63_1988, r=3, g=2, b=1, stretch="Lin") #immagine a colori naturali
+
+# multitemporal set con stretch lineare
+par(mfrow=c(2,1))
+plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="Lin") #immagine 1988
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin") #immagine 2011
+
+# multitemporal set con stretch hist
+par(mfrow=c(2,1))
+plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="hist") #immagine 1988
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="hist") #immagine 2011
+
+#pdf con set 4x4 delle immagini 1988 e 2011 in stretch lineare e hist
+pdf("multitemporal_set_1988_2011_lin_hist")
+par(mfrow=c(2,2))
+plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="Lin") #immagine 1988
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin") #immagine 2011
+plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="hist") #immagine 1988
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="hist") #immagine 2011
+dev.off()
 
 
