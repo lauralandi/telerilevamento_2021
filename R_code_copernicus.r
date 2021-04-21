@@ -1,6 +1,6 @@
 ### VISUALIZZAZIONE DATI COPERNICUS
 
-install.packages("ncdf4")
+#install.packages("ncdf4")
 library(raster)
 library(ncdf4)
 library(RStoolbox) #richiamo il pacchetto RStoolbox
