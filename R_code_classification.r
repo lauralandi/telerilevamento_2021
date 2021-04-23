@@ -30,10 +30,26 @@ plot(so2_c3$map)
 so2_c20 <- unsuperClass(so2, nClasses=20)
 plot(so2_c20$map)
 
+### PROVA CON FOTO
 fiume<-brick("photo6034998005653942920.jpg")
 fiume_c3 <- unsuperClass(fiume, nClasses=3) 
 plot(fiume_c3$map)
 fiume_c20 <- unsuperClass(fiume, nClasses=20)
 plot(fiume_c20$map)
+
+
+### DATI GRAND CANYON
+
+gc<-brick("dolansprings_oli_2013088_canyon_lrg.jpg")
+plotRGB(gc,r=1,g=2,b=3,stretch="lin")
+
+gc_c2 <- unsuperClass(gc, nClasses=2)
+cl <- colorRampPalette(c('blue','yellow'))(100)
+plot(gc_c2$map, col=cl)
+
+gc_c4 <- unsuperClass(gc, nClasses=4)
+cl2 <- colorRampPalette(c('blue','green', 'orange','yellow'))(100)
+cl3 <- colorRampPalette(c('blue','green', 'pink','orange'))(100)
+plot(gc_c4$map, col=cl2)
 
 
