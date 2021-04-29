@@ -20,3 +20,10 @@ p224r63_2011res <- aggregate(p224r63_2011, fact=10)  #riduco il numero di pixel 
 par(mfrow=c(2,1))
 plotRGB(p224r63_2011, r=4, g=3, b=2, stretch='lin')
 plotRGB(p224r63_2011res, r=4, g=3, b=2, stretch='lin')
+
+p224r63_2011res_PCA<-rasterPCA(p224r63_2011res) #contiene al suo interno mappa e informazioni sul modello
+summary(p224r63_2011res_PCA$model) #fa un sommario delle info del modello generato dalla funzione rasterPCA
+plot(p224r63_2011res_PCA$map)
+de.off()
+plotRGB(p224r63_2011res_PCA$map, r=1, g=2, b=3, stretch='lin')
+str(p224r63_2011res_PCA) #struttura dell'oggetto
