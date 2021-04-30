@@ -38,3 +38,11 @@ NDVI2<-(defor2$defor2.1-defor2$defor2.2)/(defor2$defor2.1+defor2$defor2.2)
 par(mfrow=c(2,1))
 plot(NDVI1, col=cl, main="NDVI at time 1")
 plot(NDVI2, col=cl, main="NDVI at time 2")
+
+## RStoolBox:: spectralIndices
+
+vi1<-spectralIndices(defor1, green=3, red=2, nir=1)
+plot(vi, col=cl)
+
+vi2 <- spectralIndices(defor2, green = 3, red = 2, nir = 1)
+plot(vi2, col=cl)
