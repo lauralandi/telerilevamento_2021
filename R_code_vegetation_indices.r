@@ -42,7 +42,7 @@ plot(NDVI2, col=cl, main="NDVI at time 2")
 ## RStoolBox:: spectralIndices
 
 vi1<-spectralIndices(defor1, green=3, red=2, nir=1)
-plot(vi, col=cl)
+plot(vi1, col=cl)
 
 vi2 <- spectralIndices(defor2, green = 3, red = 2, nir = 1)
 plot(vi2, col=cl)
