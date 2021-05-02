@@ -1,6 +1,7 @@
 ### INDICI DI VEGETAZIONE
 
 library(raster)
+library(RStoolbox)
 
 setwd("C:/lab/")
 
@@ -39,7 +40,11 @@ par(mfrow=c(2,1))
 plot(NDVI1, col=cl, main="NDVI at time 1")
 plot(NDVI2, col=cl, main="NDVI at time 2")
 
-## RStoolBox:: spectralIndices
+deltaNDVI<- NDVI1 - NDVI2
+plot(deltaNDVI, col=cld, main="differenza DVI")
+
+
+## RStoolbox:: spectralIndices
 
 vi1<-spectralIndices(defor1, green=3, red=2, nir=1)
 plot(vi1, col=cl)
