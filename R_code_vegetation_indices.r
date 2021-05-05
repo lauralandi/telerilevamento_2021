@@ -2,6 +2,8 @@
 
 library(raster)
 library(RStoolbox)
+library(rasterdiv) # wordlwide NDVI
+library(rasterVis)
 
 setwd("C:/lab/")
 
@@ -51,3 +53,10 @@ plot(vi1, col=cl)
 
 vi2 <- spectralIndices(defor2, green = 3, red = 2, nir = 1)
 plot(vi2, col=cl)
+
+### worldwide NDVI
+plot(copNDVI) #deriva da pacchetto rasterdiv
+copNDVI<-raster::reclassify(copNDVI, cbind(253:255,NA))
+#cbind è funzione che trasforma in NA (non valori) pixel scelti, in questo caso l'acqua
+
+levelplot(copNDVI)     
