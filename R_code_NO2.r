@@ -8,6 +8,8 @@
 # 6. plot everything altogether
 # 7. import the all set
 # 8. replicate plot images 1 and 13 using the stack
+# 9. compute principle component analysis
+# 10. compute of local variability (standard deviation) of PC1
 
 
 library(raster) 
@@ -52,5 +54,24 @@ EN<-stack(import)
 par(mfrow=c(2,1)) # 2 righe e 1 colonna
 plot(EN$EN_0001,col=cl, main="NO2 in January")
 plot(EN$EN_0013,col=cl, main="NO2 in March")
+
+# 9.
+
+EN_PCA<-rasterPCA(EN)
+summary(EN_PCA$model)
+plotRGB(EN_PCA$map, r=1, g=2, b=3, stretch='lin')
+
+# 10.
+
+PC1<-EN_PCA$map$PC1
+PC1_sd3<-focal(PC1, w=matrix(1/9,nrow=3,ncol=3), fun=sd)
+plot(PC1_sd3, col=cl)
+
+
+
+
+
+
+
 
 
