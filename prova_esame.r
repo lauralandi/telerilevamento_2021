@@ -3,6 +3,7 @@ PROVA ESAME
 library(raster) #richiamo il pacchetto raster
 library(RStoolbox) #richiamo il pacchetto RStoolbox
 library(ggplot2) #richiamo il pacchetto ggplot2
+library(gridExtra)
 
 setwd("C:/lab/esame/")
 
@@ -53,7 +54,6 @@ m[m > 0.363925] <- NA #rendo nulli i valori superiori al 25% del max di B04
 
 maskedB04 <- mask(S2$B04, m, filename="maskedB04", maskvalue=NA)
   
-raster(x, xmn=0, xmx=1, ymn=0, ymx=1, crs="", template=NULL)
 
 ###################################à
 
@@ -77,4 +77,45 @@ par(mfrow=c(2,1))
 plotRGB(july20, 8, 3, 2, stretch="lin")
 plotRGB(july27, 8, 3, 2, stretch="lin")
 dev.off()
+
+cldmsk<-cloudMask(july27, threshold = 0.03, blue = 2, tir = 12, plot = TRUE)
+masked_july27_TC <- mask(july27$july27_TC, cldmsk, inverse =TRUE, maskvalue=NA)
+masked_july27_B04 <- mask(july27$july27_B04, cldmsk, inverse =TRUE, maskvalue=NA)
+masked_july27_B03 <- mask(july27$july27_B03, cldmsk, inverse =TRUE, maskvalue=NA)
+masked_july27_B02 <- mask(july27$july27_B02, cldmsk, inverse =TRUE, maskvalue=NA)
+masked_july27_B08 <- mask(july27$july27_B08, cldmsk, inverse =TRUE, maskvalue=NA)
+
+masked_july27<-stack(masked_july27_B02$layer.1, masked_july27_B03$layer.1, masked_july27_B04$layer.1, masked_july27_B08$layer.1, masked_july27_TC$layer.1)
+
+plotRGB(masked_july27, 4, 3, 2, stretch="lin")
+
+masked_july20_TC <- mask(july20$july20_TC, cldmsk, inverse =TRUE, maskvalue=NA)
+masked_july20_B04 <- mask(july20$july20_B04, cldmsk, inverse =TRUE, maskvalue=NA)
+masked_july20_B03 <- mask(july20$july20_B03, cldmsk, inverse =TRUE, maskvalue=NA)
+masked_july20_B02 <- mask(july20$july20_B02, cldmsk, inverse =TRUE, maskvalue=NA)
+masked_july20_B08 <- mask(july20$july20_B08, cldmsk, inverse =TRUE, maskvalue=NA)
+
+masked_july20<-stack(masked_july20_B02$layer.1, masked_july20_B03$layer.1, masked_july20_B04$layer.1, masked_july20_B08$layer.1, masked_july20_TC$layer.1)
+
+par(mfrow=c(2,1))
+plotRGB(masked_july20, 4, 3, 2, stretch="lin")
+plotRGB(masked_july27, 4, 3, 2, stretch="lin")
+
+set.seed(42)
+july20_c4 <- unsuperClass(masked_july20, nClasses=4)
+july27_c4 <- unsuperClass(masked_july27, nClasses=4)
+
+cl1 <- colorRampPalette(c('blue4','green', "dark green", "blue"))(100)
+cl2 <- colorRampPalette(c('green','blue', "red", "dark green"))(100)
+
+par(mfrow=c(2,1))
+plot(july20_c4$map, col=cl1)
+plot(july27_c4$map, col=cl2)
+
+#####################
+
+p1 <- ggRGB(july20,4,3,2, stretch="lin")
+p2 <- ggRGB(july27,4,3,2, stretch="hist")
+
+grid.arrange(p1, p2, nrow = 2)
 
