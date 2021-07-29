@@ -119,3 +119,12 @@ p2 <- ggRGB(july27,4,3,2, stretch="hist")
 
 grid.arrange(p1, p2, nrow = 2)
 
+
+###################à
+
+#caricamento immagini prima e dopo
+# classificazione e calcolo frequenza classi per valutare foresta persa
+# creare dataframe e grafico
+# calcolo ndvi e confronto prima e dopo
+# calcolo firm spettrale ?
+
