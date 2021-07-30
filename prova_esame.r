@@ -4,7 +4,6 @@ library(raster) #richiamo il pacchetto raster
 library(RStoolbox) #richiamo il pacchetto RStoolbox
 library(ggplot2) #richiamo il pacchetto ggplot2
 library(gridExtra)
-library(multipanelfigure)
 library(rgdal)
 #install.packages("multipanelfigure")
 
@@ -165,6 +164,9 @@ grid.arrange(p1, p2, nrow = 2)
 
 setwd("C:/lab/esame_sardegna/")
 
+#############################
+# PRIMO STEP: CARICO LE FOTO DELLE DIVERSE BANDE E LE UNISCO IN UN RASTER PACK PER JULY10 E UNO PER JULY25
+
 rlist10<-list.files(pattern="july10") #creo una lista di file e associo alla variabile rlist
 import10<-lapply(rlist10,raster) #applico la funzione raster su tutti i file della lista e associo alla variabile import (in questo modo li importo tutti insieme)
 july10<-stack(import10) # creo un unico file che contiene tutti quelli della lista importata
@@ -173,26 +175,60 @@ rlist25<-list.files(pattern="july25") #creo una lista di file e associo alla var
 import25<-lapply(rlist25,raster) #applico la funzione raster su tutti i file della lista e associo alla variabile import (in questo modo li importo tutti insieme)
 july25<-stack(import25) # creo un unico file che contiene tutti quelli della lista importata
 
-par(mfrow=c(2,1))
-plotRGB(july10, 4, 3, 2, stretch="lin")
-plotRGB(july25, 4, 3, 2, stretch="lin")
+########################
+# SECONDO STEP OSSERVIAMO LE IMMAGINI
 
 
-## PLOT IN FALSI COLORI
+#### PRIMO PLOT CARINO, ENTRAMBI IN RGB (Sì)
+
+p1<-ggRGB(july10, 4, 3, 2, stretch="lin", quantiles = c(0.0001, 0.9999))
+p2<-ggRGB(july25, 4, 3, 2, stretch="lin")
+grid.arrange(p1, p2, nrow = 2)
+
+
+#### SECONDO PLOT, PRIMA IN RGB E SECONDA IN FALSO COLORE CON TERMICO SU BANDA ROSSA (forse no)
+
+p3<-ggRGB(july25, 11, 12, 4, stretch="lin")
+grid.arrange(p1, p3, nrow = 2)
+
+
+#### TERZO PLOT, ENTRAMBE IN FALSI COLORI CON TERMICO SU BANDA ROSSA (Sì)
+
+p4<-ggRGB(july10, 11, 12, 4, stretch="lin", quantiles = c(0.0001, 0.9999))
+p5<-ggRGB(july25, 11, 12, 4, stretch="lin")
+grid.arrange(p4, p5, nrow = 2)
+
+##################################
+# TERZO STEP CROPPO SULL'AREA DEGLI INCENDI PER ANALISI
+
 plotRGB(july25, 11, 12, 4, stretch="lin")
-
-par(mfrow=c(2,1))
-plotRGB(july10, 4, 3, 2, stretch="lin", main="10 Luglio RGB")
-plotRGB(july25, 11, 12, 4, stretch="lin", main="25 Luglio falsi colori")
-
-e <- drawExtent()
+e <- drawExtent(show=TRUE, col="red")
+e
+# class      : Extent 
+# xmin       : 943072.7 
+# xmax       : 965034.5 
+# ymin       : 4882167 
+# ymax       : 4905410
 
 july25_crop<- crop(july25, e)
 july10_crop<- crop(july10, e)
 
-par(mfrow=c(2,1))
-plotRGB(july10_crop, 4, 8, 2, stretch="lin")
-plotRGB(july25_crop, 11, 12, 4, stretch="lin")
+#### PLOT DEI DUE CROP IN FALSI COLORI (Sì)
+
+p6<-ggRGB(july10_crop, 11, 12, 4, stretch="lin", quantiles = c(0.0001, 0.9999))
+p7<-ggRGB(july25_crop, 11, 12, 4, stretch="lin")
+grid.arrange(p6, p7, ncol = 2)
+
+#####################################
+# QUARTO STEP, CALCOLO NDVI DEI DUE GIORNI
+
+
+
+
+
+
+
+
 
 
 set.seed(42)
