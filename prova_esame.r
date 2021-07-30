@@ -4,6 +4,8 @@ library(raster) #richiamo il pacchetto raster
 library(RStoolbox) #richiamo il pacchetto RStoolbox
 library(ggplot2) #richiamo il pacchetto ggplot2
 library(gridExtra)
+library(multipanelfigure)
+#install.packages("multipanelfigure")
 
 setwd("C:/lab/esame/")
 
@@ -24,6 +26,12 @@ par(mfrow=c(2,1))
 plotRGB(luglio12, 4, 5, 2, stretch="lin")
 plotRGB(luglio18, 4, 5, 2, stretch="lin")
 #dev.off()
+
+cl5<-colorRampPalette(c('gray90','black'))(100)
+
+par(mfrow=c(2,1))
+plot(luglio12$luglio12_Sentinel.1_IW.DV_VV_.dB._._orthorectified, col=cl5)
+plot(luglio18$luglio18_Sentinel.1_IW.DV_VV_.dB._._orthorectified, col=cl5)
 
 pdf("prova2")
 par(mfrow=c(2,1))
@@ -112,12 +120,23 @@ par(mfrow=c(2,1))
 plot(july20_c4$map, col=cl1)
 plot(july27_c4$map, col=cl2)
 
+set.seed(42)
+july20_c2 <- unsuperClass(masked_july20, nClasses=2)
+july27_c2 <- unsuperClass(masked_july27, nClasses=2)
+
+cl <- colorRampPalette(c("dark green", "red"))(100)
+
+par(mfrow=c(2,1))
+plot(july20_c2$map, col=cl, main="20 Luglio")
+plot(july27_c2$map, col=cl, main="27 Luglio")
+
 #####################
 
 p1 <- ggRGB(july20,4,3,2, stretch="lin")
 p2 <- ggRGB(july27,4,3,2, stretch="hist")
 
 grid.arrange(p1, p2, nrow = 2)
+
 
 
 ###################à
