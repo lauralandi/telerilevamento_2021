@@ -5,6 +5,7 @@ library(RStoolbox) #richiamo il pacchetto RStoolbox
 library(ggplot2) #richiamo il pacchetto ggplot2
 library(gridExtra)
 library(multipanelfigure)
+library(rgdal)
 #install.packages("multipanelfigure")
 
 setwd("C:/lab/esame/")
@@ -27,11 +28,21 @@ plotRGB(luglio12, 4, 5, 2, stretch="lin")
 plotRGB(luglio18, 4, 5, 2, stretch="lin")
 #dev.off()
 
-cl5<-colorRampPalette(c('gray90','black'))(100)
+cl5<-colorRampPalette(c('black','white'))(100)
 
-par(mfrow=c(2,1))
-plot(luglio12$luglio12_Sentinel.1_IW.DV_VV_.dB._._orthorectified, col=cl5)
-plot(luglio18$luglio18_Sentinel.1_IW.DV_VV_.dB._._orthorectified, col=cl5)
+#pdf("provareno")
+par(mfrow=c(2,1), mar=c(2,2,2,2))
+plot(luglio12$luglio12_S1_IW_DV_VV_dB, col=cl5, main="12 Luglio")
+plot(luglio18$luglio18_S1_IW_DV_VV_dB, col=cl5, main="18 Luglio")
+#dev.off()
+
+set.seed(42)
+luglio12_c2 <- unsuperClass(luglio12, nClasses=2)
+luglio18_c2 <- unsuperClass(luglio12, nClasses=2)
+
+cl6 <- colorRampPalette(c('red','green'))(100)
+plot(luglio12_c2$map, col=cl6)
+plot(luglio18_c2$map, col=cl6)
 
 pdf("prova2")
 par(mfrow=c(2,1))
@@ -142,8 +153,56 @@ grid.arrange(p1, p2, nrow = 2)
 ###################à
 
 #caricamento immagini prima e dopo
-# classificazione e calcolo frequenza classi per valutare foresta persa
+# classificazione e calcolo frequenza classi sulla foto bruciata per calcolare percentuale area incendiata
 # creare dataframe e grafico
 # calcolo ndvi e confronto prima e dopo
 # calcolo firm spettrale ?
+
+
+##########################à
+
+#   PROVA SARDEGNA
+
+setwd("C:/lab/esame_sardegna/")
+
+rlist10<-list.files(pattern="july10") #creo una lista di file e associo alla variabile rlist
+import10<-lapply(rlist10,raster) #applico la funzione raster su tutti i file della lista e associo alla variabile import (in questo modo li importo tutti insieme)
+july10<-stack(import10) # creo un unico file che contiene tutti quelli della lista importata
+
+rlist25<-list.files(pattern="july25") #creo una lista di file e associo alla variabile rlist
+import25<-lapply(rlist25,raster) #applico la funzione raster su tutti i file della lista e associo alla variabile import (in questo modo li importo tutti insieme)
+july25<-stack(import25) # creo un unico file che contiene tutti quelli della lista importata
+
+par(mfrow=c(2,1))
+plotRGB(july10, 4, 3, 2, stretch="lin")
+plotRGB(july25, 4, 3, 2, stretch="lin")
+
+
+## PLOT IN FALSI COLORI
+plotRGB(july25, 11, 12, 4, stretch="lin")
+
+par(mfrow=c(2,1))
+plotRGB(july10, 4, 3, 2, stretch="lin", main="10 Luglio RGB")
+plotRGB(july25, 11, 12, 4, stretch="lin", main="25 Luglio falsi colori")
+
+e <- drawExtent()
+
+july25_crop<- crop(july25, e)
+july10_crop<- crop(july10, e)
+
+par(mfrow=c(2,1))
+plotRGB(july10_crop, 4, 8, 2, stretch="lin")
+plotRGB(july25_crop, 11, 12, 4, stretch="lin")
+
+
+set.seed(42)
+july10_c3 <- unsuperClass(july10_crop, nClasses=3)
+july25_c3 <- unsuperClass(july25_crop, nClasses=3)
+
+cl <- colorRampPalette(c('red','green', "blue"))(100)
+
+
+par(mfrow=c(2,1))
+plot(july10_c3$map, col=cl)
+plot(july25_c3$map, col=cl)
 
