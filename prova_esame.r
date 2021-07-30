@@ -5,7 +5,6 @@ library(RStoolbox) #richiamo il pacchetto RStoolbox
 library(ggplot2) #richiamo il pacchetto ggplot2
 library(gridExtra)
 library(rgdal)
-#install.packages("multipanelfigure")
 
 setwd("C:/lab/esame/")
 
@@ -162,7 +161,30 @@ grid.arrange(p1, p2, nrow = 2)
 
 #   PROVA SARDEGNA
 
+library(raster) #richiamo il pacchetto raster
+library(RStoolbox) #richiamo il pacchetto RStoolbox
+library(ggplot2) #richiamo il pacchetto ggplot2
+library(gridExtra)
+library(rgdal)
+
 setwd("C:/lab/esame_sardegna/")
+
+#############################à
+
+## Le immagini utilizzate sono da Sentinel-2, le cui bande sono:
+##     BANDA                  LUNGHEZZA D'ONDA (micrometri)      RISOLUZIONE SPAZIALE (metri)
+## B01= coastal aerosol                 0.443                           60
+## B02= blue                            0.490                           10
+## B03= green                           0.560                           10
+## B04= red                             0.665                           10
+## B05= vegetation red edge             0.705                           20
+## B06= vegetation red edge             0.740                           20
+## B07= vegetation red edge             0.783                           20
+## B08= NIR                             0.842                           10
+## B08A= vegetation red edge            0.865                           20
+## B09= water vapour                    0.945                           60
+## B11= SWIR                            1.610                           20
+## B12= SWIR                            2.190                           20
 
 #############################
 # PRIMO STEP: CARICO LE FOTO DELLE DIVERSE BANDE E LE UNISCO IN UN RASTER PACK PER JULY10 E UNO PER JULY25
@@ -179,30 +201,24 @@ july25<-stack(import25) # creo un unico file che contiene tutti quelli della lis
 # SECONDO STEP OSSERVIAMO LE IMMAGINI
 
 
-#### PRIMO PLOT CARINO, ENTRAMBI IN RGB (Sì)
+#### PRIMO PLOT ENTRAMBI IN RGB (Sì)
 
-p1<-ggRGB(july10, 4, 3, 2, stretch="lin", quantiles = c(0.0001, 0.9999))
+p1<-ggRGB(july10, 4, 3, 2, stretch="lin", quantiles = c(0.0001, 0.9999)) # modifico i quantili a tentativi per regolare lo stretch della foto e renderlo più simile e confrontabile 
+                                                                          # con la seconda
 p2<-ggRGB(july25, 4, 3, 2, stretch="lin")
 grid.arrange(p1, p2, nrow = 2)
 
+#### SECONDO PLOT ENTRAMBE IN FALSI COLORI CON TERMICO SU BANDA ROSSA (Sì)
 
-#### SECONDO PLOT, PRIMA IN RGB E SECONDA IN FALSO COLORE CON TERMICO SU BANDA ROSSA (forse no)
-
-p3<-ggRGB(july25, 11, 12, 4, stretch="lin")
-grid.arrange(p1, p3, nrow = 2)
-
-
-#### TERZO PLOT, ENTRAMBE IN FALSI COLORI CON TERMICO SU BANDA ROSSA (Sì)
-
-p4<-ggRGB(july10, 11, 12, 4, stretch="lin", quantiles = c(0.0001, 0.9999))
-p5<-ggRGB(july25, 11, 12, 4, stretch="lin")
+p4<-ggRGB(july10, 11, 10, 4, stretch="lin", quantiles = c(0.0001, 0.9999))
+p5<-ggRGB(july25, 11, 10, 4, stretch="lin")
 grid.arrange(p4, p5, nrow = 2)
 
 ##################################
 # TERZO STEP CROPPO SULL'AREA DEGLI INCENDI PER ANALISI
 
-plotRGB(july25, 11, 12, 4, stretch="lin")
-e <- drawExtent(show=TRUE, col="red")
+plotRGB(july25, 11, 10, 4, stretch="lin")
+e <- drawExtent(show=TRUE, col="red") # funzione drawExtent per disegnare un riquadro sul plot e generare un oggetto extent da usare dopo nel crop
 e
 # class      : Extent 
 # xmin       : 943072.7 
@@ -215,12 +231,66 @@ july10_crop<- crop(july10, e)
 
 #### PLOT DEI DUE CROP IN FALSI COLORI (Sì)
 
-p6<-ggRGB(july10_crop, 11, 12, 4, stretch="lin", quantiles = c(0.0001, 0.9999))
-p7<-ggRGB(july25_crop, 11, 12, 4, stretch="lin")
+p6<-ggRGB(july10_crop, 11, 10, 4, stretch="lin", quantiles = c(0.0001, 0.9999))
+p7<-ggRGB(july25_crop, 11, 10, 4, stretch="lin")
 grid.arrange(p6, p7, ncol = 2)
 
 #####################################
-# QUARTO STEP, CALCOLO NDVI DEI DUE GIORNI
+# QUARTO STEP, CALCOLO NDVI E NBR DEI DUE GIORNI
+
+## NDVI= (NIR-RED)/(NIR+RED)
+## NBR=  (NIR-SWIR)/(NIR+SWIR)
+
+# NIR=B08
+# RED=B04
+# SWIR=B12
+
+## per l'NBR serve SWIR co lamba tra 2080 e 2350, quindi per sentinel è B12
+
+###########
+#NDVI
+
+NDVI_july10<-(july10_crop$july10_B08-july10_crop$july10_B04)/(july10_crop$july10_B08+july10_crop$july10_B04)
+NDVI_july25<-(july25_crop$july25_B08-july25_crop$july25_B04)/(july25_crop$july25_B08+july25_crop$july25_B04)
+
+#### PLOT DEI DUE NDVI
+cl <- colorRampPalette(c('darkblue','yellow','red','black'))(100)
+par(mfrow=c(1,2))
+plot(NDVI_july10, col=cl, main="NDVI 10 Luglio")
+plot(NDVI_july25, col=cl, main="NDVI 25 Luglio")
+
+#### CALCOLO LA DIFFERENZA PER STIMARE IL CALO DI NDVI DOPO L'INCENDIO
+deltaNDVI<- NDVI_july10 - NDVI_july25
+
+### PLOT DEL DELTA NDVI, IN ROSSO IL CALO MAGGIORE, IN BLU VICINO A ZERO
+cld <- colorRampPalette(c('blue','white','red'))(100) 
+plot(deltaNDVI, col=cld, main="differenza NDVI") ## <-- controllare come forzare a zero il limite della legenda
+
+
+###########
+#NBR
+
+NBR_july10<-(july10_crop$july10_B12-july10_crop$july10_B08)/(july10_crop$july10_B08+july10_crop$july10_B12)
+NBR_july25<-(july25_crop$july25_B12-july25_crop$july25_B08)/(july25_crop$july25_B08+july25_crop$july25_B12)
+
+#### PLOT DEI DUE NBR
+cl <- colorRampPalette(c('darkblue','yellow','red','black'))(100)
+par(mfrow=c(1,2))
+plot(NBR_july10, col=cl, main="NBR 10 Luglio")
+plot(NBR_july25, col=cl, main="NBR 25 Luglio")
+
+#### CALCOLO LA DIFFERENZA PER STIMARE L'AUMENTO DI NBR DOPO L'INCENDIO
+deltaNBR<- NBR_july25 - NBR_july10
+
+### PLOT DEL DELTA NBR, IN ROSSO L'AUMENTO MAGGIORE, IN BLU VICINO A ZERO
+cld <- colorRampPalette(c('blue','white','red'))(100) 
+plot(deltaNBR, col=cld, main="differenza NBR") ## <-- controllare come forzare a zero il limite della legenda
+
+###############
+#CLASSIFICARE I VALORI DI NBR !!!
+# FARE GRAFICO E SE TROVO COME FARE PLOT
+
+
 
 
 
