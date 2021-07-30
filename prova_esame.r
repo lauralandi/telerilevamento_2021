@@ -206,3 +206,7 @@ par(mfrow=c(2,1))
 plot(july10_c3$map, col=cl)
 plot(july25_c3$map, col=cl)
 
+### L'area della foto croppata è di 925380 celle di risoluzone 23,2 metri quindi:
+### area cella= 23,2*23,2= 538.24
+### AREA = 538.24*925380 = 498076531 m2 = 498 km2
+
