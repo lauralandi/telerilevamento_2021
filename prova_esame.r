@@ -166,6 +166,7 @@ library(RStoolbox) #richiamo il pacchetto RStoolbox
 library(ggplot2) #richiamo il pacchetto ggplot2
 library(gridExtra)
 library(rgdal)
+library(wesanderson)
 
 setwd("C:/lab/esame_sardegna/")
 
@@ -214,17 +215,24 @@ p4<-ggRGB(july10, 11, 10, 4, stretch="lin", quantiles = c(0.0001, 0.9999))
 p5<-ggRGB(july25, 11, 10, 4, stretch="lin")
 grid.arrange(p4, p5, nrow = 2)
 
+#### PLOT IN FALSI COLORI CON NIR IN BANDA ROSSA
+
+p6<-ggRGB(july10, 8, 3, 2, stretch="lin", quantiles = c(0.0001, 0.9999))
+p7<-ggRGB(july25, 8, 3, 2, stretch="lin")
+grid.arrange(p6, p7, nrow = 2)
+
 ##################################
 # TERZO STEP CROPPO SULL'AREA DEGLI INCENDI PER ANALISI
 
 plotRGB(july25, 11, 10, 4, stretch="lin")
-e <- drawExtent(show=TRUE, col="red") # funzione drawExtent per disegnare un riquadro sul plot e generare un oggetto extent da usare dopo nel crop
-e
+# e <- drawExtent(show=TRUE, col="red") # funzione drawExtent per disegnare un riquadro sul plot e generare un oggetto extent da usare dopo nel crop
+# e
 # class      : Extent 
 # xmin       : 943072.7 
 # xmax       : 965034.5 
 # ymin       : 4882167 
 # ymax       : 4905410
+e<-extent(943072.7, 965034.5, 4882167, 4905410)
 
 july25_crop<- crop(july25, e)
 july10_crop<- crop(july10, e)
@@ -247,6 +255,7 @@ grid.arrange(p6, p7, ncol = 2)
 
 ## per l'NBR serve SWIR co lamba tra 2080 e 2350, quindi per sentinel è B12
 
+
 ###########
 #NDVI
 
@@ -254,43 +263,59 @@ NDVI_july10<-(july10_crop$july10_B08-july10_crop$july10_B04)/(july10_crop$july10
 NDVI_july25<-(july25_crop$july25_B08-july25_crop$july25_B04)/(july25_crop$july25_B08+july25_crop$july25_B04)
 
 #### PLOT DEI DUE NDVI
-cl <- colorRampPalette(c('darkblue','yellow','red','black'))(100)
+clz<-wes_palette("Zissou1", 100, type = c("continuous"))
+#cl <- colorRampPalette(c('darkblue','yellow','red','black'))(100)
 par(mfrow=c(1,2))
-plot(NDVI_july10, col=cl, main="NDVI 10 Luglio")
-plot(NDVI_july25, col=cl, main="NDVI 25 Luglio")
+plot(NDVI_july10, col=clz, main="NDVI 10 Luglio")
+plot(NDVI_july25, col=clz, main="NDVI 25 Luglio")
 
 #### CALCOLO LA DIFFERENZA PER STIMARE IL CALO DI NDVI DOPO L'INCENDIO
 deltaNDVI<- NDVI_july10 - NDVI_july25
 
 ### PLOT DEL DELTA NDVI, IN ROSSO IL CALO MAGGIORE, IN BLU VICINO A ZERO
-cld <- colorRampPalette(c('blue','white','red'))(100) 
-plot(deltaNDVI, col=cld, main="differenza NDVI") ## <-- controllare come forzare a zero il limite della legenda
+clm<-wes_palette("Moonrise1", 100, type = c("continuous"))
+#cld <- colorRampPalette(c('blue','white','red'))(100) 
+plot(deltaNDVI, col=clm, main="differenza NDVI") ## <-- controllare come forzare a zero il limite della legenda
 
 
 ###########
 #NBR
 
-NBR_july10<-(july10_crop$july10_B12-july10_crop$july10_B08)/(july10_crop$july10_B08+july10_crop$july10_B12)
-NBR_july25<-(july25_crop$july25_B12-july25_crop$july25_B08)/(july25_crop$july25_B08+july25_crop$july25_B12)
+NBR_july10<-(july10_crop$july10_B08-july10_crop$july10_B12)/(july10_crop$july10_B08+july10_crop$july10_B12)
+NBR_july25<-(july25_crop$july25_B08-july25_crop$july25_B12)/(july25_crop$july25_B08+july25_crop$july25_B12)
 
 #### PLOT DEI DUE NBR
-cl <- colorRampPalette(c('darkblue','yellow','red','black'))(100)
 par(mfrow=c(1,2))
-plot(NBR_july10, col=cl, main="NBR 10 Luglio")
-plot(NBR_july25, col=cl, main="NBR 25 Luglio")
+plot(NBR_july10, col=clz, main="NBR 10 Luglio")
+plot(NBR_july25, col=clz, main="NBR 25 Luglio")
 
 #### CALCOLO LA DIFFERENZA PER STIMARE L'AUMENTO DI NBR DOPO L'INCENDIO
 deltaNBR<- NBR_july25 - NBR_july10
 
 ### PLOT DEL DELTA NBR, IN ROSSO L'AUMENTO MAGGIORE, IN BLU VICINO A ZERO
-cld <- colorRampPalette(c('blue','white','red'))(100) 
-plot(deltaNBR, col=cld, main="differenza NBR") ## <-- controllare come forzare a zero il limite della legenda
+plot(deltaNBR, col=clm, main="differenza NBR") ## <-- controllare come forzare a zero il limite della legenda
 
 ###############
 #CLASSIFICARE I VALORI DI NBR !!!
 # FARE GRAFICO E SE TROVO COME FARE PLOT
 
+# values deltaNBR : -1.515539, 0.7329894  (min, max)
+# range : 2.248528
+# range/ 3 classi: 0.7495093
+# classe 1, no danni : 0.7329894 - 0
+# classe 1, danni intermedi: 0 - 0.7577695
+# classe 3, danni più gravi: 0.7577695 - -1.515539
 
+NBR_july25
+
+
+#################
+# PLOT DEI DUE DELTA
+par(mfrow=c(1,2))
+plot(deltaNDVI, col=clm, main="differenza NDVI")
+plot(deltaNBR, col=clm, main="differenza NBR")
+
+clw<-wes_palette("Zissou1", 100, type = c("continuous"))
 
 
 
