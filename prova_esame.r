@@ -295,19 +295,6 @@ deltaNBR<- NBR_july25 - NBR_july10
 ### PLOT DEL DELTA NBR, IN ROSSO L'AUMENTO MAGGIORE, IN BLU VICINO A ZERO
 plot(deltaNBR, col=clm, main="differenza NBR") ## <-- controllare come forzare a zero il limite della legenda
 
-###############
-#CLASSIFICARE I VALORI DI NBR !!!
-# FARE GRAFICO E SE TROVO COME FARE PLOT
-
-# values deltaNBR : -1.515539, 0.7329894  (min, max)
-# range : 2.248528
-# range/ 3 classi: 0.7495093
-# classe 1, no danni : 0.7329894 - 0
-# classe 1, danni intermedi: 0 - 0.7577695
-# classe 3, danni più gravi: 0.7577695 - -1.515539
-
-NBR_july25
-
 
 #################
 # PLOT DEI DUE DELTA
@@ -316,6 +303,73 @@ plot(deltaNDVI, col=clm, main="differenza NDVI")
 plot(deltaNBR, col=clm, main="differenza NBR")
 
 clw<-wes_palette("Zissou1", 100, type = c("continuous"))
+
+###############
+#CLASSIFICARE I VALORI DI deltaNBR !!!
+# FARE GRAFICO E SE TROVO COME FARE PLOT
+
+# values deltaNBR : -1.515539, 0.7329894  (min, max)
+# range : 2.248528
+# classe 1, no danni : 0.7329894 - 0
+# classe 2, danni più lievi: 0 - -0.5051797
+# classe 3, danni intermedi: -0.5051797 - -1.010359
+# classe 4, danni più gravi: -1.010359 - -1.515539
+
+#deltaNBR
+
+## Analizzo il raster
+summary(deltaNBR)
+
+H1<-hist(deltaNBR,
+     main = "Distribution of raster cell values in the NBR difference data",
+     xlab = "deltaNBR", ylab = "Number of Pixels",
+     col = "springgreen")
+
+H2<-hist(deltaNBR,
+     main = "Distribution of raster cell values in the NBR difference data",
+     xlab = "deltaNBR", ylab = "Number of Pixels",
+     breaks = 4,
+     col = "springgreen")
+
+H3<-hist(deltaNBR,
+     main = "Distribution of raster cell values in the NBR difference data",
+     xlab = "deltaNBR", ylab = "Number of Pixels",
+     breaks = c(-1.55, -1, -0.5, 0, 0.75),
+     col = "springgreen")
+
+# H3$breaks
+# [1] -1.55 -1.00 -0.50  0.00  0.75
+
+# H3$counts
+# [1]   1068  89236 580991 276597
+
+### -1.55 - -1 -> danno maggiore 3
+### -1 - -0.5 -> danno intermedio 2
+### -0.5 - 0 -> danno minore 1
+###  0 - 0.75 -> no danno NA
+
+# creo un oggetto con gli elementi che descrivono la classificazione
+reclass<- c( -1.55,-1,3,
+            -1,-0.5,2,
+            -0.5,0,1,
+            0,0.75, NA)
+
+#trasformo l'oggetto reclass in una matrice con righe e colonne
+reclass_m<-matrix(reclass,
+                ncol = 3,
+                byrow = TRUE)
+
+#utilizzando la funzione reclassify e la matrice di classificaizone realizzata classifico il raster deltaNBR
+deltaNBR_classified <- reclassify(deltaNBR,
+                     reclass_m)
+
+barplot(deltaNBR_classified)
+
+clc<- c("red", "orange", "yellow")
+plot(deltaNBR_classified, col=clc)
+            
+
+
 
 
 
