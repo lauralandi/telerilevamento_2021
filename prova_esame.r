@@ -274,8 +274,8 @@ deltaNDVI<- NDVI_july10 - NDVI_july25
 
 ### PLOT DEL DELTA NDVI, IN ROSSO IL CALO MAGGIORE, IN BLU VICINO A ZERO
 clm<-wes_palette("Moonrise1", 100, type = c("continuous"))
-#cld <- colorRampPalette(c('blue','white','red'))(100) 
-plot(deltaNDVI, col=clm, main="differenza NDVI") ## <-- controllare come forzare a zero il limite della legenda
+cld <- colorRampPalette(c('blue','white','red'))(100) 
+plot(deltaNDVI, col=cld, main="differenza NDVI") ## <-- controllare come forzare a zero il limite della legenda
 
 
 ###########
@@ -293,37 +293,81 @@ plot(NBR_july25, col=clz, main="NBR 25 Luglio")
 deltaNBR<- NBR_july25 - NBR_july10
 
 ### PLOT DEL DELTA NBR, IN ROSSO L'AUMENTO MAGGIORE, IN BLU VICINO A ZERO
-plot(deltaNBR, col=clm, main="differenza NBR") ## <-- controllare come forzare a zero il limite della legenda
+cld2 <- colorRampPalette(c('red','white','blue'))(100)
+plot(deltaNBR, col=cld2, main="differenza NBR") ## <-- controllare come forzare a zero il limite della legenda
 
 
 #################
 # PLOT DEI DUE DELTA
 par(mfrow=c(1,2))
-plot(deltaNDVI, col=clm, main="differenza NDVI")
-plot(deltaNBR, col=clm, main="differenza NBR")
+plot(deltaNDVI, col=cld, main="differenza NDVI")
+plot(deltaNBR, col=cld2, main="differenza NBR")
 
-clw<-wes_palette("Zissou1", 100, type = c("continuous"))
 
-###############
-#CLASSIFICARE I VALORI DI deltaNBR !!!
-# FARE GRAFICO E SE TROVO COME FARE PLOT
+#############
+# CLASSIFICAZIONE DEL DELTANBR IN 4 CLASSI (DUE NO DANNI, ALTRE DUE DANNI PIù E MENO GRAVI)
+clB<-colorRampPalette(c('blue','green', 'red','yellow'))(100)
 
-# values deltaNBR : -1.515539, 0.7329894  (min, max)
-# range : 2.248528
-# classe 1, no danni : 0.7329894 - 0
-# classe 2, danni più lievi: 0 - -0.5051797
-# classe 3, danni intermedi: -0.5051797 - -1.010359
-# classe 4, danni più gravi: -1.010359 - -1.515539
+set.seed(42)
+dNBR_c4<-unsuperClass(deltaNBR, nClasses=4)
+plot(dNBR_c4$map, col=clB)
 
-#deltaNBR
+set.seed(42)
+dNBR_c3<-unsuperClass(deltaNBR, nClasses=3)
+plot(dNBR_c3$map, col=clB)
 
-## Analizzo il raster
-summary(deltaNBR)
+clD<-colorRampPalette(c('blue','red'))(100)
+set.seed(42)
+dNBR_c2<-unsuperClass(deltaNBR, nClasses=2)
+plot(dNBR_c2$map, col=clD)
 
-H1<-hist(deltaNBR,
+colors <- colorRampPalette(c('red','green','yellow','darkgreen'))(4) 
+colors2 <-colorRampPalette(c('darkgreen','red','yellow'))(100)
+
+HCLASS<-hist(dNBR_c4$map,
      main = "Distribution of raster cell values in the NBR difference data",
-     xlab = "deltaNBR", ylab = "Number of Pixels",
-     col = "springgreen")
+     breaks= c(0,1, 2, 3, 4),
+     xlab = "classi", ylab = "Number of Pixels",
+     col = colors)
+
+dNBR_c4$model
+
+##### PLOT CLASSIFICAZIONE A 4 CLASSI
+plot(dNBR_c4$map, col = colors, legend = FALSE, axes = FALSE, box = FALSE)
+legend(965031,4905419, legend = paste0("C",1:4), fill = colors,
+      title = "Classi", horiz = FALSE,  bty = "n")
+                           
+
+## Estensione raster:
+#xmin 943077.6
+#xmax 965030.7
+#ymin 4882162
+#ymax 4905419
+
+## Posizionamento legenda:
+#x 965031
+#y 4905419
+
+####################
+## PLOT DI CONFRONTO DELTANBR E CLASSIFICAZIONE
+
+par(mfrow=c(1,2))
+plot(deltaNBR, col=cld2, main="differenza NBR")
+plot(dNBR_c4$map, col = colors, legend = FALSE, axes = FALSE, box = FALSE, main="Classificazione deltaNBR")
+legend(965031,4905419, legend = paste0("C",1:4), fill = colors,
+      title = "Classi", horiz = FALSE,  bty = "n")
+
+####################
+## PLOT DI CONFRONTO FALSI COLORI E CLASSIFICAZIONE
+
+par(mfrow=c(1,2))
+plotRGB(july25_crop, 11, 10, 4, stretch="lin")
+plot(dNBR_c4$map, col = colors, legend = FALSE, axes = FALSE, box = FALSE, main="Classificazione deltaNBR")
+legend(965031,4905419, legend = paste0("C",1:4), fill = colors,
+      title = "Classi", horiz = FALSE,  bty = "n")
+
+
+##############################################################################################################################################################################
 
 H2<-hist(deltaNBR,
      main = "Distribution of raster cell values in the NBR difference data",
@@ -369,27 +413,56 @@ clc<- c("red", "orange", "yellow")
 plot(deltaNBR_classified, col=clc)
             
 
+###############
+#CLASSIFICARE I VALORI DI deltaNBR !!!
+# FARE GRAFICO E SE TROVO COME FARE PLOT
 
+## Analizzo il raster
+summary(deltaNBR)
+#             layer
+# Min.    -1.5155392
+# 1st Qu. -0.2412478
+# Median  -0.1062936
+# 3rd Qu.  0.0200322
+# Max.     0.7329894
+# NA's     0.0000000
 
+#H1<-hist(deltaNBR,
+ #    main = "Distribution of raster cell values in the NBR difference data",
+  #   xlab = "deltaNBR", ylab = "Number of Pixels",
+   #  col = "springgreen")
 
+#dai dati di distribuzione di frequenza creo una classificazione con classi di ampiezza pari alla deviazione standard
+### usare la funzione focal (da pacchetto raster) per analisi statistica utilizzando la moving window
+# con w definisco le dimensioni della moving window, con fun la variabile statistica da calcolare
 
+cld<-wes_palette("Darjeeling1", 100, type = c("continuous"))
+clM<-wes_palette("Moonrise3", 100, type = c("continuous"))
+clr<-wes_palette("Royal1", 100, type = c("continuous"))
 
+#SD3_dNBR<-focal(deltaNBR, w=matrix(1/9,nrow=3,ncol=3), fun=sd)
+#plot(SD3_dNBR, col=cld)
 
+#SD5_dNBR<-focal(deltaNBR, w=matrix(1/25,nrow=5,ncol=5), fun=sd)
+#plot(SD5_dNBR, col=cld)
 
+#SD7_dNBR<-focal(deltaNBR, w=matrix(1/49,nrow=7,ncol=7), fun=sd)
+#plot(SD7_dNBR, col=clr)
 
-
-
-
+clA<-colorRampPalette(c('blue','green','yellow'))(100)
 set.seed(42)
-july10_c3 <- unsuperClass(july10_crop, nClasses=3)
-july25_c3 <- unsuperClass(july25_crop, nClasses=3)
-
-cl <- colorRampPalette(c('red','green', "blue"))(100)
+dNBR_c3<-unsuperClass(deltaNBR, nClasses=3)
+plot(dNBR_c3$map, col=clA)
 
 
-par(mfrow=c(2,1))
-plot(july10_c3$map, col=cl)
-plot(july25_c3$map, col=cl)
+
+
+
+
+
+
+
+
 
 ### L'area della foto croppata è di 925380 celle di risoluzone 23,2 metri quindi:
 ### area cella= 23,2*23,2= 538.24
