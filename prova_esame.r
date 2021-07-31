@@ -156,10 +156,116 @@ grid.arrange(p1, p2, nrow = 2)
 # calcolo ndvi e confronto prima e dopo
 # calcolo firm spettrale ?
 
+##############################################################################################################################################################
 
-##########################à
+##############à PROVE PER SARDEGNA ##############
 
-#   PROVA SARDEGNA
+H2<-hist(deltaNBR,
+     main = "Distribution of raster cell values in the NBR difference data",
+     xlab = "deltaNBR", ylab = "Number of Pixels",
+     breaks = 4,
+     col = "springgreen")
+
+H3<-hist(deltaNBR,
+     main = "Distribution of raster cell values in the NBR difference data",
+     xlab = "deltaNBR", ylab = "Number of Pixels",
+     breaks = c(-1.55, -1, -0.5, 0, 0.75),
+     col = "springgreen")
+
+# H3$breaks
+# [1] -1.55 -1.00 -0.50  0.00  0.75
+
+# H3$counts
+# [1]   1068  89236 580991 276597
+
+### -1.55 - -1 -> danno maggiore 3
+### -1 - -0.5 -> danno intermedio 2
+### -0.5 - 0 -> danno minore 1
+###  0 - 0.75 -> no danno NA
+
+# creo un oggetto con gli elementi che descrivono la classificazione
+reclass<- c( -1.55,-1,3,
+            -1,-0.5,2,
+            -0.5,0,1,
+            0,0.75, NA)
+
+#trasformo l'oggetto reclass in una matrice con righe e colonne
+reclass_m<-matrix(reclass,
+                ncol = 3,
+                byrow = TRUE)
+
+#utilizzando la funzione reclassify e la matrice di classificaizone realizzata classifico il raster deltaNBR
+deltaNBR_classified <- reclassify(deltaNBR,
+                     reclass_m)
+
+barplot(deltaNBR_classified)
+
+clc<- c("red", "orange", "yellow")
+plot(deltaNBR_classified, col=clc)
+            
+
+###############
+#CLASSIFICARE I VALORI DI deltaNBR !!!
+# FARE GRAFICO E SE TROVO COME FARE PLOT
+
+## Analizzo il raster
+summary(deltaNBR)
+#             layer
+# Min.    -1.5155392
+# 1st Qu. -0.2412478
+# Median  -0.1062936
+# 3rd Qu.  0.0200322
+# Max.     0.7329894
+# NA's     0.0000000
+
+#H1<-hist(deltaNBR,
+ #    main = "Distribution of raster cell values in the NBR difference data",
+  #   xlab = "deltaNBR", ylab = "Number of Pixels",
+   #  col = "springgreen")
+
+#dai dati di distribuzione di frequenza creo una classificazione con classi di ampiezza pari alla deviazione standard
+### usare la funzione focal (da pacchetto raster) per analisi statistica utilizzando la moving window
+# con w definisco le dimensioni della moving window, con fun la variabile statistica da calcolare
+
+cld<-wes_palette("Darjeeling1", 100, type = c("continuous"))
+clM<-wes_palette("Moonrise3", 100, type = c("continuous"))
+clr<-wes_palette("Royal1", 100, type = c("continuous"))
+
+#SD3_dNBR<-focal(deltaNBR, w=matrix(1/9,nrow=3,ncol=3), fun=sd)
+#plot(SD3_dNBR, col=cld)
+
+#SD5_dNBR<-focal(deltaNBR, w=matrix(1/25,nrow=5,ncol=5), fun=sd)
+#plot(SD5_dNBR, col=cld)
+
+#SD7_dNBR<-focal(deltaNBR, w=matrix(1/49,nrow=7,ncol=7), fun=sd)
+#plot(SD7_dNBR, col=clr)
+
+clA<-colorRampPalette(c('blue','green','yellow'))(100)
+set.seed(42)
+dNBR_c3<-unsuperClass(deltaNBR, nClasses=3)
+plot(dNBR_c3$map, col=clA)
+
+
+
+
+
+### L'area della foto croppata è di 925380 celle di risoluzone 23,2 metri quindi:
+### area cella= 23,2*23,2= 538.24
+### AREA = 538.24*925380 = 498076531 m2 = 498 km2
+
+
+
+
+###########################################################################################################################################################################
+###########################################################################################################################################################################
+###################################################################  PROVA SARDEGNA UFFICIALE  #############################################################################
+###########################################################################################################################################################################
+###########################################################################################################################################################################
+
+
+###################################################################################################
+#   STEP 1  -  Richiamare tutte le library necessarie al codice e definire la working directiory  #
+###################################################################################################
 
 library(raster) #richiamo il pacchetto raster
 library(RStoolbox) #richiamo il pacchetto RStoolbox
@@ -170,33 +276,50 @@ library(wesanderson)
 
 setwd("C:/lab/esame_sardegna/")
 
-#############################à
+###################################################################
+#   STEP 2  -  Scegliere le immagini su cui effettuare l'analisi  #
+###################################################################
 
-## Le immagini utilizzate sono da Sentinel-2, le cui bande sono:
-##     BANDA                  LUNGHEZZA D'ONDA (micrometri)      RISOLUZIONE SPAZIALE (metri)
-## B01= coastal aerosol                 0.443                           60
-## B02= blue                            0.490                           10
-## B03= green                           0.560                           10
-## B04= red                             0.665                           10
-## B05= vegetation red edge             0.705                           20
-## B06= vegetation red edge             0.740                           20
-## B07= vegetation red edge             0.783                           20
-## B08= NIR                             0.842                           10
-## B08A= vegetation red edge            0.865                           20
-## B09= water vapour                    0.945                           60
-## B11= SWIR                            1.610                           20
-## B12= SWIR                            2.190                           20
+## Le due immagini utilizzate derivano da Sentinel-2 e rappresentano la zona del Montiferru in provincia di 
+## Oristano il 10 e il 25 Luglio 2021, ovvero prima e dopo gli incendi che hanno colpito l'area in quel mese.
 
-#############################
-# PRIMO STEP: CARICO LE FOTO DELLE DIVERSE BANDE E LE UNISCO IN UN RASTER PACK PER JULY10 E UNO PER JULY25
+## Le diverse bande in cui il satellite Sentinel-2 fornisce le immagini sono:
 
-rlist10<-list.files(pattern="july10") #creo una lista di file e associo alla variabile rlist
-import10<-lapply(rlist10,raster) #applico la funzione raster su tutti i file della lista e associo alla variabile import (in questo modo li importo tutti insieme)
-july10<-stack(import10) # creo un unico file che contiene tutti quelli della lista importata
+##       BANDA                  LUNGHEZZA D'ONDA (micrometri)      RISOLUZIONE SPAZIALE (metri)
+##   B01= coastal aerosol                 0.443                           60
+##   B02= blue                            0.490                           10
+##   B03= green                           0.560                           10
+##   B04= red                             0.665                           10
+##   B05= vegetation red edge             0.705                           20
+##   B06= vegetation red edge             0.740                           20
+##   B07= vegetation red edge             0.783                           20
+##   B08= NIR                             0.842                           10
+##   B08A= vegetation red edge            0.865                           20
+##   B09= water vapour                    0.945                           60
+##   B11= SWIR                            1.610                           20
+##   B12= SWIR                            2.190                           20
 
-rlist25<-list.files(pattern="july25") #creo una lista di file e associo alla variabile rlist
-import25<-lapply(rlist25,raster) #applico la funzione raster su tutti i file della lista e associo alla variabile import (in questo modo li importo tutti insieme)
-july25<-stack(import25) # creo un unico file che contiene tutti quelli della lista importata
+
+## Nello specifico per questa analisi sono state sfruttate le bande
+##   B02= blue 
+##   B03= green
+##   B04= red  
+##   B08= NIR
+##   B11= SWIR
+##   B12= SWIR
+
+
+# Le diverse bande sono state scaricate separatamente, quindi per caricarle creo due liste di file con pattern "july10" e "july25" rispettivamente per
+# la prima e la seconda immagine. Dopodichè la funzione lapply mi permette di applicare all'intera lista la funzione raster. Infine con la funzione stack unisco
+# tutti i raster in un unico RasterStack, che conterrà tutte le bande (il procedimento è ripetuto per entrambe le immagini)
+
+rlist10<-list.files(pattern="july10") #creo una lista di file delle diverse bande con pattern "july10" e associo alla variabile rlist10
+import10<-lapply(rlist10,raster) #applico la funzione raster su tutti i file della lista e associo alla variabile import10
+july10<-stack(import10) # creo un unico oggetto RasterStack che contiene come layer tutte le bande importate
+
+rlist25<-list.files(pattern="july25") #creo una lista di file delle diverse bande con pattern "july25" e associo alla variabile rlist25
+import25<-lapply(rlist25,raster) #applico la funzione raster su tutti i file della lista e associo alla variabile import25
+july25<-stack(import25) # creo un unico oggetto RasterStack che contiene come layer tutte le bande importate
 
 ########################
 # SECONDO STEP OSSERVIAMO LE IMMAGINI
@@ -321,7 +444,7 @@ set.seed(42)
 dNBR_c2<-unsuperClass(deltaNBR, nClasses=2)
 plot(dNBR_c2$map, col=clD)
 
-colors <- colorRampPalette(c('red','green','yellow','darkgreen'))(4) 
+colors <- colorRampPalette(c('red','green','yellow','darkgreen'))(100) 
 colors2 <-colorRampPalette(c('darkgreen','red','yellow'))(100)
 
 HCLASS<-hist(dNBR_c4$map,
@@ -366,105 +489,52 @@ plot(dNBR_c4$map, col = colors, legend = FALSE, axes = FALSE, box = FALSE, main=
 legend(965031,4905419, legend = paste0("C",1:4), fill = colors,
       title = "Classi", horiz = FALSE,  bty = "n")
 
+#################
+## CALCOLARE PERCENTUALE DELLE CLASSI
+
+freq(dNBR_c4$map)
+#      value   count
+#  [1,]   1   210375
+#  [2,]   2   359710
+#  [3,]   3    99897
+#  [4,]   4   277910
+
+somma<- 210375 + 359710 + 99897 + 277910
+perc<-freq(dNBR_c4$map)/somma
+#            value        count
+# [1,]    1.054973e-06   0.2219398
+# [2,]    2.109945e-06   0.3794842
+# [3,]    3.164918e-06   0.1053886
+# [4,]    4.219890e-06   0.2931874
+
+# C1: 22%
+# C2: 38%
+# C3: 11%
+# C4: 29%
+
+#######################
+## GENERARE UN DATASET (DATAFRAME)
+
+# La risoluzione è 
+# x: 23.20628 m
+# y: 23.21091 m
+# ncell: 947892
+
+# L'area di un pixel quindi è 
+# 23.20628 * 23.21091 = 538.6389 m2
+# L'area totale è
+# 538.6389 * somma = 510571504 m2 = 510.571504 km2
+
+Classi<-c("C1","C2", "C3", "C4")
+Danno<- c( "Intermedio", "Nullo", "Alto", "Nullo")
+Area_percentuale<-c(0.22, 0.38, 0.11, 0.29)
+Area_km2<-Area_percentuale*510.571504
+
+percent<-data.frame(Classi, Danno, Area_percentuale, Area_km2)
+percent
+
+#PLOT DEL GRAFICO AREA DANNO DA DATAFRAME
+g5<-ggplot(percent, aes(x=Danno,y=Area_km2,color=Classi)) + geom_bar(stat="identity", width=0.2, (aes(fill = Classi)))
 
 ##############################################################################################################################################################################
-
-H2<-hist(deltaNBR,
-     main = "Distribution of raster cell values in the NBR difference data",
-     xlab = "deltaNBR", ylab = "Number of Pixels",
-     breaks = 4,
-     col = "springgreen")
-
-H3<-hist(deltaNBR,
-     main = "Distribution of raster cell values in the NBR difference data",
-     xlab = "deltaNBR", ylab = "Number of Pixels",
-     breaks = c(-1.55, -1, -0.5, 0, 0.75),
-     col = "springgreen")
-
-# H3$breaks
-# [1] -1.55 -1.00 -0.50  0.00  0.75
-
-# H3$counts
-# [1]   1068  89236 580991 276597
-
-### -1.55 - -1 -> danno maggiore 3
-### -1 - -0.5 -> danno intermedio 2
-### -0.5 - 0 -> danno minore 1
-###  0 - 0.75 -> no danno NA
-
-# creo un oggetto con gli elementi che descrivono la classificazione
-reclass<- c( -1.55,-1,3,
-            -1,-0.5,2,
-            -0.5,0,1,
-            0,0.75, NA)
-
-#trasformo l'oggetto reclass in una matrice con righe e colonne
-reclass_m<-matrix(reclass,
-                ncol = 3,
-                byrow = TRUE)
-
-#utilizzando la funzione reclassify e la matrice di classificaizone realizzata classifico il raster deltaNBR
-deltaNBR_classified <- reclassify(deltaNBR,
-                     reclass_m)
-
-barplot(deltaNBR_classified)
-
-clc<- c("red", "orange", "yellow")
-plot(deltaNBR_classified, col=clc)
-            
-
-###############
-#CLASSIFICARE I VALORI DI deltaNBR !!!
-# FARE GRAFICO E SE TROVO COME FARE PLOT
-
-## Analizzo il raster
-summary(deltaNBR)
-#             layer
-# Min.    -1.5155392
-# 1st Qu. -0.2412478
-# Median  -0.1062936
-# 3rd Qu.  0.0200322
-# Max.     0.7329894
-# NA's     0.0000000
-
-#H1<-hist(deltaNBR,
- #    main = "Distribution of raster cell values in the NBR difference data",
-  #   xlab = "deltaNBR", ylab = "Number of Pixels",
-   #  col = "springgreen")
-
-#dai dati di distribuzione di frequenza creo una classificazione con classi di ampiezza pari alla deviazione standard
-### usare la funzione focal (da pacchetto raster) per analisi statistica utilizzando la moving window
-# con w definisco le dimensioni della moving window, con fun la variabile statistica da calcolare
-
-cld<-wes_palette("Darjeeling1", 100, type = c("continuous"))
-clM<-wes_palette("Moonrise3", 100, type = c("continuous"))
-clr<-wes_palette("Royal1", 100, type = c("continuous"))
-
-#SD3_dNBR<-focal(deltaNBR, w=matrix(1/9,nrow=3,ncol=3), fun=sd)
-#plot(SD3_dNBR, col=cld)
-
-#SD5_dNBR<-focal(deltaNBR, w=matrix(1/25,nrow=5,ncol=5), fun=sd)
-#plot(SD5_dNBR, col=cld)
-
-#SD7_dNBR<-focal(deltaNBR, w=matrix(1/49,nrow=7,ncol=7), fun=sd)
-#plot(SD7_dNBR, col=clr)
-
-clA<-colorRampPalette(c('blue','green','yellow'))(100)
-set.seed(42)
-dNBR_c3<-unsuperClass(deltaNBR, nClasses=3)
-plot(dNBR_c3$map, col=clA)
-
-
-
-
-
-
-
-
-
-
-
-### L'area della foto croppata è di 925380 celle di risoluzone 23,2 metri quindi:
-### area cella= 23,2*23,2= 538.24
-### AREA = 538.24*925380 = 498076531 m2 = 498 km2
 
