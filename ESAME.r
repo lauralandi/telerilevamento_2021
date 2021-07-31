@@ -1,9 +1,19 @@
-###########################################################################################################################################################################
-###########################################################################################################################################################################
-###################################################################  PROVA SARDEGNA UFFICIALE  #############################################################################
-###########################################################################################################################################################################
-###########################################################################################################################################################################
+################################################################################################################################################################################
+###############################################################                                            #####################################################################
+###############################################################   ESAME DI TELERILEVAMENTO GEO-ECOLOGICO   #####################################################################
+###############################################################               10 Agosto 2021               #####################################################################
+###############################################################                Laura Landi                 #####################################################################
+###############################################################                                            #####################################################################
+################################################################################################################################################################################
 
+#  INDICE
+#  STEP 1  -  Richiamare tutte le library necessarie al codice e definire la working directiory
+#  STEP 2  -  Scegliere le immagini su cui effettuare l'analisi e importarle
+#  STEP 3  -  Elaborazione e osservazione delle immagini
+#  STEP 4  -  Focus sull'area di interesse per l'analisi
+#  STEP 5  -  Calcolo degli indici NDVI e NBR
+#  STEP 6  -  Classificazione del deltaNBR
+#  STEP 7  -  Costruzione di un dataset con i dati ottenuti
 
 ###################################################################################################
 #   STEP 1  -  Richiamare tutte le library necessarie al codice e definire la working directiory  #
@@ -118,7 +128,7 @@ p7<-ggRGB(july25_crop, 11, 10, 4, stretch="lin")
 grid.arrange(p6, p7, ncol = 2)
 
 ################################################
-#   STEP 4  -  Calcolo degli indici NDVI e NBR #
+#   STEP 5  -  Calcolo degli indici NDVI e NBR #
 ################################################
 
 # SPIEGARE BREVEMENTE I DUE INDICI
@@ -179,7 +189,7 @@ plot(deltaNBR, col=cld2, main="differenza NBR")
 
 
 #############################################
-#  STEP 5  -  Classificazione del deltaNBR  #
+#  STEP 6  -  Classificazione del deltaNBR  #
 #############################################
 
 # Applico una classificazione dell'indice deltaNBR per riconoscere le aree più danneggiate dagli incendi
@@ -262,15 +272,17 @@ dNBR_c4$map # richiamando la variabile della mappa ottengo le informazioni sulla
 # 538.6389 * pxtot = 510571504 m2 = 510.571504 km2
 
 
-##########################################
-#  STEP 6  -  Costruzione di un dataset  #
-##########################################
+##############################################################
+#  STEP 7  -  Costruzione di un dataset con i dati ottenuti  #
+##############################################################
 
 ## Ottenuti i dati di interesse li inserisco in un dataset
 Classi<-c("C1","C2", "C3", "C4") # alla variabile Classi associo i nomi delle classi ottenute
 Danno<- c( "Intermedio", "Nullo", "Alto", "Nullo")  # alla variabile Danno associo una descrizione qualitativa del danno sulla base dei valori di deltaNBR (maggiori per danni maggiori)
 Area_percentuale<-c(0.22, 0.38, 0.11, 0.29)  # alla variabile Area_percentuale associo i valori ricavati precedentemente
 Area_km2<-Area_percentuale*510.571504  # moltiplicando l'area percentuale per l'area totale in km2 ottengo le aree in km2 che rientrano nelle 4 classi
+
+### AGGIUNGERE NDVI!!
 
 percent<-data.frame(Classi, Danno, Area_percentuale, Area_km2)  # con la funzione data.frame costruisco il dataframe e lo associo alla variabile percent
 percent 
