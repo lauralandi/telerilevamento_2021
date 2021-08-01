@@ -144,45 +144,50 @@ grid.arrange(p6, p7, ncol = 2)
 #   STEP 5  -  Calcolo degli indici NDVI e NBR #
 ################################################
 
-# SPIEGARE BREVEMENTE I DUE INDICI
+# Per analizzare l'area incendiata è utile calcolare due indici di vegetazione: NDVI e NBR
 
-# L'indice NDVI è utilizzato per descrivere lo stato fisiologico della vegetazione. 
+# L'indice NDVI è utilizzato per descrivere lo stato fisiologico della vegetazione e si basa sulla firma spettrale dei vegetali, che quando
+# sono in salute mostrano un picco di riflettanza nel NIR e assorbimento nel RED.
 # La sua variazione spaziale permette di ricoscere aree con diversi tipi di vegetazione: valori maggiori per le aree boschive 
 # e minori per quelle coltivate o a vegetazione prevalentemente erbacea.
-# La sua variazione temporale permette invece di riconoscere il danno subito dalla vegetazione: superfici maggiormente danneggiate 
-# avranno infatti un calo più drastico del valore di NDVI.
-
-# L'indice NBR
-
+# La sua variazione temporale permette invece, in questo caso specifico, di riconoscere il danno subito dalla vegetazione dopo l'incendio: 
+# superfici maggiormente danneggiate avranno infatti un calo più drastico del valore di NDVI.
 ## NDVI= (NIR-RED)/(NIR+RED)
+
+# L'indice NBR è utilizzato per mappare la severità delle aree incendiate e si basa anch'esso sulla caratteristica firma spettrale dei vegetali: una vegetazione 
+# in normale stato di salute mostra un picco di riflettanza nel NIR e un valore invece debole nello SWIR, mentre a seguito di un incendio, e quindi di una 
+# perdita del materiale fotosintetizzante, la riflettanza nel NIR cala drasticamente e si ha un netto aumento di riflettanza nello SWIR.
+# Nel calcolo nel NBR si usa una banda di SWIR con lunghezze d'onda comprese tra  2080 e 2350, che nel caso di Sentinel.2 è la B12.
 ## NBR=  (NIR-SWIR)/(NIR+SWIR)
+
+# Le bande necessarie a calcolare gli indici e i rispettivi layer nelle due immagini sono quindi:
 
 #  BANDA   NOME LAYER JULY10   NOME LAYER JULY25
 # NIR=B08     july10_B08          july25_B08
 # RED=B04     july10_B04          july25_B04
 # SWIR=B12    july10_B12          july25_B12
 
-## per l'NBR serve SWIR co lamba tra 2080 e 2350, quindi per sentinel è B12
-
-
 
 ## Calcolo del NDVI
 
 NDVI_july10<-(july10_crop$july10_B08-july10_crop$july10_B04)/(july10_crop$july10_B08+july10_crop$july10_B04) # NDVI=(NIR-RED)/(NIR+RED)
-NDVI_july25<-(july25_crop$july25_B08-july25_crop$july25_B04)/(july25_crop$july25_B08+july25_crop$july25_B04)
+NDVI_july25<-(july25_crop$july25_B08-july25_crop$july25_B04)/(july25_crop$july25_B08+july25_crop$july25_B04) # con il $ scelgo il layer che mi serve all'interno del RasterStack
 
 ## PLOT5 - Confronto tra NDVI del 10 Luglio e NDVI del 25 luglio
 clz<-wes_palette("Zissou1", 100, type = c("continuous"))  #associo alla variabile clz una palette di colori dal pacchetto wesanderson
 par(mfrow=c(1,2))  # con la funzione par plotto in unico grafico le due immagini
-plot(NDVI_july10, col=clz, main="NDVI 10 Luglio")  # plot del raster NDVI calcolato con la palette di colori scelta
-plot(NDVI_july25, col=clz, main="NDVI 25 Luglio")
+plot(NDVI_july10, col=clz, main="NDVI 10 Luglio", box=FALSE)  # plot del raster NDVI calcolato con la palette di colori scelta
+plot(NDVI_july25, col=clz, main="NDVI 25 Luglio", box= FALSE)
+# Da questo plot si osserva bene il calo drastico di NDVI nella zona colpita dagli incendi
 
-## Calcolando la differenza tra i due NDVI se ne può quantificare il calo dopo gli incendi
+## Calcolando la differenza tra i due NDVI se ne può quantificare il calo
 deltaNDVI<- NDVI_july10 - NDVI_july25  
 
 ## PLOT6 - Il deltaNDVI 
 cld <- colorRampPalette(c('blue','white','red'))(100) # definisco una palette che associa al rosso i valori di differenza maggiori, ovvero il calo di NDVI maggiore
 plot(deltaNDVI, col=cld, main="differenza NDVI") ## <-- controllare come forzare a zero il limite della legenda
+# Tralasciando le due zone a NW e NE dove vi è una interferenza con le nuvole, dal plot si osserva come all'interno dell'area incendiata il
+# calo di NDVI più drastico sia nella porziona a sud, corrispondente alla zona boschiva
 
 
 ## Calcolo del NBR
@@ -194,35 +199,41 @@ NBR_july25<-(july25_crop$july25_B08-july25_crop$july25_B12)/(july25_crop$july25_
 par(mfrow=c(1,2))
 plot(NBR_july10, col=clz, main="NBR 10 Luglio")
 plot(NBR_july25, col=clz, main="NBR 25 Luglio")
+# Anche in questo caso il calo di NBR nella seconda foto indica un aumento della riflettanza nello SWIR simultaneamente a un calo nel NIR dovuti all'incendio
 
 ## Calcolando la differenza tra i due NBR se ne può quantificare il calo dopo gli incendi
 deltaNBR<- NBR_july10 - NBR_july25
 
 ## PLOT8 - Il deltaNBR
-#cld2 <- colorRampPalette(c('red','white','blue'))(100)  
 plot(deltaNBR, col=cld, main="differenza NBR") ## <-- controllare come forzare a zero il limite della legenda
-
+# Anche in questo caso i valori maggiori di delta NBR sono nella porsione sud dell'area incendiata, ovvero la zona boschiva, dove il danno è quindi stato maggiore
 
 ## PLOT9 - Confronto tra il deltNDVI e il deltaNBR
 par(mfrow=c(1,2))
 plot(deltaNDVI, col=cld, main="differenza NDVI")
-plot(deltaNBR, col=cld2, main="differenza NBR")
+plot(deltaNBR, col=cld, main="differenza NBR")
+
 
 
 #############################################
 #  STEP 6  -  Classificazione del deltaNBR  #
 #############################################
 
-# Applico una classificazione dell'indice deltaNBR per riconoscere le aree più danneggiate dagli incendi
+# Per riconoscere e quantificare le aree più danneggiate dagli incendi applico una classificazione dell'indice deltaNBR 
 
-set.seed(42)  # la funzione set.seed mi permette di poter replicare più volte lo stesso processo che altrimenti sarebbe sempre randomico ???
-dNBR_c4<-unsuperClass(deltaNBR, nClasses=4) # con la funzione unsuperClass applico una classificazione non suervisionata di 4 classi e la associo alla variabile dNBR_c4
+set.seed(60)  # la funzione set.seed mi permette di poter replicare più volte lo stesso processo che altrimenti sarebbe sempre randomico ???
+dNBR_c4<-unsuperClass(deltaNBR, nClasses=4) # con la funzione unsuperClass applico una classificazione non supervisionata di 4 classi e la associo alla variabile dNBR_c4
 
 ## PLOT10 - La classificazione del deltaNBR
-clc <- colorRampPalette(c('red','green','yellow','darkgreen'))(100) # definisco una palette con 4 colori per le classi
+clc <- colorRampPalette(c('yellow','red','green','darkgreen'))(4) # definisco una palette con 4 colori per le classi
 plot(dNBR_c4$map, col = clc, legend = FALSE, axes = FALSE, box = FALSE)
 legend(965031,4905419, legend = paste0("C",1:4), fill = clc,
-      title = "Classi", horiz = FALSE,  bty = "n")
+       title = "Classi", horiz = FALSE,  bty = "n")
+
+# La mappa di classificazione mette in evidenza due zone riconducibili alle aree non coinvolte dagli incendi (C3 e C4) e altre due alle zone invece colpite, 
+# con due diversi gradi di severità (C1, con i maggiori valori di deltaNBR, e C2). Anche in questo caso bisogna tenere conto di alcune interferenze legate alla
+# nuvolosità che sovrastimano il danno in alcune zone con alti deltaNBR. Allo stesso tempo nella porzione a nord il deltaNBR è più basso nonostante l'incendio 
+# abbia coinvolto anche quella zona perchè la vegetazione presente (erbacea o campi coltivati) mostrava in partenza una bassa riflettanza nel NIR.
 
 
 HCLASS<-hist(dNBR_c4$map,
@@ -249,7 +260,6 @@ plot(dNBR_c4$map, col = clc, legend = FALSE, axes = FALSE, box = FALSE, main="Cl
 legend(965031,4905419, legend = paste0("C",1:4), fill = clc,
       title = "Classi", horiz = FALSE,  bty = "n")
 
-
 ## PLOT12 - Confronto tra l'immagine infalsi colori e la classificaizone di deltaNBR
 par(mfrow=c(1,2))
 plotRGB(july25_crop, 11, 10, 4, stretch="lin")
@@ -262,18 +272,20 @@ legend(965031,4905419, legend = paste0("C",1:4), fill = clc,
 
 freq(dNBR_c4$map)  # con la funzione freq ricavo in numero di pixel che ricade in ogni classe
 #  value   count
-#    1     210375
-#    2     359710
-#    3     99897
-#    4     277910
+#    1     101603
+#    2     236700
+#    3     364891
+#    4     244698
 
-pxtot<- 210375 + 359710 + 99897 + 277910
+
+pxtot<- 101603 + 236700 + 364891 + 244698
 perc<-freq(dNBR_c4$map)/pxtot   # normalizzo il numero di pixel di ogni classe per il numero totale dei pixel per ottenere i valori percentuali
 #  value   count
-#   1    0.2219398
-#   2    0.3794842
-#   3    0.1053886
-#   4    0.2931874
+#   1    0.1071884
+#   2    0.2497120
+#   3    0.3849500
+#   4    0.2581497
+
 
 # Per cui approssimando si ha:
 # C1: 22%
@@ -293,13 +305,14 @@ dNBR_c4$map # richiamando la variabile della mappa ottengo le informazioni sulla
 # 538.6389 * pxtot = 510571504 m2 = 510.571504 km2
 
 
+
 ##############################################################
 #  STEP 7  -  Costruzione di un dataset con i dati ottenuti  #
 ##############################################################
 
 ## Ottenuti i dati di interesse li inserisco in un dataset
 Classi<-c("C1","C2", "C3", "C4") # alla variabile Classi associo i nomi delle classi ottenute
-Danno<- c( "Intermedio", "Nullo", "Alto", "Nullo")  # alla variabile Danno associo una descrizione qualitativa del danno sulla base dei valori di deltaNBR (maggiori per danni maggiori)
+Danno<- c( "Alto", "Intermedioo", "NUllo", "Nullo")  # alla variabile Danno associo una descrizione qualitativa del danno sulla base dei valori di deltaNBR (maggiori per danni maggiori)
 Area_percentuale<-c(0.22, 0.38, 0.11, 0.29)  # alla variabile Area_percentuale associo i valori ricavati precedentemente
 Area_km2<-Area_percentuale*510.571504  # moltiplicando l'area percentuale per l'area totale in km2 ottengo le aree in km2 che rientrano nelle 4 classi
 
