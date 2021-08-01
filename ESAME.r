@@ -107,7 +107,7 @@ grid.arrange(p3, p4, nrow = 2)
 
 ## PLOT3 - Le due immagini (10 e 25 Luglio) in falsi colori: r=SWIR(B12), g=SWIR(B11), b=red
 # Questa modalità di visualizzazione esalta in rosso le aree bruciate, poichè esse hanno un'alta riflettanza nella banda del SWIR
-pp5<-ggRGB(july10, 11, 10, 4, stretch="lin", quantiles = c(0.001, 0.999))
+p5<-ggRGB(july10, 11, 10, 4, stretch="lin", quantiles = c(0.001, 0.999))
 p6<-ggRGB(july25, 11, 10, 4, stretch="hist")
 grid.arrange(p5, p6, nrow = 2)
 # il PLOT3 evidenzia in rosso l'area bruciata e le zone in essa più colpite
@@ -134,8 +134,8 @@ july25_crop<- crop(july25, e)  # con la funzione crop ritaglio le immagini nelle
 july10_crop<- crop(july10, e)
 
 ## PLOT4 - Le due immagini ritagliate, in falsi colori
-p6<-ggRGB(july10_crop, 11, 10, 4, stretch="lin", quantiles = c(0.0001, 0.9999))
-p7<-ggRGB(july25_crop, 11, 10, 4, stretch="lin")
+p7<-ggRGB(july10_crop, 11, 10, 4, stretch="lin", quantiles = c(0.0001, 0.9999))
+p8<-ggRGB(july25_crop, 11, 10, 4, stretch="lin")
 grid.arrange(p6, p7, ncol = 2)
 
 
@@ -166,8 +166,8 @@ freq(july10_c2$map)  # con la funzione freq ricavo in numero di pixel che ricade
 #    2     519096
 
 pxtot<- 428796 + 519096
-perc<-freq(july10_c2$map)/pxtot   # normalizzo il numero di pixel di ogni classe per il numero totale dei pixel per ottenere i valori percentuali
-perc
+perc_c<-freq(july10_c2$map)/pxtot   # normalizzo il numero di pixel di ogni classe per il numero totale dei pixel per ottenere i valori percentuali
+perc_c
 #  value   count
 #   1    0.452368
 #   2    0.547632
@@ -189,18 +189,19 @@ july10_c2$map # richiamando la variabile della mappa ottengo le informazioni sul
 
 # Inserisco questi dati in un dataset
 
-Classi_veg<-c("C1","C2") # alla variabile Classi associo i nomi delle classi ottenute
+Classi_<-c("C1","C2") # alla variabile Classi associo i nomi delle classi ottenute
 Copertura<- c( "Coltivazioni", "Boschiva")  # alla variabile Danno associo una descrizione qualitativa del danno sulla base dei valori di deltaNBR (più alti per danni maggiori)
-Area_perc_veg<-c(0.4524, 0.5476)  # alla variabile Area_percentuale associo i valori ricavati precedentemente
-Area_km2_veg<-Area_percentuale*510.571504  # moltiplicando l'area percentuale per l'area totale in km2 ottengo le aree in km2 che rientrano nelle 4 classi
+Area_perc_cop<-c(0.4524, 0.5476)  # alla variabile Area_percentuale associo i valori ricavati precedentemente
+Area_km2_cop<-Area_perc_cop*510.571504  # moltiplicando l'area percentuale per l'area totale in km2 ottengo le aree in km2 che rientrano nelle 4 classi
 
-perc_veg<-data.frame(Classi_veg, Copertura, Area_perc_veg, Area_km2_veg)  # con la funzione data.frame inserisco le variabili all'interno di un dataset che associo alla variabile percent
-perc_veg
+perc_cop<-data.frame(Classi_, Copertura, Area_perc_cop, Area_km2_cop)  # con la funzione data.frame inserisco le variabili all'interno di un dataset che associo alla variabile percent
+perc_cop
 
 ## PLOT13 - Grafico a barre dei dati presenti nel dataframe
-g5<-ggplot(perc_veg, aes(x=Classi,y=Area_km2_veg, color=Copertura)) 
-           + geom_bar(stat="identity", width=0.2, (aes(fill = Classi))) # con la funzione ggplot creo un grafico a barre che mostra 
+g1<-ggplot(perc_cop, aes(x=Classi_, y=Area_km2_cop)) + geom_bar(stat="identity", width=0.2, (aes(fill = Copertura))) # con la funzione ggplot creo un grafico a barre che mostra 
                                                                         # le aree e le classi che rientrano nei danni
+
+
 
 
 
@@ -347,10 +348,8 @@ freq(dNBR_c4$map)  # con la funzione freq ricavo in numero di pixel che ricade i
 #    3     364891
 #    4     244698
 
-
-pxtot<- 101603 + 236700 + 364891 + 244698
-perc<-freq(dNBR_c4$map)/pxtot   # normalizzo il numero di pixel di ogni classe per il numero totale dei pixel per ottenere i valori percentuali
-perc
+perc_d<-freq(dNBR_c4$map)/pxtot   # normalizzo il numero di pixel di ogni classe per il numero totale dei pixel per ottenere i valori percentuali
+perc_d
 #  value   count
 #   1    0.1071884
 #   2    0.2497120
@@ -384,7 +383,7 @@ dNBR_c4$map # richiamando la variabile della mappa ottengo le informazioni sulla
 ## Ottenuti i dati di interesse li inserisco in un dataset
 
 Classi_deltaNBR<-c("C1","C2", "C3", "C4") # alla variabile Classi associo i nomi delle classi ottenute
-Danno<- c( "Alto", "Intermedio", "NUllo", "Nullo")  # alla variabile Danno associo una descrizione qualitativa del danno sulla base dei valori di deltaNBR (più alti per danni maggiori)
+Danno<- c( "Alto", "Intermedio", "Nullo", "Nullo")  # alla variabile Danno associo una descrizione qualitativa del danno sulla base dei valori di deltaNBR (più alti per danni maggiori)
 Area_perc_dan<-c(0.1072, 0.2497, 0.3850, 0.2581)  # alla variabile Area_percentuale associo i valori ricavati precedentemente
 Area_km2_dan<-Area_perc_dan*510.571504  # moltiplicando l'area percentuale per l'area totale in km2 ottengo le aree in km2 che rientrano nelle 4 classi
 
@@ -392,6 +391,5 @@ perc_dan<-data.frame(Classi_deltaNBR, Danno, Area_perc_dan, Area_km2_dan)  # con
 perc_dan
 
 ## PLOT13 - Grafico a barre dei dati presenti nel dataframe
-g5<-ggplot(perc_dan, aes(x=Danno,y=Area_km2_dan,color=Classi_deltaNBR)) 
-           + geom_bar(stat="identity", width=0.2, (aes(fill = Classi_deltaNBR))) # con la funzione ggplot creo un grafico a barre che mostra 
-                                                                        # le aree e le classi che rientrano nei danni
+g2<-ggplot(perc_dan, aes(x=Danno,y=Area_km2_dan)) + geom_bar(stat="identity", width=0.2, (aes(fill = Danno))) # con la funzione ggplot creo un grafico a barre che mostra 
+                                                                                                                                     # le aree e le classi che rientrano nei danni
