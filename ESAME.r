@@ -140,8 +140,74 @@ grid.arrange(p6, p7, ncol = 2)
 
 
 
+##############################################################
+#   STEP 5 - Classificazione della vegetazione pre-incendio  #
+##############################################################
+
+# Applicando una classificazione sull'mmagine del 10 Luglio definisco due tipi di vegetazione, una con una maggiore riflettanza nel NIR (aree boschive) e
+# una con minore riflettanza (aree coltivate o a vegetazione erbacea).
+
+set.seed(60)  # la funzione set.seed mi permette di poter replicare più volte lo stesso processo che altrimenti sarebbe sempre randomico
+july10_c2<-unsuperClass(july10_crop, nClasses=2)
+
+## PLOT5 - La mappa di classificazione pre-incendio
+clc2 <- colorRampPalette(c('green', 'darkgreen'))(2) # definisco una palette con 2 colori per le classi
+plot(july10_c2$map, col = clc2, legend = FALSE, axes = FALSE, box = FALSE)
+legend(965031,4905419, legend = paste0("C",1:2), fill = clc2,
+       title = "Classi", horiz = FALSE,  bty = "n")
+
+# La mappa di classificazione mostra un'area prevalentemente boschiva (C2) nella zona SE e una dominata da aree coltivate e vegetazione erbacea (C1) nella zona W e NW
+
+## Ottenuta la classificazione è possibile calcolare le percentuali di area che rientrano nelle diverse classi
+
+freq(july10_c2$map)  # con la funzione freq ricavo in numero di pixel che ricade in ogni classe
+#  value   count
+#    1     428796
+#    2     519096
+
+pxtot<- 428796 + 519096
+perc<-freq(july10_c2$map)/pxtot   # normalizzo il numero di pixel di ogni classe per il numero totale dei pixel per ottenere i valori percentuali
+perc
+#  value   count
+#   1    0.452368
+#   2    0.547632
+
+# Per cui approssimando si ha:
+# C1 (aree coltivate e vegetazione erbacea): 45.24%
+# C2 (aree boschive): 54.76%
+
+## Conoscendo la risoluzione dell'immagine è possibile quantificare le aree classificate
+
+july10_c2$map # richiamando la variabile della mappa ottengo le informazioni sulla risoluzione lungo x e y    
+            # x: 23.20628 m
+            # y: 23.21091 m
+            
+# L'area di un pixel quindi è 
+# 23.20628 * 23.21091 = 538.6389 m2
+# L'area totale dell'immagine è
+# 538.6389 * pxtot = 510571504 m2 = 510.571504 km2
+
+# Inserisco questi dati in un dataset
+
+Classi_veg<-c("C1","C2") # alla variabile Classi associo i nomi delle classi ottenute
+Copertura<- c( "Coltivazioni", "Boschiva")  # alla variabile Danno associo una descrizione qualitativa del danno sulla base dei valori di deltaNBR (più alti per danni maggiori)
+Area_perc_veg<-c(0.4524, 0.5476)  # alla variabile Area_percentuale associo i valori ricavati precedentemente
+Area_km2_veg<-Area_percentuale*510.571504  # moltiplicando l'area percentuale per l'area totale in km2 ottengo le aree in km2 che rientrano nelle 4 classi
+
+perc_veg<-data.frame(Classi_veg, Copertura, Area_perc_veg, Area_km2_veg)  # con la funzione data.frame inserisco le variabili all'interno di un dataset che associo alla variabile percent
+perc_veg
+
+## PLOT13 - Grafico a barre dei dati presenti nel dataframe
+g5<-ggplot(perc_veg, aes(x=Classi,y=Area_km2_veg, color=Copertura)) 
+           + geom_bar(stat="identity", width=0.2, (aes(fill = Classi))) # con la funzione ggplot creo un grafico a barre che mostra 
+                                                                        # le aree e le classi che rientrano nei danni
+
+
+
+
+
 ################################################
-#   STEP 5  -  Calcolo degli indici NDVI e NBR #
+#   STEP 6  -  Calcolo degli indici NDVI e NBR #
 ################################################
 
 # Per analizzare l'area incendiata è utile calcolare due indici di vegetazione: NDVI e NBR
@@ -173,7 +239,7 @@ grid.arrange(p6, p7, ncol = 2)
 NDVI_july10<-(july10_crop$july10_B08-july10_crop$july10_B04)/(july10_crop$july10_B08+july10_crop$july10_B04) # NDVI=(NIR-RED)/(NIR+RED)
 NDVI_july25<-(july25_crop$july25_B08-july25_crop$july25_B04)/(july25_crop$july25_B08+july25_crop$july25_B04) # con il $ scelgo il layer che mi serve all'interno del RasterStack
 
-## PLOT5 - Confronto tra NDVI del 10 Luglio e NDVI del 25 luglio
+## PLOT6 - Confronto tra NDVI del 10 Luglio e NDVI del 25 luglio
 clz<-wes_palette("Zissou1", 100, type = c("continuous"))  #associo alla variabile clz una palette di colori dal pacchetto wesanderson
 par(mfrow=c(1,2))  # con la funzione par plotto in unico grafico le due immagini
 plot(NDVI_july10, col=clz, main="NDVI 10 Luglio", box=FALSE)  # plot del raster NDVI calcolato con la palette di colori scelta
@@ -183,7 +249,7 @@ plot(NDVI_july25, col=clz, main="NDVI 25 Luglio", box= FALSE)
 ## Calcolando la differenza tra i due NDVI se ne può quantificare il calo
 deltaNDVI<- NDVI_july10 - NDVI_july25  
 
-## PLOT6 - Il deltaNDVI 
+## PLOT7 - Il deltaNDVI 
 cld <- colorRampPalette(c('blue','white','red'))(100) # definisco una palette che associa al rosso i valori di differenza maggiori, ovvero il calo di NDVI maggiore
 plot(deltaNDVI, col=cld, main="differenza NDVI") ## <-- controllare come forzare a zero il limite della legenda
 # Tralasciando le due zone a NW e NE dove vi è una interferenza con le nuvole, dal plot si osserva come all'interno dell'area incendiata il
@@ -195,7 +261,7 @@ plot(deltaNDVI, col=cld, main="differenza NDVI") ## <-- controllare come forzare
 NBR_july10<-(july10_crop$july10_B08-july10_crop$july10_B12)/(july10_crop$july10_B08+july10_crop$july10_B12)  # NBR= (NIR-SWIR)/(NIR+SWIR)
 NBR_july25<-(july25_crop$july25_B08-july25_crop$july25_B12)/(july25_crop$july25_B08+july25_crop$july25_B12)
 
-## PLOT7 - Confronto tra NBR del 10 Luglio e NBR del 25 luglio
+## PLOT8 - Confronto tra NBR del 10 Luglio e NBR del 25 luglio
 par(mfrow=c(1,2))
 plot(NBR_july10, col=clz, main="NBR 10 Luglio")
 plot(NBR_july25, col=clz, main="NBR 25 Luglio")
@@ -204,11 +270,11 @@ plot(NBR_july25, col=clz, main="NBR 25 Luglio")
 ## Calcolando la differenza tra i due NBR se ne può quantificare il calo dopo gli incendi
 deltaNBR<- NBR_july10 - NBR_july25
 
-## PLOT8 - Il deltaNBR
+## PLOT9 - Il deltaNBR
 plot(deltaNBR, col=cld, main="differenza NBR") ## <-- controllare come forzare a zero il limite della legenda
 # Anche in questo caso i valori maggiori di delta NBR sono nella porsione sud dell'area incendiata, ovvero la zona boschiva, dove il danno è quindi stato maggiore
 
-## PLOT9 - Confronto tra il deltNDVI e il deltaNBR
+## PLOT10 - Confronto tra il deltNDVI e il deltaNBR
 par(mfrow=c(1,2))
 plot(deltaNDVI, col=cld, main="differenza NDVI")
 plot(deltaNBR, col=cld, main="differenza NBR")
@@ -216,7 +282,7 @@ plot(deltaNBR, col=cld, main="differenza NBR")
 
 
 #############################################
-#  STEP 6  -  Classificazione del deltaNBR  #
+#  STEP 7  -  Classificazione del deltaNBR  #
 #############################################
 
 # Per riconoscere e quantificare le aree più danneggiate dagli incendi applico una classificazione dell'indice deltaNBR 
@@ -224,23 +290,33 @@ plot(deltaNBR, col=cld, main="differenza NBR")
 set.seed(60)  # la funzione set.seed mi permette di poter replicare più volte lo stesso processo che altrimenti sarebbe sempre randomico ???
 dNBR_c4<-unsuperClass(deltaNBR, nClasses=4) # con la funzione unsuperClass applico una classificazione non supervisionata di 4 classi e la associo alla variabile dNBR_c4
 
-## PLOT10 - La classificazione del deltaNBR
-clc <- colorRampPalette(c('yellow','red','green','darkgreen'))(4) # definisco una palette con 4 colori per le classi
+## PLOT11 - La mappa di classificazione del deltaNBR
+clc <- colorRampPalette(c('yellow','red','darkgreen','green'))(4) # definisco una palette con 4 colori per le classi
 plot(dNBR_c4$map, col = clc, legend = FALSE, axes = FALSE, box = FALSE)
 legend(965031,4905419, legend = paste0("C",1:4), fill = clc,
        title = "Classi", horiz = FALSE,  bty = "n")
 
-# La mappa di classificazione mette in evidenza due zone riconducibili alle aree non coinvolte dagli incendi (C3 e C4) e altre due alle zone invece colpite, 
-# con due diversi gradi di severità (C1, con i maggiori valori di deltaNBR, e C2). Anche in questo caso bisogna tenere conto di alcune interferenze legate alla
-# nuvolosità che sovrastimano il danno in alcune zone con alti deltaNBR. Allo stesso tempo nella porzione a nord il deltaNBR è più basso nonostante l'incendio 
-# abbia coinvolto anche quella zona perchè la vegetazione presente (erbacea o campi coltivati) mostrava in partenza una bassa riflettanza nel NIR.
+# La mappa di classificazione mette in evidenza due zone riconducibili alle aree non coinvolte dagli incendi (C3 e C4) e altre due alle zone invece colpite, con due 
+# diversi gradi di severità (C1, con i maggiori valori di deltaNBR, e C2). Anche in questo caso bisogna tenere conto di alcune interferenze legate alla nuvolosità.
 
+## PLOT12 - Confronto tra il deltaNBR e la sua classificazione 
+par(mfrow=c(1,2))
+plot(deltaNBR, col=cld, main="differenza NBR")
+plot(dNBR_c4$map, col = clc, legend = FALSE, axes = FALSE, box = FALSE, main="Classificazione deltaNBR")
+legend(965031,4905419, legend = paste0("C",1:4), fill = clc,
+      title = "Classi", horiz = FALSE,  bty = "n")
 
-HCLASS<-hist(dNBR_c4$map,
-     main = "Distribution of raster cell values in the NBR difference data",
-     breaks= c(0,1, 2, 3, 4),
-     xlab = "classi", ylab = "Number of Pixels",
-     col = colors)
+## PLOT13 - Confronto tra classificazione pre-incendio e classificazione deltaNBR
+par(mfrow=c(1,2))
+plot(july10_c2$map, col = clc2, legend = FALSE, axes = FALSE, box = FALSE, main="Classi di vegetazione pre-incendio")
+legend(965031,4905419, legend = paste0("C",1:2), fill = clc2,
+       title = "Classi", horiz = FALSE,  bty = "n")
+plot(dNBR_c4$map, col = clc, legend = FALSE, axes = FALSE, box = FALSE, main="Zone di severità dei danni da incendio")
+legend(965031,4905419, legend = paste0("C",1:4), fill = clc,
+       title = "Classi", horiz = FALSE,  bty = "n")
+
+# Confrontando le due mappe di classificazione si osserva come il grado di severità maggiore di danno (C1) sono prevalenti nella porzione corrispondente alle aree boschive, 
+# dove il valore di riflettanza nel NIR di partenza era maggiore e quindi il calo di NBR è stato più drastico
 
 
 dNBR_c4$map # richiamando la variabile della mappa di classificazione ottengo informazioni sulla sua estensione:                          
@@ -253,17 +329,11 @@ dNBR_c4$map # richiamando la variabile della mappa di classificazione ottengo in
             # y 4905419
 
 
-## PLOT11 - Confronto tra il deltaNBR e la sua classificazione 
-par(mfrow=c(1,2))
-plot(deltaNBR, col=cld, main="differenza NBR")
-plot(dNBR_c4$map, col = clc, legend = FALSE, axes = FALSE, box = FALSE, main="Classificazione deltaNBR")
-legend(965031,4905419, legend = paste0("C",1:4), fill = clc,
-      title = "Classi", horiz = FALSE,  bty = "n")
 
-## PLOT12 - Confronto tra l'immagine infalsi colori e la classificaizone di deltaNBR
+## PLOT14 - Confronto tra l'immagine in falsi colori e la classificazione di deltaNBR
 par(mfrow=c(1,2))
 plotRGB(july25_crop, 11, 10, 4, stretch="lin")
-plot(dNBR_c4$map, col = clc, legend = FALSE, axes = FALSE, box = FALSE, main="Classificazione deltaNBR")
+plot(dNBR_c4$map, col = clc, legend = FALSE, axes = FALSE, box = FALSE, main="Aree di severità di danno")
 legend(965031,4905419, legend = paste0("C",1:4), fill = clc,
       title = "Classi", horiz = FALSE,  bty = "n")
 
@@ -280,6 +350,7 @@ freq(dNBR_c4$map)  # con la funzione freq ricavo in numero di pixel che ricade i
 
 pxtot<- 101603 + 236700 + 364891 + 244698
 perc<-freq(dNBR_c4$map)/pxtot   # normalizzo il numero di pixel di ogni classe per il numero totale dei pixel per ottenere i valori percentuali
+perc
 #  value   count
 #   1    0.1071884
 #   2    0.2497120
@@ -288,10 +359,10 @@ perc<-freq(dNBR_c4$map)/pxtot   # normalizzo il numero di pixel di ogni classe p
 
 
 # Per cui approssimando si ha:
-# C1: 22%
-# C2: 38%
-# C3: 11%
-# C4: 29%
+# C1: 10.72%
+# C2: 24.97%
+# C3: 38.50%
+# C4: 25.81%
 
 ## Conoscendo la risoluzione dell'immagine è possibile calcolare le aree di territorio coinvolte dall'incendio
 
@@ -301,7 +372,7 @@ dNBR_c4$map # richiamando la variabile della mappa ottengo le informazioni sulla
             
 # L'area di un pixel quindi è 
 # 23.20628 * 23.21091 = 538.6389 m2
-# L'area totale è
+# L'area totale dell'immagine è
 # 538.6389 * pxtot = 510571504 m2 = 510.571504 km2
 
 
@@ -311,17 +382,16 @@ dNBR_c4$map # richiamando la variabile della mappa ottengo le informazioni sulla
 ##############################################################
 
 ## Ottenuti i dati di interesse li inserisco in un dataset
-Classi<-c("C1","C2", "C3", "C4") # alla variabile Classi associo i nomi delle classi ottenute
-Danno<- c( "Alto", "Intermedioo", "NUllo", "Nullo")  # alla variabile Danno associo una descrizione qualitativa del danno sulla base dei valori di deltaNBR (maggiori per danni maggiori)
-Area_percentuale<-c(0.22, 0.38, 0.11, 0.29)  # alla variabile Area_percentuale associo i valori ricavati precedentemente
-Area_km2<-Area_percentuale*510.571504  # moltiplicando l'area percentuale per l'area totale in km2 ottengo le aree in km2 che rientrano nelle 4 classi
 
-### AGGIUNGERE NDVI!!
+Classi_deltaNBR<-c("C1","C2", "C3", "C4") # alla variabile Classi associo i nomi delle classi ottenute
+Danno<- c( "Alto", "Intermedio", "NUllo", "Nullo")  # alla variabile Danno associo una descrizione qualitativa del danno sulla base dei valori di deltaNBR (più alti per danni maggiori)
+Area_perc_dan<-c(0.1072, 0.2497, 0.3850, 0.2581)  # alla variabile Area_percentuale associo i valori ricavati precedentemente
+Area_km2_dan<-Area_perc_dan*510.571504  # moltiplicando l'area percentuale per l'area totale in km2 ottengo le aree in km2 che rientrano nelle 4 classi
 
-percent<-data.frame(Classi, Danno, Area_percentuale, Area_km2)  # con la funzione data.frame costruisco il dataframe e lo associo alla variabile percent
-percent 
+perc_dan<-data.frame(Classi_deltaNBR, Danno, Area_perc_dan, Area_km2_dan)  # con la funzione data.frame inserisco le variabili all'interno di un dataset che associo alla variabile percent
+perc_dan
 
 ## PLOT13 - Grafico a barre dei dati presenti nel dataframe
-g5<-ggplot(percent, aes(x=Danno,y=Area_km2,color=Classi)) 
-           + geom_bar(stat="identity", width=0.2, (aes(fill = Classi))) # con la funzione ggplot creo un grafico a barre che mostra 
+g5<-ggplot(perc_dan, aes(x=Danno,y=Area_km2_dan,color=Classi_deltaNBR)) 
+           + geom_bar(stat="identity", width=0.2, (aes(fill = Classi_deltaNBR))) # con la funzione ggplot creo un grafico a barre che mostra 
                                                                         # le aree e le classi che rientrano nei danni
