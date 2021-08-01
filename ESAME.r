@@ -10,13 +10,14 @@
 
 #                             INDICE
 #
-#  STEP 1  -  Richiamare tutte le library necessarie al codice e definire la working directiory
-#  STEP 2  -  Scegliere le immagini su cui effettuare l'analisi e importarle
+#  STEP 1  -  Richiamare le library necessarie al codice e definire la working directiory
+#  STEP 2  -  Scelta delle immagini su cui effettuare l'analisi e importazione
 #  STEP 3  -  Elaborazione e osservazione delle immagini
 #  STEP 4  -  Focus sull'area di interesse per l'analisi
-#  STEP 5  -  Calcolo degli indici NDVI e NBR
-#  STEP 6  -  Classificazione del deltaNBR
-#  STEP 7  -  Costruzione di un dataset con i dati ottenuti
+#  STEP 5 -   Classificazione della vegetazione pre-incendio
+#  STEP 6  -  Calcolo degli indici NDVI e NBR
+#  STEP 7  -  Classificazione del deltaNBR
+#  STEP 8  -  Costruzione e plot di un dataset con i dati ottenuti
 
 
 
@@ -24,20 +25,20 @@
 #   STEP 1  -  Richiamare tutte le library necessarie al codice e definire la working directiory  #
 ###################################################################################################
 
-library(raster) #richiamo il pacchetto raster
-library(RStoolbox) #richiamo il pacchetto RStoolbox
-library(ggplot2) #richiamo il pacchetto ggplot2
-library(gridExtra)
-library(rgdal)
-library(wesanderson)
+library(raster) # pacchetto con funzioni per elaborare file raster
+library(RStoolbox) # pacchetto con funzioni per processare le immagini (tra cui unsuperClass)
+library(ggplot2) # pacchetto con diverse funzioni per creare e modificare grafici
+library(gridExtra) # pacchetto con funzioni per lavorare con grafici (tra cui grid.arrange)
+#library(rgdal)
+library(wesanderson) # pacchetto con diverse palette di colori ispirate a Wes Anderson
 
-setwd("C:/lab/esame_sardegna/")
+setwd("C:/lab/esame_sardegna/")  # definire la working directory
 
 
 
-################################################################################
-#   STEP 2  -  Scegliere le immagini su cui effettuare l'analisi e importarle  #
-################################################################################
+##################################################################################
+#   STEP 2  -  Scelta delle immagini su cui effettuare l'analisi e importazione  #
+##################################################################################
 
 ## Le due immagini utilizzate derivano da Sentinel-2 e rappresentano la zona del Montiferru in provincia di 
 ## Oristano il 10 e il 25 Luglio 2021, ovvero prima e dopo gli incendi che hanno colpito l'area in quel mese.
@@ -93,8 +94,10 @@ july25
 ############################################################
 
 ## PLOT1 - Le due immagini (10 e 25 Luglio) in RGB veri colori: r=red, g=green, b=blue
-p1<-ggRGB(july10, 4, 3, 2, stretch="lin", quantiles = c(0.001, 0.999))  # con la funzione ggRGB monto le bande in RGB (veri colori) e le associo alle variabili p1 e p2 (modificando i quantili regolo lo stretch della foto)
-p2<-ggRGB(july25, 4, 3, 2, stretch="hist")
+p1<-ggRGB(july10, 4, 3, 2, stretch="lin", quantiles = c(0.001, 0.999)) + ggtitle("10 Luglio 2021") + theme(plot.title = element_text(hjust = 0.5)) +
+                                                                         xlab("Long") + ylab("Lat")
+  # con la funzione ggRGB monto le bande in RGB (veri colori) e le associo alle variabili p1 e p2 (modificando i quantili regolo lo stretch della foto)
+p2<-ggRGB(july25, 4, 3, 2, stretch="hist") + labs(title="25 Luglio 2021",  x ="Long", y = "Lat")
 grid.arrange(p1, p2, nrow = 2)     # con la funzione grid.arrange plotto le due immagini insieme in un unico grafico
 
 ## PLOT2 - Le due immagini (10 e 25 Luglio) in falsi colori: r=NIR, g=green, b=blue
@@ -376,14 +379,14 @@ dNBR_c4$map # richiamando la variabile della mappa ottengo le informazioni sulla
 
 
 
-##############################################################
-#  STEP 7  -  Costruzione di un dataset con i dati ottenuti  #
-##############################################################
+#####################################################################
+#  STEP 8  -  Costruzione e plot di un dataset con i dati ottenuti  #
+#####################################################################
 
 ## Ottenuti i dati di interesse li inserisco in un dataset
 
 Classi_deltaNBR<-c("C1","C2", "C3", "C4") # alla variabile Classi associo i nomi delle classi ottenute
-Danno<- c( "Alto", "Intermedio", "Nullo", "Nullo")  # alla variabile Danno associo una descrizione qualitativa del danno sulla base dei valori di deltaNBR (più alti per danni maggiori)
+Danno<- c( "Maggiore", "Minore", "Nullo", "Nullo")  # alla variabile Danno associo una descrizione qualitativa del danno sulla base dei valori di deltaNBR (più alti per danni maggiori)
 Area_perc_dan<-c(0.1072, 0.2497, 0.3850, 0.2581)  # alla variabile Area_percentuale associo i valori ricavati precedentemente
 Area_km2_dan<-Area_perc_dan*510.571504  # moltiplicando l'area percentuale per l'area totale in km2 ottengo le aree in km2 che rientrano nelle 4 classi
 
