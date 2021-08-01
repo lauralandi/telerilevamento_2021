@@ -6,7 +6,10 @@
 ###############################################################                                            #####################################################################
 ################################################################################################################################################################################
 
-#  INDICE
+
+
+#                             INDICE
+#
 #  STEP 1  -  Richiamare tutte le library necessarie al codice e definire la working directiory
 #  STEP 2  -  Scegliere le immagini su cui effettuare l'analisi e importarle
 #  STEP 3  -  Elaborazione e osservazione delle immagini
@@ -14,6 +17,8 @@
 #  STEP 5  -  Calcolo degli indici NDVI e NBR
 #  STEP 6  -  Classificazione del deltaNBR
 #  STEP 7  -  Costruzione di un dataset con i dati ottenuti
+
+
 
 ###################################################################################################
 #   STEP 1  -  Richiamare tutte le library necessarie al codice e definire la working directiory  #
@@ -27,6 +32,8 @@ library(rgdal)
 library(wesanderson)
 
 setwd("C:/lab/esame_sardegna/")
+
+
 
 ################################################################################
 #   STEP 2  -  Scegliere le immagini su cui effettuare l'analisi e importarle  #
@@ -73,33 +80,37 @@ rlist25<-list.files(pattern="july25") #creo una lista di file con le diverse ban
 import25<-lapply(rlist25,raster) # con lapply applico la funzione raster su tutti i file della lista e li importo associati alla variabile import25
 july25<-stack(import25) # creo un unico oggetto RasterStack che contiene come layer tutte le bande importate
 
-# Richiamando le variabili posso leggerne le informazioni e i nomi e la posizione dei layer
-july10
+# Richiamando le variabili leggo i nomi e la posizione dei layer:
+july10 
+#names: july10_B01, july10_B02, july10_B03, july10_B04, july10_B05, july10_B06, july10_B07, july10_B08, july10_B09, july10_B11, july10_B12, july10_B8A, july10_TC 
 july25
-### AGGIUNGERE INFO IMMAGINI E ORDINE BANDE
+#names: july25_B01, july25_B02, july25_B03, july25_B04, july25_B05, july25_B06, july25_B07, july25_B08, july25_B09, july25_B11, july25_B12, july25_B8A, july25_TC
+
+
 
 ############################################################
 #   STEP 3  -  Elaborazione e osservazione delle immagini  #
 ############################################################
 
 ## PLOT1 - Le due immagini (10 e 25 Luglio) in RGB veri colori: r=red, g=green, b=blue
-p1<-ggRGB(july10, 4, 3, 2, stretch="lin", quantiles = c(0.0001, 0.9999))  # con la funzione ggRGB monto le immagini in RGB (veri colori) e le associo alle variabili p1 e p2 (modificando i quantili regolo lo stretch della foto)
-p2<-ggRGB(july25, 4, 3, 2, stretch="lin")
+p1<-ggRGB(july10, 4, 3, 2, stretch="lin", quantiles = c(0.001, 0.999))  # con la funzione ggRGB monto le bande in RGB (veri colori) e le associo alle variabili p1 e p2 (modificando i quantili regolo lo stretch della foto)
+p2<-ggRGB(july25, 4, 3, 2, stretch="hist")
 grid.arrange(p1, p2, nrow = 2)     # con la funzione grid.arrange plotto le due immagini insieme in un unico grafico
 
 ## PLOT2 - Le due immagini (10 e 25 Luglio) in falsi colori: r=NIR, g=green, b=blue
-# Questa modalità di visualizzazione esalta in rosso la vegetazione, poichè essa ha un'alta riflettanza nella banda del NIR
-p3<-ggRGB(july10, 8, 3, 2, stretch="lin", quantiles = c(0.0001, 0.9999))
-p4<-ggRGB(july25, 8, 3, 2, stretch="lin")
+# Questa modalità di visualizzazione esalta in rosso la vegetazione, che ha un'alta riflettanza nella banda del NIR, con valori maggiori per le aree boschive 
+# e minori per le aree a prevalenza di vegetazione erbacea 
+p3<-ggRGB(july10, 8, 3, 2, stretch="lin", quantiles = c(0.001, 0.999))
+p4<-ggRGB(july25, 8, 3, 2, stretch="hist")
 grid.arrange(p3, p4, nrow = 2)
 # il PLOT2 mostra come il 25 Luglio si sia formata una grossa area scura dove la vegetazione è scomparsa a causa degli incendi
 
 ## PLOT3 - Le due immagini (10 e 25 Luglio) in falsi colori: r=SWIR(B12), g=SWIR(B11), b=red
-# Questa modalità di visualizzazione esalta in rosso le aree bruciate, poichè esse mostrano un'alta riflettanza nella banda del SWIR
-p5<-ggRGB(july10, 11, 10, 4, stretch="lin", quantiles = c(0.0001, 0.9999))
-p6<-ggRGB(july25, 11, 10, 4, stretch="lin")
+# Questa modalità di visualizzazione esalta in rosso le aree bruciate, poichè esse hanno un'alta riflettanza nella banda del SWIR
+pp5<-ggRGB(july10, 11, 10, 4, stretch="lin", quantiles = c(0.001, 0.999))
+p6<-ggRGB(july25, 11, 10, 4, stretch="hist")
 grid.arrange(p5, p6, nrow = 2)
-# il PLOT3 evidenzia l'area bruciata e le zone più colpite con una maggiore riflettanza nel SWIR
+# il PLOT3 evidenzia in rosso l'area bruciata e le zone in essa più colpite
 
 
 ############################################################
@@ -127,11 +138,21 @@ p6<-ggRGB(july10_crop, 11, 10, 4, stretch="lin", quantiles = c(0.0001, 0.9999))
 p7<-ggRGB(july25_crop, 11, 10, 4, stretch="lin")
 grid.arrange(p6, p7, ncol = 2)
 
+
+
 ################################################
 #   STEP 5  -  Calcolo degli indici NDVI e NBR #
 ################################################
 
 # SPIEGARE BREVEMENTE I DUE INDICI
+
+# L'indice NDVI è utilizzato per descrivere lo stato fisiologico della vegetazione. 
+# La sua variazione spaziale permette di ricoscere aree con diversi tipi di vegetazione: valori maggiori per le aree boschive 
+# e minori per quelle coltivate o a vegetazione prevalentemente erbacea.
+# La sua variazione temporale permette invece di riconoscere il danno subito dalla vegetazione: superfici maggiormente danneggiate 
+# avranno infatti un calo più drastico del valore di NDVI.
+
+# L'indice NBR
 
 ## NDVI= (NIR-RED)/(NIR+RED)
 ## NBR=  (NIR-SWIR)/(NIR+SWIR)
