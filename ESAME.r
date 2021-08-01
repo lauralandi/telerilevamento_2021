@@ -28,6 +28,7 @@
 library(raster) # pacchetto con funzioni per elaborare file raster
 library(RStoolbox) # pacchetto con funzioni per processare le immagini (tra cui unsuperClass)
 library(ggplot2) # pacchetto con diverse funzioni per creare e modificare grafici
+library(grid)  
 library(gridExtra) # pacchetto con funzioni per lavorare con grafici (tra cui grid.arrange)
 #library(rgdal)
 library(wesanderson) # pacchetto con diverse palette di colori ispirate a Wes Anderson
@@ -94,19 +95,45 @@ july25
 ############################################################
 
 ## PLOT1 - Le due immagini (10 e 25 Luglio) in RGB veri colori: r=red, g=green, b=blue
-p1<-ggRGB(july10, 4, 3, 2, stretch="lin", quantiles = c(0.001, 0.999)) + ggtitle("10 Luglio 2021") + theme(plot.title = element_text(hjust = 0.5)) +
-                                                                         xlab("Long") + ylab("Lat")
-  # con la funzione ggRGB monto le bande in RGB (veri colori) e le associo alle variabili p1 e p2 (modificando i quantili regolo lo stretch della foto)
-p2<-ggRGB(july25, 4, 3, 2, stretch="hist") + labs(title="25 Luglio 2021",  x ="Long", y = "Lat")
-grid.arrange(p1, p2, nrow = 2)     # con la funzione grid.arrange plotto le due immagini insieme in un unico grafico
+
+F<-windowsFont("Bookman Old Style")
+
+p1<-ggRGB(july10, 4, 3, 2, stretch="lin", quantiles = c(0.001, 0.999)) + #monto le bande in RGB in veri colori e modificando i quantili regolo lo stretch della foto
+    ggtitle("10 Luglio 2021") +     # titolo dell'immagine
+    xlab("Long") + ylab("Lat") +    #titoli degli assi
+    theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", color="red", family="serif"), 
+          axis.title=element_text(size=10), axis.text= element_text(size=8))   # modifiche agli elementi del grafico (sfondo, titoli e valori degli assi)
+        
+p2<-ggRGB(july25, 4, 3, 2, stretch="hist") + 
+    ggtitle("25 Luglio 2021") +     
+    xlab("Long") + ylab("Lat") +
+    theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", color="red", family="serif"), 
+          axis.title=element_text(size=10), axis.text= element_text(size=8))
+
+grid.arrange(p1, p2, nrow = 2, top=grid.text("Immagini in veri colori \n", gp=gpar(fontsize=18,font=2, fontfamily="serif"), vjust=0.7))     
+# con la funzione grid.arrange plotto le due immagini insieme in un unico grafico aggiungendo un titolo
+
 
 ## PLOT2 - Le due immagini (10 e 25 Luglio) in falsi colori: r=NIR, g=green, b=blue
 # Questa modalità di visualizzazione esalta in rosso la vegetazione, che ha un'alta riflettanza nella banda del NIR, con valori maggiori per le aree boschive 
 # e minori per le aree a prevalenza di vegetazione erbacea 
-p3<-ggRGB(july10, 8, 3, 2, stretch="lin", quantiles = c(0.001, 0.999))
-p4<-ggRGB(july25, 8, 3, 2, stretch="hist")
-grid.arrange(p3, p4, nrow = 2)
+
+p3<-ggRGB(july10, 8, 3, 2, stretch="lin", quantiles = c(0.001, 0.999)) + #monto le bande in RGB in falsi colori e modificando i quantili regolo lo stretch della foto
+    ggtitle("10 Luglio 2021") +     # titolo dell'immagine
+    xlab("Long") + ylab("Lat") +    #titoli degli assi
+    theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", color="red", family="serif"), 
+          axis.title=element_text(size=10), axis.text= element_text(size=8))   # modifiche agli elementi del grafico (sfondo, titoli e valori degli assi)
+        
+p4<-ggRGB(july25, 8, 3, 2, stretch="hist") + 
+    ggtitle("25 Luglio 2021") +     
+    xlab("Long") + ylab("Lat") +
+    theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", color="red", family="serif"), 
+          axis.title=element_text(size=10), axis.text= element_text(size=8))
+
+grid.arrange(p3, p4, nrow = 2, top=grid.text("Immagini in falsi colori \n", gp=gpar(fontsize=18,font=2, fontfamily="serif"), vjust=0.7)) 
 # il PLOT2 mostra come il 25 Luglio si sia formata una grossa area scura dove la vegetazione è scomparsa a causa degli incendi
+
+
 
 ## PLOT3 - Le due immagini (10 e 25 Luglio) in falsi colori: r=SWIR(B12), g=SWIR(B11), b=red
 # Questa modalità di visualizzazione esalta in rosso le aree bruciate, poichè esse hanno un'alta riflettanza nella banda del SWIR
