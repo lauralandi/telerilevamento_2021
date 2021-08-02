@@ -96,21 +96,19 @@ july25
 
 ## PLOT1 - Le due immagini (10 e 25 Luglio) in RGB veri colori: r=red, g=green, b=blue
 
-F<-windowsFont("Bookman Old Style")
-
 p1<-ggRGB(july10, 4, 3, 2, stretch="lin", quantiles = c(0.001, 0.999)) + #monto le bande in RGB in veri colori e modificando i quantili regolo lo stretch della foto
     ggtitle("10 Luglio 2021") +     # titolo dell'immagine
     xlab("Long") + ylab("Lat") +    #titoli degli assi
-    theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", color="red", family="serif"), 
+    theme(panel.background = element_blank(), plot.title = element_text(size=11, face="bold", color="red"), 
           axis.title=element_text(size=10), axis.text= element_text(size=8))   # modifiche agli elementi del grafico (sfondo, titoli e valori degli assi)
         
 p2<-ggRGB(july25, 4, 3, 2, stretch="hist") + 
     ggtitle("25 Luglio 2021") +     
     xlab("Long") + ylab("Lat") +
-    theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", color="red", family="serif"), 
+    theme(panel.background = element_blank(), plot.title = element_text(size=11, face="bold", color="red"), 
           axis.title=element_text(size=10), axis.text= element_text(size=8))
 
-grid.arrange(p1, p2, nrow = 2, top=grid.text("Immagini in veri colori \n", gp=gpar(fontsize=18,font=2, fontfamily="serif"), vjust=0.7))     
+grid.arrange(p1, p2, nrow = 2, top=grid.text("Immagini in veri colori", gp=gpar(fontsize=15,font=2)))     
 # con la funzione grid.arrange plotto le due immagini insieme in un unico grafico aggiungendo un titolo
 
 
@@ -121,27 +119,36 @@ grid.arrange(p1, p2, nrow = 2, top=grid.text("Immagini in veri colori \n", gp=gp
 p3<-ggRGB(july10, 8, 3, 2, stretch="lin", quantiles = c(0.001, 0.999)) + #monto le bande in RGB in falsi colori e modificando i quantili regolo lo stretch della foto
     ggtitle("10 Luglio 2021") +     # titolo dell'immagine
     xlab("Long") + ylab("Lat") +    #titoli degli assi
-    theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", color="red", family="serif"), 
+    theme(panel.background = element_blank(), plot.title = element_text(size=11, face="bold", color="red"), 
           axis.title=element_text(size=10), axis.text= element_text(size=8))   # modifiche agli elementi del grafico (sfondo, titoli e valori degli assi)
         
 p4<-ggRGB(july25, 8, 3, 2, stretch="hist") + 
     ggtitle("25 Luglio 2021") +     
     xlab("Long") + ylab("Lat") +
-    theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", color="red", family="serif"), 
+    theme(panel.background = element_blank(), plot.title = element_text(size=11, face="bold", color="red"), 
           axis.title=element_text(size=10), axis.text= element_text(size=8))
 
-grid.arrange(p3, p4, nrow = 2, top=grid.text("Immagini in falsi colori \n", gp=gpar(fontsize=18,font=2, fontfamily="serif"), vjust=0.7)) 
+grid.arrange(p3, p4, nrow = 2, top=grid.text("Immagini in falsi colori", gp=gpar(fontsize=15,font=2))) 
 # il PLOT2 mostra come il 25 Luglio si sia formata una grossa area scura dove la vegetazione è scomparsa a causa degli incendi
-
 
 
 ## PLOT3 - Le due immagini (10 e 25 Luglio) in falsi colori: r=SWIR(B12), g=SWIR(B11), b=red
 # Questa modalità di visualizzazione esalta in rosso le aree bruciate, poichè esse hanno un'alta riflettanza nella banda del SWIR
-p5<-ggRGB(july10, 11, 10, 4, stretch="lin", quantiles = c(0.001, 0.999))
-p6<-ggRGB(july25, 11, 10, 4, stretch="hist")
-grid.arrange(p5, p6, nrow = 2)
-# il PLOT3 evidenzia in rosso l'area bruciata e le zone in essa più colpite
 
+p5<-ggRGB(july10, 11, 10, 4, stretch="lin", quantiles = c(0.001, 0.999)) + #monto le bande in RGB in falsi colori e modificando i quantili regolo lo stretch della foto
+    ggtitle("10 Luglio 2021") +     # titolo dell'immagine
+    xlab("Long") + ylab("Lat") +    #titoli degli assi
+    theme(panel.background = element_blank(), plot.title = element_text(size=11, face="bold", color="red"), 
+          axis.title=element_text(size=10), axis.text= element_text(size=8))   # modifiche agli elementi del grafico (sfondo, titoli e valori degli assi)
+        
+p6<-ggRGB(july25, 11, 10, 4, stretch="hist") + 
+    ggtitle("25 Luglio 2021") +     
+    xlab("Long") + ylab("Lat") +
+    theme(panel.background = element_blank(), plot.title = element_text(size=11, face="bold", color="red"), 
+          axis.title=element_text(size=10), axis.text= element_text(size=8))
+
+grid.arrange(p5, p6, nrow = 2, top=grid.text("Immagini in falsi colori", gp=gpar(fontsize=15,font=2)))
+# il PLOT3 evidenzia in rosso l'area bruciata e le zone in essa più colpite
 
 ############################################################
 #   STEP 4  -  Focus sull'area di interesse per l'analisi  #
@@ -150,24 +157,34 @@ grid.arrange(p5, p6, nrow = 2)
 ## Per analizzare meglio l'area bruciata dagli incendi mi focalizzo su un'area più stretta.
 ## In questo modo limito le interferenze che la presenza del mare e delle nuvole possono avere sull'analisi
 
-plotRGB(july25, 11, 10, 4, stretch="lin")
-# e <- drawExtent(show=TRUE, col="red") # con la funzione drawExtent disegno un riquadro sul plot appena aperto e genero un oggetto extent associato alla variabile e
+p6
+# e <- drawExtent(show=TRUE, col="red") # con la funzione drawExtent disegno un riquadro sull'immagine p6 aperta e genero un oggetto extent associato alla variabile e
 e   # richiamando la variabile e ottengo le sue informazioni:
     # class      : Extent 
     # xmin       : 943072.7 
     # xmax       : 965034.5 
     # ymin       : 4882167 
     # ymax       : 4905410
-e<-extent(943072.7, 965034.5, 4882167, 4905410)  # DA CANCELLARE PRIMA DI ESAME
+e<-extent(943072.7, 965034.5, 4882167, 4905410)  # CANCELLARE PRIMA DI ESAME
 
 july25_crop<- crop(july25, e)  # con la funzione crop ritaglio le immagini nelle dimensioni definite dalla variabile e
 july10_crop<- crop(july10, e)
 
 ## PLOT4 - Le due immagini ritagliate, in falsi colori
-p7<-ggRGB(july10_crop, 11, 10, 4, stretch="lin", quantiles = c(0.0001, 0.9999))
-p8<-ggRGB(july25_crop, 11, 10, 4, stretch="lin")
-grid.arrange(p6, p7, ncol = 2)
 
+p7<-ggRGB(july10_crop, 11, 10, 4, stretch="lin", quantiles = c(0.001, 0.999)) + #monto le bande in RGB in falsi colori e modificando i quantili regolo lo stretch della foto
+    ggtitle("10 Luglio 2021") +     # titolo dell'immagine
+    xlab("Long") + ylab("Lat") +    #titoli degli assi
+    theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", color="red"), 
+          axis.title=element_text(size=10), axis.text= element_text(size=8))   # modifiche agli elementi del grafico (sfondo, titoli e valori degli assi)
+        
+p8<-ggRGB(july25_crop, 11, 10, 4, stretch="lin") + 
+    ggtitle("25 Luglio 2021") +     
+    xlab("Long") + ylab("Lat") +
+    theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", color="red"), 
+          axis.title=element_text(size=10), axis.text= element_text(size=8))
+
+grid.arrange(p7, p8, ncol = 2, top=grid.text("Immagini in falsi colori", gp=gpar(fontsize=18,font=2)))
 
 
 ##############################################################
@@ -181,10 +198,16 @@ set.seed(60)  # la funzione set.seed mi permette di poter replicare più volte l
 july10_c2<-unsuperClass(july10_crop, nClasses=2)
 
 ## PLOT5 - La mappa di classificazione pre-incendio
-clc2 <- colorRampPalette(c('green', 'darkgreen'))(2) # definisco una palette con 2 colori per le classi
-plot(july10_c2$map, col = clc2, legend = FALSE, axes = FALSE, box = FALSE)
-legend(965031,4905419, legend = paste0("C",1:2), fill = clc2,
-       title = "Classi", horiz = FALSE,  bty = "n")
+
+p9 <-ggplot(july10_c2$map, aes(x,y)) +
+     geom_raster(aes(fill=factor(layer))) +
+     scale_fill_manual(values=c('green', 'darkgreen'), name=("Copertura"), labels=c("Coltivazioni", "Boschiva")) +
+     ggtitle("Classificazione copertura vegetale pre-incendi") +     # titolo dell'immagine
+     xlab("Long") + ylab("Lat") +    #titoli degli assi
+     theme(panel.background = element_blank(), plot.title = element_text(size=16, face="bold",  hjust=0.5), 
+           axis.title=element_text(size=10), axis.text= element_text(size=8),
+           legend.title = element_text(size=12, face="bold"),
+           legend.text = element_text(size = 10))
 
 # La mappa di classificazione mostra un'area prevalentemente boschiva (C2) nella zona SE e una dominata da aree coltivate e vegetazione erbacea (C1) nella zona W e NW
 
@@ -227,13 +250,18 @@ Area_km2_cop<-Area_perc_cop*510.571504  # moltiplicando l'area percentuale per l
 perc_cop<-data.frame(Classi_, Copertura, Area_perc_cop, Area_km2_cop)  # con la funzione data.frame inserisco le variabili all'interno di un dataset che associo alla variabile percent
 perc_cop
 
-## PLOT13 - Grafico a barre dei dati presenti nel dataframe
-g1<-ggplot(perc_cop, aes(x=Classi_, y=Area_km2_cop)) + geom_bar(stat="identity", width=0.2, (aes(fill = Copertura))) # con la funzione ggplot creo un grafico a barre che mostra 
-                                                                        # le aree e le classi che rientrano nei danni
+## PLOT6 - Grafico a barre dei dati presenti nel dataframe
+g1<-ggplot(perc_cop, aes(x=Classi_, y=Area_km2_cop)) + 
+    geom_bar(stat="identity", width=0.5, (aes(fill = Copertura))) +
+    ggtitle("Aree di copertura vegetale pre-incendi") + 
+    xlab("Classi") + ylab("Area (km2)") +
+    theme(plot.title = element_text(size=16, face="bold",  hjust=0.5), 
+           axis.title=element_text(size=10), axis.text= element_text(size=8),
+           legend.title = element_text(size=12, face="bold"),
+           legend.text = element_text(size = 10))
 
-
-
-
+# con la funzione ggplot creo un grafico a barre che mostra 
+# le aree e le classi che rientrano nei danni
 
 
 
@@ -270,12 +298,36 @@ g1<-ggplot(perc_cop, aes(x=Classi_, y=Area_km2_cop)) + geom_bar(stat="identity",
 NDVI_july10<-(july10_crop$july10_B08-july10_crop$july10_B04)/(july10_crop$july10_B08+july10_crop$july10_B04) # NDVI=(NIR-RED)/(NIR+RED)
 NDVI_july25<-(july25_crop$july25_B08-july25_crop$july25_B04)/(july25_crop$july25_B08+july25_crop$july25_B04) # con il $ scelgo il layer che mi serve all'interno del RasterStack
 
-## PLOT6 - Confronto tra NDVI del 10 Luglio e NDVI del 25 luglio
+## PLOT7 - Confronto tra NDVI del 10 Luglio e NDVI del 25 luglio
 clz<-wes_palette("Zissou1", 100, type = c("continuous"))  #associo alla variabile clz una palette di colori dal pacchetto wesanderson
 par(mfrow=c(1,2))  # con la funzione par plotto in unico grafico le due immagini
 plot(NDVI_july10, col=clz, main="NDVI 10 Luglio", box=FALSE)  # plot del raster NDVI calcolato con la palette di colori scelta
 plot(NDVI_july25, col=clz, main="NDVI 25 Luglio", box= FALSE)
 # Da questo plot si osserva bene il calo drastico di NDVI nella zona colpita dagli incendi
+
+
+p10 <-ggplot(NDVI_july10, aes(x,y)) +
+     geom_raster(aes(fill=layer)) + scale_color_gradient(low="blue", high="red")
+     scale_color_gradientn(colours=c("blue","red"))  +
+     ggtitle("Classificazione copertura vegetale pre-incendi") +     # titolo dell'immagine
+     xlab("Long") + ylab("Lat") +    #titoli degli assi
+     theme(panel.background = element_blank(), plot.title = element_text(size=16, face="bold",  hjust=0.5), 
+           axis.title=element_text(size=10), axis.text= element_text(size=8),
+           legend.title = element_text(size=12, face="bold"),
+           legend.text = element_text(size = 10))
+        
+p11 <-ggplot(july10_c2$map, aes(x,y)) +
+     geom_raster(aes(fill=factor(layer))) +
+     scale_fill_manual(values=c('green', 'darkgreen'), name=("Copertura"), labels=c("Coltivazioni", "Boschiva")) +
+     ggtitle("Classificazione copertura vegetale pre-incendi") +     # titolo dell'immagine
+     xlab("Long") + ylab("Lat") +    #titoli degli assi
+     theme(panel.background = element_blank(), plot.title = element_text(size=16, face="bold",  hjust=0.5), 
+           axis.title=element_text(size=10), axis.text= element_text(size=8),
+           legend.title = element_text(size=12, face="bold"),
+           legend.text = element_text(size = 10))
+
+grid.arrange(p10, p11, ncol = 2, top=grid.text("Immagini in falsi colori", gp=gpar(fontsize=18,font=2)))
+
 
 ## Calcolando la differenza tra i due NDVI se ne può quantificare il calo
 deltaNDVI<- NDVI_july10 - NDVI_july25  
