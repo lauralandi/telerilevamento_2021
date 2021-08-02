@@ -10,7 +10,7 @@
 
 #                             INDICE
 #
-#  STEP 1  -  Richiamare le library necessarie al codice e definire la working directiory
+#  STEP 1  -  Richiamare le library necessarie al codice e definire la working directory
 #  STEP 2  -  Scelta delle immagini su cui effettuare l'analisi e importazione
 #  STEP 3  -  Elaborazione e osservazione delle immagini
 #  STEP 4  -  Focus sull'area di interesse per l'analisi
@@ -22,7 +22,7 @@
 
 
 ###################################################################################################
-#   STEP 1  -  Richiamare tutte le library necessarie al codice e definire la working directiory  #
+#   STEP 1  -  Richiamare le library necessarie al codice e definire la working directory  #
 ###################################################################################################
 
 library(raster) # pacchetto con funzioni per elaborare file raster
@@ -32,6 +32,8 @@ library(grid)
 library(gridExtra) # pacchetto con funzioni per lavorare con grafici (tra cui grid.arrange)
 #library(rgdal)
 library(wesanderson) # pacchetto con diverse palette di colori ispirate a Wes Anderson
+#library(RColorBrewer)
+library(ggpubr)
 
 setwd("C:/lab/esame_sardegna/")  # definire la working directory
 
@@ -208,6 +210,7 @@ p9 <-ggplot(july10_c2$map, aes(x,y)) +
            axis.title=element_text(size=10), axis.text= element_text(size=8),
            legend.title = element_text(size=12, face="bold"),
            legend.text = element_text(size = 10))
+p9
 
 # La mappa di classificazione mostra un'area prevalentemente boschiva (C2) nella zona SE e una dominata da aree coltivate e vegetazione erbacea (C1) nella zona W e NW
 
@@ -259,6 +262,7 @@ g1<-ggplot(perc_cop, aes(x=Classi_, y=Area_km2_cop)) +
            axis.title=element_text(size=10), axis.text= element_text(size=8),
            legend.title = element_text(size=12, face="bold"),
            legend.text = element_text(size = 10))
+g1
 
 # con la funzione ggplot creo un grafico a barre che mostra 
 # le aree e le classi che rientrano nei danni
@@ -298,35 +302,35 @@ g1<-ggplot(perc_cop, aes(x=Classi_, y=Area_km2_cop)) +
 NDVI_july10<-(july10_crop$july10_B08-july10_crop$july10_B04)/(july10_crop$july10_B08+july10_crop$july10_B04) # NDVI=(NIR-RED)/(NIR+RED)
 NDVI_july25<-(july25_crop$july25_B08-july25_crop$july25_B04)/(july25_crop$july25_B08+july25_crop$july25_B04) # con il $ scelgo il layer che mi serve all'interno del RasterStack
 
-## PLOT7 - Confronto tra NDVI del 10 Luglio e NDVI del 25 luglio
-clz<-wes_palette("Zissou1", 100, type = c("continuous"))  #associo alla variabile clz una palette di colori dal pacchetto wesanderson
-par(mfrow=c(1,2))  # con la funzione par plotto in unico grafico le due immagini
-plot(NDVI_july10, col=clz, main="NDVI 10 Luglio", box=FALSE)  # plot del raster NDVI calcolato con la palette di colori scelta
-plot(NDVI_july25, col=clz, main="NDVI 25 Luglio", box= FALSE)
-# Da questo plot si osserva bene il calo drastico di NDVI nella zona colpita dagli incendi
+NDVI_july10
+# -0.3337898, 0.9993358  (min, max)
 
+NDVI_july25
+#-0.3251454, 0.7381541  (min, max)
+
+# Per definire una scala di colore comune da plottare sui due grafici impongo un range -0.3251454, 0.9993358 per entrambi e poi plotto una legenda comune
+## PLOT7 - Confronto tra NDVI del 10 Luglio e NDVI del 25 luglio
 
 p10 <-ggplot(NDVI_july10, aes(x,y)) +
-     geom_raster(aes(fill=layer)) + scale_color_gradient(low="blue", high="red")
-     scale_color_gradientn(colours=c("blue","red"))  +
-     ggtitle("Classificazione copertura vegetale pre-incendi") +     # titolo dell'immagine
+     geom_raster(aes(fill=layer)) + 
+     scale_fill_gradientn(colors = wes_palette("Zissou1", 100, type = c("continuous")), limits = c(-0.3251454, 0.9993358))  +
+     ggtitle("NDVI 10 Luglio 2021") +     # titolo dell'immagine
      xlab("Long") + ylab("Lat") +    #titoli degli assi
-     theme(panel.background = element_blank(), plot.title = element_text(size=16, face="bold",  hjust=0.5), 
-           axis.title=element_text(size=10), axis.text= element_text(size=8),
-           legend.title = element_text(size=12, face="bold"),
-           legend.text = element_text(size = 10))
+     theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", hjust=0.5), 
+          axis.title=element_text(size=10), axis.text= element_text(size=8),
+          legend.title = element_blank())   # modifiche agli elementi del grafico (sfondo, titoli e valori degli assi)
         
-p11 <-ggplot(july10_c2$map, aes(x,y)) +
-     geom_raster(aes(fill=factor(layer))) +
-     scale_fill_manual(values=c('green', 'darkgreen'), name=("Copertura"), labels=c("Coltivazioni", "Boschiva")) +
-     ggtitle("Classificazione copertura vegetale pre-incendi") +     # titolo dell'immagine
+p11 <-ggplot(NDVI_july25, aes(x,y)) +
+     geom_raster(aes(fill=layer)) + 
+     scale_fill_gradientn(colors = wes_palette("Zissou1", 100, type = c("continuous")), limits = c(-0.3251454, 0.9993358))  +
+     ggtitle(" NDVI 25 Luglio 2021") +     # titolo dell'immagine
      xlab("Long") + ylab("Lat") +    #titoli degli assi
-     theme(panel.background = element_blank(), plot.title = element_text(size=16, face="bold",  hjust=0.5), 
-           axis.title=element_text(size=10), axis.text= element_text(size=8),
-           legend.title = element_text(size=12, face="bold"),
-           legend.text = element_text(size = 10))
+     theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", hjust=0.5), 
+          axis.title=element_text(size=10), axis.text= element_text(size=8),
+          legend.title = element_blank())   # modifiche agli elementi del grafico (sfondo, titoli e valori degli assi)
 
-grid.arrange(p10, p11, ncol = 2, top=grid.text("Immagini in falsi colori", gp=gpar(fontsize=18,font=2)))
+ggarrange(p10, p11, ncol = 2, common.legend=TRUE)
+# Da questo plot si osserva bene il calo drastico di NDVI nella zona colpita dagli incendi
 
 
 ## Calcolando la differenza tra i due NDVI se ne può quantificare il calo
