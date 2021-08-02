@@ -309,38 +309,55 @@ NDVI_july25
 #-0.3251454, 0.7381541  (min, max)
 
 # Per definire una scala di colore comune da plottare sui due grafici impongo un range -0.3251454, 0.9993358 per entrambi e poi plotto una legenda comune
+
 ## PLOT7 - Confronto tra NDVI del 10 Luglio e NDVI del 25 luglio
+clz<-wes_palette("Zissou1", 100, type = c("continuous"))
 
 p10 <-ggplot(NDVI_july10, aes(x,y)) +
      geom_raster(aes(fill=layer)) + 
-     scale_fill_gradientn(colors = wes_palette("Zissou1", 100, type = c("continuous")), limits = c(-0.3251454, 0.9993358))  +
+     scale_fill_gradientn(colors = clz, limits = c(-0.35, 1), 
+                          breaks = c(0, 0.25, 0.5, 0.75, 1), labels=c(0, 0.25, 0.5, 0.75, 1))  +
+     guides(fill = guide_colourbar(barwidth= 15)) +
      ggtitle("NDVI 10 Luglio 2021") +     # titolo dell'immagine
      xlab("Long") + ylab("Lat") +    #titoli degli assi
      theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", hjust=0.5), 
           axis.title=element_text(size=10), axis.text= element_text(size=8),
-          legend.title = element_blank())   # modifiche agli elementi del grafico (sfondo, titoli e valori degli assi)
+          legend.title = element_blank())
+             # modifiche agli elementi del grafico (sfondo, titoli e valori degli assi)
         
 p11 <-ggplot(NDVI_july25, aes(x,y)) +
      geom_raster(aes(fill=layer)) + 
-     scale_fill_gradientn(colors = wes_palette("Zissou1", 100, type = c("continuous")), limits = c(-0.3251454, 0.9993358))  +
+     scale_fill_gradientn(colors = clz, limits = c(-0.35, 1), 
+                          breaks = c(0, 0.25, 0.5, 0.75, 1), labels=c(0, 0.25, 0.5, 0.75, 1))  +
+     guides(fill = guide_colourbar(barwidth= 15)) +
      ggtitle(" NDVI 25 Luglio 2021") +     # titolo dell'immagine
      xlab("Long") + ylab("Lat") +    #titoli degli assi
      theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", hjust=0.5), 
           axis.title=element_text(size=10), axis.text= element_text(size=8),
-          legend.title = element_blank())   # modifiche agli elementi del grafico (sfondo, titoli e valori degli assi)
+          legend.title = element_blank())
+             # modifiche agli elementi del grafico (sfondo, titoli e valori degli assi)
 
-ggarrange(p10, p11, ncol = 2, common.legend=TRUE)
+ggarrange(p10, p11, ncol = 2, common.legend=TRUE, legend="bottom")
 # Da questo plot si osserva bene il calo drastico di NDVI nella zona colpita dagli incendi
 
 
 ## Calcolando la differenza tra i due NDVI se ne può quantificare il calo
 deltaNDVI<- NDVI_july10 - NDVI_july25  
 
-## PLOT7 - Il deltaNDVI 
-cld <- colorRampPalette(c('blue','white','red'))(100) # definisco una palette che associa al rosso i valori di differenza maggiori, ovvero il calo di NDVI maggiore
-plot(deltaNDVI, col=cld, main="differenza NDVI") ## <-- controllare come forzare a zero il limite della legenda
+## PLOT8 - Il deltaNDVI 
+
+p12<-ggplot(deltaNDVI, aes(x,y)) +
+     geom_raster(aes(fill=layer)) + 
+     scale_fill_gradientn(colors = clz, limits = c(0, 1)) +   
+     ggtitle("deltaNDVI") +     # titolo dell'immagine
+     xlab("Long") + ylab("Lat") +    #titoli degli assi
+     theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", hjust=0.5), 
+          axis.title=element_text(size=10), axis.text= element_text(size=8),
+          legend.title = element_blank())
+p12
 # Tralasciando le due zone a NW e NE dove vi è una interferenza con le nuvole, dal plot si osserva come all'interno dell'area incendiata il
 # calo di NDVI più drastico sia nella porziona a sud, corrispondente alla zona boschiva
+           
 
 
 ## Calcolo del NBR
@@ -348,24 +365,62 @@ plot(deltaNDVI, col=cld, main="differenza NDVI") ## <-- controllare come forzare
 NBR_july10<-(july10_crop$july10_B08-july10_crop$july10_B12)/(july10_crop$july10_B08+july10_crop$july10_B12)  # NBR= (NIR-SWIR)/(NIR+SWIR)
 NBR_july25<-(july25_crop$july25_B08-july25_crop$july25_B12)/(july25_crop$july25_B08+july25_crop$july25_B12)
 
-## PLOT8 - Confronto tra NBR del 10 Luglio e NBR del 25 luglio
-par(mfrow=c(1,2))
-plot(NBR_july10, col=clz, main="NBR 10 Luglio")
-plot(NBR_july25, col=clz, main="NBR 25 Luglio")
+NBR_july10
+#-0.4545455, 0.843633  (min, max)
+
+NBR_july25
+#-0.8563125, 0.7879109  (min, max)
+
+# Per definire una scala di colore comune da plottare sui due grafici impongo un range -0.4545455, 0.843633 per entrambi e poi plotto una legenda comune
+
+## PLOT9 - Confronto tra NBR del 10 Luglio e NBR del 25 luglio
+
+p13 <-ggplot(NBR_july10, aes(x,y)) +
+     geom_raster(aes(fill=layer)) + 
+     scale_fill_gradientn(colors = clz, limits = c(-0.46, 0.85), 
+                          breaks = c(-0.45, -0.2, 0.05, 0.3, 0.55, 0.8))  +
+     guides(fill = guide_colourbar(barwidth= 15)) +
+     ggtitle("NBR 10 Luglio 2021") +     # titolo dell'immagine
+     xlab("Long") + ylab("Lat") +    #titoli degli assi
+     theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", hjust=0.5), 
+          axis.title=element_text(size=10), axis.text= element_text(size=8),
+          legend.title = element_blank())
+             # modifiche agli elementi del grafico (sfondo, titoli e valori degli assi)
+        
+p14 <-ggplot(NBR_july25, aes(x,y)) +
+     geom_raster(aes(fill=layer)) + 
+     scale_fill_gradientn(colors = clz, limits = c(-0.46, 0.85), 
+                          breaks = c(-0.45, -0.2, 0.05, 0.3, 0.55, 0.8))  +
+     guides(fill = guide_colourbar(barwidth= 15)) +
+     ggtitle(" NBR 25 Luglio 2021") +     # titolo dell'immagine
+     xlab("Long") + ylab("Lat") +    #titoli degli assi
+     theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", hjust=0.5), 
+          axis.title=element_text(size=10), axis.text= element_text(size=8),
+          legend.title = element_blank())
+             # modifiche agli elementi del grafico (sfondo, titoli e valori degli assi)
+
+ggarrange(p13, p14, ncol = 2, common.legend=TRUE, legend="bottom")
 # Anche in questo caso il calo di NBR nella seconda foto indica un aumento della riflettanza nello SWIR simultaneamente a un calo nel NIR dovuti all'incendio
+
 
 ## Calcolando la differenza tra i due NBR se ne può quantificare il calo dopo gli incendi
 deltaNBR<- NBR_july10 - NBR_july25
 
-## PLOT9 - Il deltaNBR
-plot(deltaNBR, col=cld, main="differenza NBR") ## <-- controllare come forzare a zero il limite della legenda
+## PLOT10 - Il deltaNBR
+
+p15<-ggplot(deltaNBR, aes(x,y)) +
+     geom_raster(aes(fill=layer)) + 
+     scale_fill_gradientn(colors = clz, limits = c(0, 1)) +   
+     ggtitle("deltaNBR") +     # titolo dell'immagine
+     xlab("Long") + ylab("Lat") +    #titoli degli assi
+     theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", hjust=0.5), 
+          axis.title=element_text(size=10), axis.text= element_text(size=8),
+          legend.title = element_blank())
+p15
 # Anche in questo caso i valori maggiori di delta NBR sono nella porsione sud dell'area incendiata, ovvero la zona boschiva, dove il danno è quindi stato maggiore
 
-## PLOT10 - Confronto tra il deltNDVI e il deltaNBR
-par(mfrow=c(1,2))
-plot(deltaNDVI, col=cld, main="differenza NDVI")
-plot(deltaNBR, col=cld, main="differenza NBR")
-
+## PLOT11 - Confronto tra il deltNDVI e il deltaNBR
+ggarrange(p12, p15, ncol = 2, common.legend=TRUE, legend="bottom")
 
 
 #############################################
@@ -377,7 +432,7 @@ plot(deltaNBR, col=cld, main="differenza NBR")
 set.seed(60)  # la funzione set.seed mi permette di poter replicare più volte lo stesso processo che altrimenti sarebbe sempre randomico ???
 dNBR_c4<-unsuperClass(deltaNBR, nClasses=4) # con la funzione unsuperClass applico una classificazione non supervisionata di 4 classi e la associo alla variabile dNBR_c4
 
-## PLOT11 - La mappa di classificazione del deltaNBR
+## PLOT12 - La mappa di classificazione del deltaNBR
 clc <- colorRampPalette(c('yellow','red','darkgreen','green'))(4) # definisco una palette con 4 colori per le classi
 plot(dNBR_c4$map, col = clc, legend = FALSE, axes = FALSE, box = FALSE)
 legend(965031,4905419, legend = paste0("C",1:4), fill = clc,
@@ -386,14 +441,14 @@ legend(965031,4905419, legend = paste0("C",1:4), fill = clc,
 # La mappa di classificazione mette in evidenza due zone riconducibili alle aree non coinvolte dagli incendi (C3 e C4) e altre due alle zone invece colpite, con due 
 # diversi gradi di severità (C1, con i maggiori valori di deltaNBR, e C2). Anche in questo caso bisogna tenere conto di alcune interferenze legate alla nuvolosità.
 
-## PLOT12 - Confronto tra il deltaNBR e la sua classificazione 
+## PLOT13 - Confronto tra il deltaNBR e la sua classificazione 
 par(mfrow=c(1,2))
 plot(deltaNBR, col=cld, main="differenza NBR")
 plot(dNBR_c4$map, col = clc, legend = FALSE, axes = FALSE, box = FALSE, main="Classificazione deltaNBR")
 legend(965031,4905419, legend = paste0("C",1:4), fill = clc,
       title = "Classi", horiz = FALSE,  bty = "n")
 
-## PLOT13 - Confronto tra classificazione pre-incendio e classificazione deltaNBR
+## PLOT14 - Confronto tra classificazione pre-incendio e classificazione deltaNBR
 par(mfrow=c(1,2))
 plot(july10_c2$map, col = clc2, legend = FALSE, axes = FALSE, box = FALSE, main="Classi di vegetazione pre-incendio")
 legend(965031,4905419, legend = paste0("C",1:2), fill = clc2,
@@ -417,7 +472,7 @@ dNBR_c4$map # richiamando la variabile della mappa di classificazione ottengo in
 
 
 
-## PLOT14 - Confronto tra l'immagine in falsi colori e la classificazione di deltaNBR
+## PLOT15 - Confronto tra l'immagine in falsi colori e la classificazione di deltaNBR
 par(mfrow=c(1,2))
 plotRGB(july25_crop, 11, 10, 4, stretch="lin")
 plot(dNBR_c4$map, col = clc, legend = FALSE, axes = FALSE, box = FALSE, main="Aree di severità di danno")
@@ -476,6 +531,6 @@ Area_km2_dan<-Area_perc_dan*510.571504  # moltiplicando l'area percentuale per l
 perc_dan<-data.frame(Classi_deltaNBR, Danno, Area_perc_dan, Area_km2_dan)  # con la funzione data.frame inserisco le variabili all'interno di un dataset che associo alla variabile percent
 perc_dan
 
-## PLOT13 - Grafico a barre dei dati presenti nel dataframe
+## PLOT16 - Grafico a barre dei dati presenti nel dataframe
 g2<-ggplot(perc_dan, aes(x=Danno,y=Area_km2_dan)) + geom_bar(stat="identity", width=0.2, (aes(fill = Danno))) # con la funzione ggplot creo un grafico a barre che mostra 
                                                                                                                                      # le aree e le classi che rientrano nei danni
