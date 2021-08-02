@@ -206,9 +206,9 @@ p9 <-ggplot(july10_c2$map, aes(x,y)) +
      scale_fill_manual(values=c('green', 'darkgreen'), name=("Copertura"), labels=c("Coltivazioni", "Boschiva")) +
      ggtitle("Classificazione copertura vegetale pre-incendi") +     # titolo dell'immagine
      xlab("Long") + ylab("Lat") +    #titoli degli assi
-     theme(panel.background = element_blank(), plot.title = element_text(size=16, face="bold",  hjust=0.5), 
+     theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold",  hjust=0.5), 
            axis.title=element_text(size=10), axis.text= element_text(size=8),
-           legend.title = element_text(size=12, face="bold"),
+           legend.title = element_text(size=10, face="bold"),
            legend.text = element_text(size = 10))
 p9
 
@@ -259,7 +259,7 @@ g1<-ggplot(perc_cop, aes(x=Classi_, y=Area_km2_cop)) +
     ggtitle("Aree di copertura vegetale pre-incendi") + 
     xlab("Classi") + ylab("Area (km2)") +
     theme(plot.title = element_text(size=16, face="bold",  hjust=0.5), 
-           axis.title=element_text(size=10), axis.text= element_text(size=8),
+           axis.title=element_text(size=10), axis.text= element_text(size=10),
            legend.title = element_text(size=12, face="bold"),
            legend.text = element_text(size = 10))
 g1
@@ -433,51 +433,31 @@ set.seed(60)  # la funzione set.seed mi permette di poter replicare più volte l
 dNBR_c4<-unsuperClass(deltaNBR, nClasses=4) # con la funzione unsuperClass applico una classificazione non supervisionata di 4 classi e la associo alla variabile dNBR_c4
 
 ## PLOT12 - La mappa di classificazione del deltaNBR
-clc <- colorRampPalette(c('yellow','red','darkgreen','green'))(4) # definisco una palette con 4 colori per le classi
-plot(dNBR_c4$map, col = clc, legend = FALSE, axes = FALSE, box = FALSE)
-legend(965031,4905419, legend = paste0("C",1:4), fill = clc,
-       title = "Classi", horiz = FALSE,  bty = "n")
+p16 <-ggplot(dNBR_c4$map, aes(x,y)) +
+     geom_raster(aes(fill=factor(layer))) +
+     scale_fill_manual(values=c('yellow','red','darkgreen','green'), name=("Severità di danno"), labels=c("Alta", "Intermedia", "Bassa o Nulla", "Bassa o Nulla")) +
+     ggtitle("Mappa di classificazione del deltaBNR") +     # titolo dell'immagine
+     xlab("Long") + ylab("Lat") +    #titoli degli assi
+     theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold",  hjust=0.5), 
+           axis.title=element_text(size=10), axis.text= element_text(size=8),
+           legend.title = element_text(size=10, face="bold"),
+           legend.text = element_text(size = 10))
+p16
 
 # La mappa di classificazione mette in evidenza due zone riconducibili alle aree non coinvolte dagli incendi (C3 e C4) e altre due alle zone invece colpite, con due 
 # diversi gradi di severità (C1, con i maggiori valori di deltaNBR, e C2). Anche in questo caso bisogna tenere conto di alcune interferenze legate alla nuvolosità.
 
 ## PLOT13 - Confronto tra il deltaNBR e la sua classificazione 
-par(mfrow=c(1,2))
-plot(deltaNBR, col=cld, main="differenza NBR")
-plot(dNBR_c4$map, col = clc, legend = FALSE, axes = FALSE, box = FALSE, main="Classificazione deltaNBR")
-legend(965031,4905419, legend = paste0("C",1:4), fill = clc,
-      title = "Classi", horiz = FALSE,  bty = "n")
+grid.arrange(p15, p16, ncol = 2)
 
 ## PLOT14 - Confronto tra classificazione pre-incendio e classificazione deltaNBR
-par(mfrow=c(1,2))
-plot(july10_c2$map, col = clc2, legend = FALSE, axes = FALSE, box = FALSE, main="Classi di vegetazione pre-incendio")
-legend(965031,4905419, legend = paste0("C",1:2), fill = clc2,
-       title = "Classi", horiz = FALSE,  bty = "n")
-plot(dNBR_c4$map, col = clc, legend = FALSE, axes = FALSE, box = FALSE, main="Zone di severità dei danni da incendio")
-legend(965031,4905419, legend = paste0("C",1:4), fill = clc,
-       title = "Classi", horiz = FALSE,  bty = "n")
+grid.arrange(p9, p16, ncol = 2)
 
 # Confrontando le due mappe di classificazione si osserva come il grado di severità maggiore di danno (C1) sono prevalenti nella porzione corrispondente alle aree boschive, 
 # dove il valore di riflettanza nel NIR di partenza era maggiore e quindi il calo di NBR è stato più drastico
 
-
-dNBR_c4$map # richiamando la variabile della mappa di classificazione ottengo informazioni sulla sua estensione:                          
-            # xmin 943077.6
-            # xmax 965030.7
-            # ymin 4882162
-            # ymax 4905419
-            # In base alle quali posiziono la legenda:
-            # x 965031
-            # y 4905419
-
-
-
 ## PLOT15 - Confronto tra l'immagine in falsi colori e la classificazione di deltaNBR
-par(mfrow=c(1,2))
-plotRGB(july25_crop, 11, 10, 4, stretch="lin")
-plot(dNBR_c4$map, col = clc, legend = FALSE, axes = FALSE, box = FALSE, main="Aree di severità di danno")
-legend(965031,4905419, legend = paste0("C",1:4), fill = clc,
-      title = "Classi", horiz = FALSE,  bty = "n")
+grid.arrange(p8, p16, ncol = 2)
 
 
 ## Ottenuta la classificazione è possibile calcolare le percentuali di area che rientrano nelle diverse classi
@@ -497,24 +477,15 @@ perc_d
 #   3    0.3849500
 #   4    0.2581497
 
-
 # Per cui approssimando si ha:
-# C1: 10.72%
-# C2: 24.97%
-# C3: 38.50%
-# C4: 25.81%
+# C1: 10.72%  --> Severità alta
+# C2: 24.97%  --> Severità intermedia
+# C3: 38.50%  --> Severità bassa o nulla
+# C4: 25.81%  --> Severità bassa o nulla
 
-## Conoscendo la risoluzione dell'immagine è possibile calcolare le aree di territorio coinvolte dall'incendio
-
-dNBR_c4$map # richiamando la variabile della mappa ottengo le informazioni sulla risoluzione lungo x e y    
-            # x: 23.20628 m
-            # y: 23.21091 m
-            
-# L'area di un pixel quindi è 
-# 23.20628 * 23.21091 = 538.6389 m2
-# L'area totale dell'immagine è
-# 538.6389 * pxtot = 510571504 m2 = 510.571504 km2
-
+## Conoscendo la risoluzione dell'immagine è possibile quantificare le aree di territorio coinvolte dall'incendio
+# Area dell'immagine= 510.571504 km2 
+# (Vedi procedimento per il calcolo dell'area alla riga 235)
 
 
 #####################################################################
@@ -524,7 +495,7 @@ dNBR_c4$map # richiamando la variabile della mappa ottengo le informazioni sulla
 ## Ottenuti i dati di interesse li inserisco in un dataset
 
 Classi_deltaNBR<-c("C1","C2", "C3", "C4") # alla variabile Classi associo i nomi delle classi ottenute
-Danno<- c( "Maggiore", "Minore", "Nullo", "Nullo")  # alla variabile Danno associo una descrizione qualitativa del danno sulla base dei valori di deltaNBR (più alti per danni maggiori)
+Danno<- c( "Alto", "Intermedio", "Basso o Nullo", "Basso o Nullo")  # alla variabile Danno associo una descrizione qualitativa del danno sulla base dei valori di deltaNBR (più alti per danni maggiori)
 Area_perc_dan<-c(0.1072, 0.2497, 0.3850, 0.2581)  # alla variabile Area_percentuale associo i valori ricavati precedentemente
 Area_km2_dan<-Area_perc_dan*510.571504  # moltiplicando l'area percentuale per l'area totale in km2 ottengo le aree in km2 che rientrano nelle 4 classi
 
@@ -532,5 +503,21 @@ perc_dan<-data.frame(Classi_deltaNBR, Danno, Area_perc_dan, Area_km2_dan)  # con
 perc_dan
 
 ## PLOT16 - Grafico a barre dei dati presenti nel dataframe
-g2<-ggplot(perc_dan, aes(x=Danno,y=Area_km2_dan)) + geom_bar(stat="identity", width=0.2, (aes(fill = Danno))) # con la funzione ggplot creo un grafico a barre che mostra 
-                                                                                                                                     # le aree e le classi che rientrano nei danni
+
+g2<-ggplot(perc_dan, aes(x=factor(Danno,level = c("Alto", "Intermedio", "Basso o Nullo")), y=Area_km2_dan)) + 
+    geom_bar(stat="identity", width=0.5, (aes(fill = Danno))) +
+    ggtitle("Aree danneggiate dall'incendio") + 
+    xlab("") + ylab("Area (km2)") +
+    theme(plot.title = element_text(size=16, face="bold",  hjust=0.5), 
+           axis.title=element_text(size=10), axis.text= element_text(size=10),
+          axis.text.x=element_blank(),
+           axis.ticks.x=element_blank(),
+           legend.title = element_text(size=12, face="bold"),
+           legend.text = element_text(size = 10))
+g2
+
+ # con la funzione ggplot creo un grafico a barre che mostra le aree risultano danneggiate dall'incendio
+
+
+
+
