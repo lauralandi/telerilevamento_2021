@@ -203,8 +203,8 @@ july10_c2<-unsuperClass(july10_crop, nClasses=2)
 
 p9 <-ggplot(july10_c2$map, aes(x,y)) +
      geom_raster(aes(fill=factor(layer))) +
-     scale_fill_manual(values=c('green', 'darkgreen'), name=("Copertura"), labels=c("Coltivazioni", "Boschiva")) +
-     ggtitle("Classificazione copertura vegetale pre-incendi") +     # titolo dell'immagine
+     scale_fill_manual(values=c('green', 'darkgreen'), name=("Copertura"), labels=c("Erbacea o \nColtivata", "Boschiva")) +
+     ggtitle("Mappa di classificazione") +     # titolo dell'immagine
      xlab("Long") + ylab("Lat") +    #titoli degli assi
      theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold",  hjust=0.5), 
            axis.title=element_text(size=10), axis.text= element_text(size=8),
@@ -246,7 +246,7 @@ july10_c2$map # richiamando la variabile della mappa ottengo le informazioni sul
 # Inserisco questi dati in un dataset
 
 Classi_<-c("C1","C2") # alla variabile Classi associo i nomi delle classi ottenute
-Copertura<- c( "Coltivazioni", "Boschiva")  # alla variabile Danno associo una descrizione qualitativa del danno sulla base dei valori di deltaNBR (più alti per danni maggiori)
+Copertura<- c( "Erbacea o \nColtivata", "Boschiva")  # alla variabile Danno associo una descrizione qualitativa del danno sulla base dei valori di deltaNBR (più alti per danni maggiori)
 Area_perc_cop<-c(0.4524, 0.5476)  # alla variabile Area_percentuale associo i valori ricavati precedentemente
 Area_km2_cop<-Area_perc_cop*510.571504  # moltiplicando l'area percentuale per l'area totale in km2 ottengo le aree in km2 che rientrano nelle 4 classi
 
@@ -273,7 +273,7 @@ g1
 #   STEP 6  -  Calcolo degli indici NDVI e NBR #
 ################################################
 
-# Per analizzare l'area incendiata è utile calcolare due indici di vegetazione: NDVI e NBR
+# Per analizzare l'area incendiata è utile calcolare due indici: il Normalized Difference Vegetation Index (NDVI) e il Normalized Burn Ratio (NBR)
 
 # L'indice NDVI è utilizzato per descrivere lo stato fisiologico della vegetazione e si basa sulla firma spettrale dei vegetali, che quando
 # sono in salute mostrano un picco di riflettanza nel NIR e assorbimento nel RED.
@@ -349,6 +349,7 @@ deltaNDVI<- NDVI_july10 - NDVI_july25
 p12<-ggplot(deltaNDVI, aes(x,y)) +
      geom_raster(aes(fill=layer)) + 
      scale_fill_gradientn(colors = clz, limits = c(0, 1)) +   
+     guides(fill = guide_colourbar(barwidth= 15))  +
      ggtitle("deltaNDVI") +     # titolo dell'immagine
      xlab("Long") + ylab("Lat") +    #titoli degli assi
      theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", hjust=0.5), 
@@ -411,6 +412,7 @@ deltaNBR<- NBR_july10 - NBR_july25
 p15<-ggplot(deltaNBR, aes(x,y)) +
      geom_raster(aes(fill=layer)) + 
      scale_fill_gradientn(colors = clz, limits = c(0, 1)) +   
+     guides(fill = guide_colourbar(barwidth= 15)) +
      ggtitle("deltaNBR") +     # titolo dell'immagine
      xlab("Long") + ylab("Lat") +    #titoli degli assi
      theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", hjust=0.5), 
