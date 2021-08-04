@@ -139,6 +139,8 @@ dev.off() # pulisco la finestra grafica dopo il procedimento per salvare corrett
 ### GREENLAND INCREASE OF TEMPERATURE
 ### Data and code from Emanuela Cosma
 
+# con installl.packages installo i pacchetti che mi interessano (è sufficiente farlo una volta)
+# una volta installati i pacchetti uso library per richiamare quelli che servono nel codice e poterli utilizzare
 # install.packages("raster")
 library(raster)
 # install.packages("RStoolbox")
@@ -148,49 +150,58 @@ library(rasterVis)
 # install.packages("knitr")
 library(knitr)
 
-setwd("C:/lab/greenland/")
-lst_2000<-raster("lst_2000.tif") #importo un layer raster
+setwd("C:/lab/greenland/")  # definisco l working directory
+
+lst_2000<-raster("lst_2000.tif") # con la funzione raster importo un file come oggetto raster
 lst_2005<-raster("lst_2005.tif")
 lst_2010<-raster("lst_2010.tif")
 lst_2015<-raster("lst_2015.tif")
 
-#creare multipanel con le 4 immagini
+# con la funzione par creo un multipanel 2x2 con le 4 immagini
 par(mfrow=c(2,2))
 plot(lst_2000)
 plot(lst_2005)
 plot(lst_2010)
 plot(lst_2015)
 
-rlist<-list.files(pattern="lst") #creo una lista di file e associo alla variabile rlist
-import<-lapply(rlist,raster) #applico la funzione raster su tutti i file della lista e associo alla variabile import (in questo modo li importo tutti insieme)
-TGr<-stack(import) # creo un univo file che contiene tutti quelli della lista importata
+rlist<-list.files(pattern="lst") # creo una lista di file dalla wd secondo un pattern (tutti i file che contengono lst nel nome) e la associo alla variabile rlist
+import<-lapply(rlist,raster) # con lapply applico la funzione raster su tutti i file della lista: associo quindi alla variabile import una lista di oggetti raster
+TGr<-stack(import) # con la funzione stack creo un unico oggetto di tipo RasterStack che contiene come layer i raster importati dalla lista
 
-plotRGB(TGr, 1, 2, 3, stretch="lin")
+plotRGB(TGr, 1, 2, 3, stretch="lin") # plotto l'immagine montando i layer in RGB
 
-levelplot(TGr) #plot dell'immagine
-levelplot(TGr) #plot del singolo layer dell'immagine con grafici della medie colonne e righe
-cl <- colorRampPalette(c("blue","light blue","pink","red"))(100)
-levelplot(TGr,col.regions=cl,main="Summer land surface temperature",names.attr=c("July 2000","July 2005", "July 2010", "July 2015"))
+levelplot(TGr$lst_2000) # con la funzione levelplot il singolo layer è plottato insieme ai grafici che, lungo la direzione x e y, rappresentano la media rispettivament di ogni colonna e riga
+cl <- colorRampPalette(c("blue","light blue","pink","red"))(100)  
+levelplot(TGr,col.regions=cl,main="Summer land surface temperature",       # la funzione levelplot permette di arricchire il grafico la color palette scelta,
+          names.attr=c("July 2000","July 2005", "July 2010", "July 2015"))                                 # i titoli dei singoli layer e un titolo generale
+                                                                           
+                                                                                                                                 
 
 ### Melt Data 
-melt_list<-list.files(pattern="melt")
-melt_import<-lapply(melt_list,raster)
-melt_stack<-stack(melt_import)
+# I dati sullo scioglimento sono un file per ogni anno, per importarli in un singolo oggetto seguo il procedimento:
+melt_list<-list.files(pattern="melt")  # creo una lista con tutti i file che contengono melt nel nome
+melt_import<-lapply(melt_list,raster)  # importo la lista di file come oggetti raster
+melt_stack<-stack(melt_import)  # creo un oggetto RasterStack che unisce tutti i layer importati
 levelplot(melt_stack,col.regions=cl,main="Annual Melt Data",names.attr=c("1979","1980", "1981", "1982", "1983", "1984", "1985", "1986", 
                                                                           "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", 
                                                                           "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", 
                                                                           "2003", "2004", "2005", "2007"))
+# uso levelplot per plottare tutti i layer insieme
 
-#sottrazione tra matrici 2007-1979
-melt_amount<- melt_stack$X2007annual_melt - melt_stack$X1979annual_melt
-cl2<-colorRampPalette(c("blue","white","red"))(100)
-levelplot(melt_amount,col.regions=cl2)
+# Per calcolare la variazione dello scioglimento tra il 1979 e il 2007 applico una sottrazione tra matrici (ovvero i corrispondenti layer)
+melt_amount<- melt_stack$X2007annual_melt - melt_stack$X1979annual_melt # alla variabile melt_amount associo il risultato della differenza tra il layer del 2007
+                                                                        # e quello del 1979 (che definisco tramite $)
+cl2<-colorRampPalette(c("blue","white","red"))(100) # scelgo una scala di colori che metta in risalto le differenze positive e quelle negative
+levelplot(melt_amount,col.regions=cl2) # plotto il risultato della differenza con la scala di colori scelta
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # 3. R Code - Copernicus
 
 ### VISUALIZZAZIONE DATI COPERNICUS
+
+# con installl.packages installo i pacchetti che mi interessano (è sufficiente farlo una volta)
+# una volta installati i pacchetti uso library per richiamare quelli che servono nel codice e poterli utilizzare
 
 #install.packages("ncdf4")
 library(raster)
@@ -199,18 +210,18 @@ library(RStoolbox) #richiamo il pacchetto RStoolbox
 library(ggplot2) #richiamo il pacchetto ggplot2
 library(rasterVis)
 
-setwd("C:/lab/")
+setwd("C:/lab/")  # definisco la working directory
 
-SWI<-raster("c_gls_SWI1km_202104071200_CEURO_SCATSAR_V1.0.1.nc")
+SWI<-raster("c_gls_SWI1km_202104071200_CEURO_SCATSAR_V1.0.1.nc")  # importo il file come oggetto raster
 
 cl <- colorRampPalette(c("red","pink","light blue","blue"))(100)
 cl2 <- colorRampPalette(c("red","yellow","pink","white"))(100)
-#plot(SWI,col=cl)
-levelplot(SWI,col.regions=cl2)
+levelplot(SWI,col.regions=cl2)  # plotto l'immagine con la scala colori scelta
 
 ## resampling
-SWIres<-aggregate(SWI,fact=10)
-plot(SWIres,col=cl,main="Soil Water Index")
+SWIres<-aggregate(SWI,fact=10) # con la funzione aggregate posso ricampionare il raster, ovvero ridurre il numero di pixel
+                               # con fact=10 calcola per ogni gruppo 10x10 di pixel una media producendo per ognuna di queste un solo pixel più grande in uscita
+plot(SWIres,col=cl,main="Soil Water Index") # plotto il risultato del ricampionamento
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -218,9 +229,12 @@ plot(SWIres,col=cl,main="Soil Water Index")
 
 ### REPORT IN KNITR
 
-setwd("C:/lab/")
-library(knitr)
-stitch("R_code_greenland.r", template=system.file("misc", "knitr-template.Rnw", package="knitr"))
+setwd("C:/lab/") # definisco la wd
+
+library(knitr)  # il pacchetto knitr permette di realizzare dei report
+
+stitch("R_code_greenland.r", template=system.file("misc", "knitr-template.Rnw", package="knitr")) # la funzione stitch crea un report automatico sulla base di uno
+                                                                                                  # script R, definito dal suo path, e un template  
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -228,33 +242,40 @@ stitch("R_code_greenland.r", template=system.file("misc", "knitr-template.Rnw", 
 
 ### ANALISI MULTIVARIATA
 
+# con installl.packages installo i pacchetti che mi interessano (è sufficiente farlo una volta)
+# una volta installati i pacchetti uso library per richiamare quelli che servono nel codice e poterli utilizzare
+
 library(raster)
 library(RStoolbox) #richiamo il pacchetto RStoolbox
 
-setwd("C:/lab/")
+setwd("C:/lab/")  #definisco la wd
 
-p224r63_2011 <- brick("p224r63_2011_masked.grd")
+p224r63_2011 <- brick("p224r63_2011_masked.grd")  # importo il file come oggetto RasterBrick, ovvero comporto da più layer
 
-plot(p224r63_2011)
+plot(p224r63_2011)  # plotto tutti i layer del raster importato
 
-plot(p224r63_2011$B1_sre,p224r63_2011$B2_sre,col="red", pch=19, cex=2)
-plot(p224r63_2011$B2_sre,p224r63_2011$B1_sre,col="red", pch=19, cex=2)
+plot(p224r63_2011$B1_sre,p224r63_2011$B2_sre,col="red", pch=19, cex=2)  # plotto una grafico a dispersione (scatterplot) che mette in relazione i valori di due layer ponendoli sugli assi x e y
 
-pairs(p224r63_2011)
+pairs(p224r63_2011) # con la funzione pairs creo una matrice di scatterplot che mettono in relazione i diversi layer scon tutte le combinazioni
 
 ### resampling (ricampionamento)
-p224r63_2011res <- aggregate(p224r63_2011, fact=10)  #riduco il numero di pixel (la risoluzione) con la funzione aggregate
+p224r63_2011res <- aggregate(p224r63_2011, fact=10)  # ricampiono il raster con un fattore 10 (in uscita ho 1 pixel ogni 100 del raster di partenza)
 
-par(mfrow=c(2,1))
+par(mfrow=c(2,1))  # plotto insieme su due righe l'immagine originale e l'immagine ricampionata in veri colori RGB
 plotRGB(p224r63_2011, r=4, g=3, b=2, stretch='lin')
 plotRGB(p224r63_2011res, r=4, g=3, b=2, stretch='lin')
 
-p224r63_2011res_PCA<-rasterPCA(p224r63_2011res) #contiene al suo interno mappa e informazioni sul modello
-summary(p224r63_2011res_PCA$model) #fa un sommario delle info del modello generato dalla funzione rasterPCA
-plot(p224r63_2011res_PCA$map)
-de.off()
-plotRGB(p224r63_2011res_PCA$map, r=1, g=2, b=3, stretch='lin')
-str(p224r63_2011res_PCA) #struttura dell'oggetto
+# L'analisi multivariata delle componenti principali PCA (Principal Component Analysis) permette la riduzione del numero di variabili senza perdere troppe informazioni.
+# La PCA consiste nel proiettare le variabili originarie in un nuovo sistema cartesiano nel quale le variabili vengono ordinate in ordine decrescente di varianza: 
+# la variabile con maggiore varianza viene proiettata sul primo asse (PC1), la seconda sul secondo asse (PC2) e così via. La riduzione della complessità avviene limitandosi 
+# ad analizzare solo le componenti principali, ovvero quelle che spiegano maggiore varianza.
+
+p224r63_2011res_PCA<-rasterPCA(p224r63_2011res) # la funzione rasterPCA applica un'analisi PCA e produce un oggetto che contiene la mappa e le informazioni sul modello
+summary(p224r63_2011res_PCA$model) # la funzione summary fa un sommario delle info del modello generato dall'analisi di rasterPCA, con le percentuali di varianza spiegate da ogni PC
+plot(p224r63_2011res_PCA$map)  # plotto tutte le componenti principali generate dall'analisi PCA
+
+plotRGB(p224r63_2011res_PCA$map, r=1, g=2, b=3, stretch='lin')  # plotto in RGB le prime tre PC (quelle che spiegano maggiore varianza)
+str(p224r63_2011res_PCA) # descrive le struttura dell'oggetto prodotto dall'analisi
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
