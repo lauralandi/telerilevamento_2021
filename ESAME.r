@@ -1,15 +1,15 @@
-                                                      ########################################################################                                                            
-                                                      ##   ANALISI IN REMOTE SENSING DELL'AREA DEL MONTIFERRU IN SARDEGNA   ##
-                                                      ##                COLPITA DAGLI INCENDI DI LUGLIO 2021                ##
-                                                      ##                                                                    ##
-                                                      ##                           10 Agosto 2021                           ##   
-                                                      ##                            Laura Landi                             ##
-                                                      ##                                                                    ##
-                                                      ##               Esame di telerilevamento geo-ecologico               ##
-                                                      ########################################################################
+                                                      #--------------------------------------------------------------------#                                                            
+                                                      #   ANALISI IN REMOTE SENSING DELL'AREA DEL MONTIFERRU IN SARDEGNA   #
+                                                      #                COLPITA DAGLI INCENDI DI LUGLIO 2021                #
+                                                      #                                                                    #
+                                                      #                           10 Agosto 2021                           #   
+                                                      #                            Laura Landi                             #
+                                                      #                                                                    #
+                                                      #               Esame di telerilevamento geo-ecologico               #
+                                                      #--------------------------------------------------------------------#
 
 
-                                  ###    INDICE    ###
+                                  #----- INDICE -----#
 
 #  STEP 1  -  Richiamare le library necessarie al codice e definire la working directory  ......... 026
 #  STEP 2  -  Scelta delle immagini su cui effettuare l'analisi e importazione  ................... 042
@@ -22,9 +22,9 @@
 
 
 
-#############################################################################################
+#-------------------------------------------------------------------------------------------#
 #   STEP 1  -  Richiamare le library necessarie al codice e definire la working directory   #
-#############################################################################################
+#-------------------------------------------------------------------------------------------#
 
 library(raster) # pacchetto con funzioni per elaborare file raster
 library(RStoolbox) # pacchetto con funzioni per processare le immagini (tra cui unsuperClass)
@@ -38,9 +38,9 @@ setwd("C:/lab/sardegna/")  # definire la working directory
 
 
 
-###################################################################################
+#---------------------------------------------------------------------------------#
 #   STEP 2  -  Scelta delle immagini su cui effettuare l'analisi e importazione   #
-###################################################################################
+#---------------------------------------------------------------------------------#
 
 ## Le due immagini utilizzate derivano dai satelliti Sentinel-2 e rappresentano la zona del Montiferru in provincia di 
 ## Oristano il 10 e il 25 Luglio 2021, ovvero prima e dopo gli incendi che hanno colpito l'area in quel mese.
@@ -90,9 +90,9 @@ july25
 
 
 
-#############################################################
+#-----------------------------------------------------------#
 #   STEP 3  -  Elaborazione e osservazione delle immagini   #
-#############################################################
+#-----------------------------------------------------------#
 
 ## PLOT1 - Le due immagini (10 e 25 Luglio) in RGB veri colori: r=red, g=green, b=blue
 
@@ -152,9 +152,9 @@ grid.arrange(p5, p6, nrow = 2, top=grid.text("Immagini in falsi colori", gp=gpar
 
 
 
-############################################################
+#----------------------------------------------------------#
 #   STEP 4  -  Focus sull'area di interesse per l'analisi  #
-############################################################
+#----------------------------------------------------------#
 
 ## Per analizzare meglio l'area bruciata dagli incendi mi focalizzo su un'area più stretta.
 ## In questo modo limito le interferenze che la presenza del mare e delle nuvole possono avere sull'analisi
@@ -190,9 +190,9 @@ grid.arrange(p7, p8, ncol = 2, top=grid.text("Immagini in falsi colori", gp=gpar
 
 
 
-###############################################################
+#-------------------------------------------------------------#
 #   STEP 5 - Classificazione della vegetazione pre-incendio   #
-###############################################################
+#-------------------------------------------------------------#
 
 # Applicando una classificazione sull'mmagine del 10 Luglio definisco due tipi di vegetazione, una con una maggiore riflettanza nel NIR (aree boschive) e
 # una con minore riflettanza (aree coltivate o a vegetazione erbacea).
@@ -273,9 +273,9 @@ g1
 
 
 
-##################################################
+#------------------------------------------------#
 #   STEP 6  -  Calcolo degli indici NDVI e NBR   #
-##################################################
+#------------------------------------------------#
 
 # Per analizzare l'area incendiata è utile calcolare due indici: il Normalized Difference Vegetation Index (NDVI) e il Normalized Burn Ratio (NBR)
 
@@ -435,9 +435,9 @@ ggarrange(p12, p15, ncol = 2, common.legend=TRUE, legend="bottom")
 
 
 
-###############################################
+#---------------------------------------------#
 #   STEP 7  -  Classificazione del deltaNBR   #
-###############################################
+#---------------------------------------------#
 
 # Per riconoscere e quantificare le aree più danneggiate dagli incendi applico una classificazione dell'indice deltaNBR 
 
@@ -501,9 +501,9 @@ perc_d
 
 
 
-#######################################################################
+#---------------------------------------------------------------------#
 #   STEP 8  -  Costruzione e plot di un dataset con i dati ottenuti   #
-#######################################################################
+#---------------------------------------------------------------------#
 
 ## Ottenuti i dati di interesse li inserisco in un dataset
 
