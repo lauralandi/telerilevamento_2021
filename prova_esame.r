@@ -8,6 +8,12 @@ library(rgdal)
 
 setwd("C:/lab/esame/")
 
+
+#####################################################################################
+#   e<-extent(943072.7, 965034.5, 4882167, 4905410)  # CANCELLARE PRIMA DI ESAME   #
+#####################################################################################
+
+
 rlist12<-list.files(pattern="luglio12") #creo una lista di file e associo alla variabile rlist
 import12<-lapply(rlist12,raster) #applico la funzione raster su tutti i file della lista e associo alla variabile import (in questo modo li importo tutti insieme)
 luglio12<-stack(import12) # creo un univo file che contiene tutti quelli della lista importata
