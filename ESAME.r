@@ -28,12 +28,13 @@
 library(raster) # pacchetto con funzioni per elaborare file raster
 library(RStoolbox) # pacchetto con funzioni per processare le immagini (tra cui unsuperClass)
 library(ggplot2) # pacchetto con diverse funzioni per creare e modificare grafici
+library(ggpubr) # pacchetto che aggiunge ulteriori funzioni a ggplot2 per personalizzare i grafici (tra cui ggarrange con common.legend)
 library(grid)  
 library(gridExtra) # pacchetto con funzioni per lavorare con grafici (tra cui grid.arrange)
 #library(rgdal)
 library(wesanderson) # pacchetto con diverse palette di colori ispirate a Wes Anderson
 #library(RColorBrewer)
-library(ggpubr)
+
 
 setwd("C:/lab/esame_sardegna/")  # definire la working directory
 
@@ -204,7 +205,7 @@ july10_c2<-unsuperClass(july10_crop, nClasses=2)
 p9 <-ggplot(july10_c2$map, aes(x,y)) +
      geom_raster(aes(fill=factor(layer))) +
      scale_fill_manual(values=c('green', 'darkgreen'), name=("Copertura"), labels=c("Erbacea o \nColtivata", "Boschiva")) +
-     ggtitle("Mappa di classificazione") +     # titolo dell'immagine
+     ggtitle("Mappa di classificazione pre-incendio") +     # titolo dell'immagine
      xlab("Long") + ylab("Lat") +    #titoli degli assi
      theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold",  hjust=0.5), 
            axis.title=element_text(size=10), axis.text= element_text(size=8),
