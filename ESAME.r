@@ -1,4 +1,4 @@
-                                                                 ###################################################
+                                                                 ###################################################                                                             
                                                                  ##                                               ##
                                                                  ##    ESAME DI TELERILEVAMENTO GEO-ECOLOGICO     ##  
                                                                  ##                10 Agosto 2021                 ##  
@@ -7,16 +7,16 @@
                                                                  ###################################################
 
 
-                                      ###    INDICE    ###
+                                  ###    INDICE    ###
 
-#  STEP 1  -  Richiamare le library necessarie al codice e definire la working directory  ......... xxx
-#  STEP 2  -  Scelta delle immagini su cui effettuare l'analisi e importazione  ................... xxx
-#  STEP 3  -  Elaborazione e osservazione delle immagini  ......................................... xxx
-#  STEP 4  -  Focus sull'area di interesse per l'analisi  ......................................... xxx
-#  STEP 5 -   Classificazione della vegetazione pre-incendio  ..................................... xxx
-#  STEP 6  -  Calcolo degli indici NDVI e NBR  .................................................... xxx
-#  STEP 7  -  Classificazione del deltaNBR  ....................................................... xxx
-#  STEP 8  -  Costruzione e plot di un dataset con i dati ottenuti  ............................... xxx
+#  STEP 1  -  Richiamare le library necessarie al codice e definire la working directory  ......... 024
+#  STEP 2  -  Scelta delle immagini su cui effettuare l'analisi e importazione  ................... 040
+#  STEP 3  -  Elaborazione e osservazione delle immagini  ......................................... 092
+#  STEP 4  -  Focus sull'area di interesse per l'analisi  ......................................... 154
+#  STEP 5 -   Classificazione della vegetazione pre-incendio  ..................................... 192
+#  STEP 6  -  Calcolo degli indici NDVI e NBR  .................................................... 275
+#  STEP 7  -  Classificazione del deltaNBR  ....................................................... 437
+#  STEP 8  -  Costruzione e plot di un dataset con i dati ottenuti  ............................... 503
 
 
 
@@ -158,7 +158,7 @@ grid.arrange(p5, p6, nrow = 2, top=grid.text("Immagini in falsi colori", gp=gpar
 ## In questo modo limito le interferenze che la presenza del mare e delle nuvole possono avere sull'analisi
 
 p6  # plotto l'immagine del 25 Luglio
-e <- drawExtent(show=TRUE, col="red") # con la funzione drawExtent disegno un riquadro sull'immagine p6 aperta e genero un oggetto extent associato alla variabile e
+e<- drawExtent(show=TRUE, col="red") # con la funzione drawExtent disegno un riquadro sull'immagine p6 aperta e genero un oggetto extent associato alla variabile e
 e   # richiamando la variabile e ottengo le sue informazioni:
     # class      : Extent 
     # xmin       : 943072.7 
@@ -201,7 +201,7 @@ july10_c2<-unsuperClass(july10_crop, nClasses=2)  # con unsuperClass applico una
 
 ## PLOT5 - La mappa di classificazione pre-incendio
 
-p9 <-ggplot(july10_c2$map, aes(x,y)) +   # con ggplot creo il grafico che contiene la mappa
+p9<-ggplot(july10_c2$map, aes(x,y)) +   # con ggplot creo il grafico che contiene la mappa
      geom_raster(aes(fill=factor(layer))) +  # geom_raster permette di plottare nel grafico un elemento raster
      scale_fill_manual(values=c('green', 'darkgreen'),  # definisco i colori delle classi
                        name=("Copertura"), labels=c("Erbacea o \nColtivata", "Boschiva")) +  # definisco nome della legenda ed etichette dei colori corrispondenti
@@ -267,7 +267,6 @@ g1<-ggplot(perc_cop, aes(x=Classi_, y=Area_km2_cop)) +  # con ggplot creo un gra
            legend.title = element_text(size=12, face="bold"),
            legend.text = element_text(size = 10))  # con theme modifico gli elementi del grafico ( titolo, testo dei titoli e valori degli assi, 
                                                                                                   # titolo ed etichette della legenda)
-
 g1
 
 
@@ -319,7 +318,7 @@ NDVI_july25
 
 clz<-wes_palette("Zissou1", 100, type = c("continuous"))  # associo alla variabile clz una palette di colori dal pacchetto wesanderson
 
-p10 <-ggplot(NDVI_july10, aes(x,y)) +
+p10<-ggplot(NDVI_july10, aes(x,y)) +
      geom_raster(aes(fill=layer)) + 
      scale_fill_gradientn(colors = clz, limits = c(-0.35, 1),  # impongo i limiti max e min della scala di colore
                           breaks = c(0, 0.25, 0.5, 0.75, 1), labels=c(0, 0.25, 0.5, 0.75, 1))  +  # indico i breaks della scala dove inserire le etichette
@@ -330,7 +329,7 @@ p10 <-ggplot(NDVI_july10, aes(x,y)) +
           axis.title=element_text(size=10), axis.text= element_text(size=8),
           legend.title = element_blank())  # tolgo il titolo della legenda, poichè è già indicato nel titolo del grafico
                 
-p11 <-ggplot(NDVI_july25, aes(x,y)) +
+p11<-ggplot(NDVI_july25, aes(x,y)) +
      geom_raster(aes(fill=layer)) + 
      scale_fill_gradientn(colors = clz, limits = c(-0.35, 1), 
                           breaks = c(0, 0.25, 0.5, 0.75, 1), labels=c(0, 0.25, 0.5, 0.75, 1))  +
@@ -383,7 +382,7 @@ NBR_july25
 
 ## PLOT9 - Confronto tra NBR del 10 Luglio e NBR del 25 luglio
 
-p13 <-ggplot(NBR_july10, aes(x,y)) +
+p13<-ggplot(NBR_july10, aes(x,y)) +
      geom_raster(aes(fill=layer)) + 
      scale_fill_gradientn(colors = clz, limits = c(-0.46, 0.85), 
                           breaks = c(-0.45, -0.2, 0.05, 0.3, 0.55, 0.8))  +
@@ -394,7 +393,7 @@ p13 <-ggplot(NBR_july10, aes(x,y)) +
           axis.title=element_text(size=10), axis.text= element_text(size=8),
           legend.title = element_blank())
         
-p14 <-ggplot(NBR_july25, aes(x,y)) +
+p14<-ggplot(NBR_july25, aes(x,y)) +
      geom_raster(aes(fill=layer)) + 
      scale_fill_gradientn(colors = clz, limits = c(-0.46, 0.85), 
                           breaks = c(-0.45, -0.2, 0.05, 0.3, 0.55, 0.8))  +
@@ -446,7 +445,7 @@ dNBR_c4<-unsuperClass(deltaNBR, nClasses=4) # con unsuperClass applico una class
 
 ## PLOT12 - La mappa di classificazione del deltaNBR
 
-p16 <-ggplot(dNBR_c4$map, aes(x,y)) +
+p16<-ggplot(dNBR_c4$map, aes(x,y)) +
      geom_raster(aes(fill=factor(layer))) +
      scale_fill_manual(values=c('yellow','red','darkgreen','green'), 
                        name=("Severità di danno"), labels=c("Alta", "Intermedia", "Bassa o Nulla", "Bassa o Nulla")) +
