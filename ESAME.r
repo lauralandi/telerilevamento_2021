@@ -1,22 +1,24 @@
-                                                                 ###################################################                                                             
-                                                                 ##                                               ##
-                                                                 ##    ESAME DI TELERILEVAMENTO GEO-ECOLOGICO     ##  
-                                                                 ##                10 Agosto 2021                 ##  
-                                                                 ##                  Laura Landi                  ##  
-                                                                 ##                                               ##
-                                                                 ###################################################
+                                                      ########################################################################                                                            
+                                                      ##   ANALISI IN REMOTE SENSING DELL'AREA DEL MONTIFERRU IN SARDEGNA   ##
+                                                      ##                COLPITA DAGLI INCENDI DI LUGLIO 2021                ##
+                                                      ##                                                                    ##
+                                                      ##                           10 Agosto 2021                           ##   
+                                                      ##                            Laura Landi                             ##
+                                                      ##                                                                    ##
+                                                      ##               Esame di telerilevamento geo-ecologico               ##
+                                                      ########################################################################
 
 
                                   ###    INDICE    ###
 
-#  STEP 1  -  Richiamare le library necessarie al codice e definire la working directory  ......... 024
-#  STEP 2  -  Scelta delle immagini su cui effettuare l'analisi e importazione  ................... 040
-#  STEP 3  -  Elaborazione e osservazione delle immagini  ......................................... 092
-#  STEP 4  -  Focus sull'area di interesse per l'analisi  ......................................... 154
-#  STEP 5 -   Classificazione della vegetazione pre-incendio  ..................................... 192
-#  STEP 6  -  Calcolo degli indici NDVI e NBR  .................................................... 275
-#  STEP 7  -  Classificazione del deltaNBR  ....................................................... 437
-#  STEP 8  -  Costruzione e plot di un dataset con i dati ottenuti  ............................... 503
+#  STEP 1  -  Richiamare le library necessarie al codice e definire la working directory  ......... 026
+#  STEP 2  -  Scelta delle immagini su cui effettuare l'analisi e importazione  ................... 042
+#  STEP 3  -  Elaborazione e osservazione delle immagini  ......................................... 094
+#  STEP 4  -  Focus sull'area di interesse per l'analisi  ......................................... 156
+#  STEP 5 -   Classificazione della vegetazione pre-incendio  ..................................... 194
+#  STEP 6  -  Calcolo degli indici NDVI e NBR  .................................................... 277
+#  STEP 7  -  Classificazione del deltaNBR  ....................................................... 439
+#  STEP 8  -  Costruzione e plot di un dataset con i dati ottenuti  ............................... 505
 
 
 
