@@ -284,51 +284,44 @@ str(p224r63_2011res_PCA) # descrive le struttura dell'oggetto prodotto dall'anal
 ### CLASSIFICAZIONE IMMAGINI 
 ### DATI SOLAR ORBITER
 
+# uso library per richiamare i pacchetti che servono nel codice e poterli utilizzare
 library(raster)
-
 library(RStoolbox) #richiamo il pacchetto RStoolbox
 library(ggplot2) #richiamo il pacchetto ggplot2
 
+setwd("C:/lab/") # definisco la wd
 
-setwd("C:/lab/")
+so <- brick("Solar_Orbiter_s_first_views_of_the_Sun_pillars.jpg")  # importo il file come un oggetto RasterBrick, ovvero costituito da più RasterLayer
+so # vedo le informazioni dell'immagine importata
+plot(so) # visualizzo le tre bande separate
+plotRGB(so, 1,2,3, stretch="lin") # visualizzo le tre bande montate in RGB
 
-so <- brick("Solar_Orbiter_s_first_views_of_the_Sun_pillars.jpg")
-so #vedo le info della immagine
-plot(so) #visualizzo le tre bande separate
-plotRGB(so, 1,2,3, stretch="lin") #visualizzo le tre bande montate in RGB
-
-set.seed(42) # fa in modo che il risultato sia sempre lo stesso nei diversi run utilizzando sempre lo stesso set di pixel che altrimenti sarebbe sempre randomica
-so_c3 <- unsuperClass(so, nClasses=3) #classificazone non supervisionata che produce una mappa e il model con le info
+set.seed(42) # la funzione set.seed fa in modo che il risultato sia sempre lo stesso nei diversi run utilizzando sempre lo stesso set di pixel che altrimenti sarebbe ogni volta randomico
+so_c3 <- unsuperClass(so, nClasses=3) # classificazone non supervisionata che produce un oggetto costiruio dalla mappa e dal modello con le informazioni
 so_c20 <- unsuperClass(so, nClasses=20) #classificazione con 20 classi
-plot(so_c3$map) # plotto la mappa prodotta dalla funzione unsuperClass
+plot(so_c3$map) # plotto la mappa prodotta dalla funzione unsuperClass, richiamandola con $ all'interno dell'oggetto output della classificazione
 plot(so_c20$map)
 
-#carico una seconda immagine
-so2 <- brick("Solar_Orbiter_spots_campfires_on_the_Sun_annotated.jpg")
-plotRGB(so2, 1, 2, 3, stretch="lin")
+so2 <- brick("Solar_Orbiter_spots_campfires_on_the_Sun_annotated.jpg") # # importo una seconda immagine come un oggetto RasterBrick
+plotRGB(so2, 1, 2, 3, stretch="lin")  # plotto l'immagine in RGB
 
+# Applico classicicazioni con diverso numero di classi
 so2_c3 <- unsuperClass(so2, nClasses=3) 
 plot(so2_c3$map)
 so2_c20 <- unsuperClass(so2, nClasses=20)
 plot(so2_c20$map)
 
-### PROVA CON FOTO
-fiume<-brick("photo6034998005653942920.jpg")
-fiume_c3 <- unsuperClass(fiume, nClasses=3) 
-plot(fiume_c3$map)
-fiume_c20 <- unsuperClass(fiume, nClasses=20)
-plot(fiume_c20$map)
-
 
 ### DATI GRAND CANYON
 
-gc<-brick("dolansprings_oli_2013088_canyon_lrg.jpg")
-plotRGB(gc,r=1,g=2,b=3,stretch="lin")
+gc<-brick("dolansprings_oli_2013088_canyon_lrg.jpg") # importo l'immagine del grandcanyon
+plotRGB(gc,r=1,g=2,b=3,stretch="lin") # plotto l'immagine in RGB
 
-gc_c2 <- unsuperClass(gc, nClasses=2)
-cl <- colorRampPalette(c('blue','yellow'))(100)
-plot(gc_c2$map, col=cl)
+gc_c2 <- unsuperClass(gc, nClasses=2)  # applico una classificazione con 2 classi
+cl <- colorRampPalette(c('blue','yellow'))(100) # definisco una color palette
+plot(gc_c2$map, col=cl) # plotto la mappa di classificazione con la scala di colori scelta
 
+# applico lo stesso procedimento per una seconda classificazione con 4 classi:
 gc_c4 <- unsuperClass(gc, nClasses=4)
 cl2 <- colorRampPalette(c('blue','green', 'orange','yellow'))(100)
 cl3 <- colorRampPalette(c('blue','green', 'pink','orange'))(100)
@@ -340,22 +333,23 @@ plot(gc_c4$map, col=cl2)
 
 ##### GGPLOT2
 
+# uso library per richiamare i pacchetti che servono nel codice e poterli utilizzare
 library(raster)
 library(RStoolbox)
 library(ggplot2)
 library(gridExtra)
 
-setwd("~/lab/")
+setwd("~/lab/") # definisco la wd
 
-p224r63 <- brick("p224r63_2011_masked.grd")
+p224r63 <- brick("p224r63_2011_masked.grd")  # importo l'immagine 
 
-ggRGB(p224r63,3,2,1, stretch="lin")
-ggRGB(p224r63,4,3,2, stretch="lin")
+ggRGB(p224r63,3,2,1, stretch="lin") # con la funzione ggRGB del pacchetto ggplot2 visualizzo l'immagine in RGB in veri colori
+ggRGB(p224r63,4,3,2, stretch="lin")  # con la funzione ggRGB del pacchetto ggplot2 visualizzo l'immagine in RGB in falsi colori
 
-p1 <- ggRGB(p224r63,3,2,1, stretch="lin")
+p1 <- ggRGB(p224r63,3,2,1, stretch="lin")  # associo l'output del plot a una variabile p1
 p2 <- ggRGB(p224r63,4,3,2, stretch="lin")
 
-grid.arrange(p1, p2, nrow = 2) # this needs gridExtra
+grid.arrange(p1, p2, nrow = 2) # con la funzione grid.arrange del pacchetto gridExtra costruisco un multipanel con due righe dove plottare le due immagini
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -363,66 +357,70 @@ grid.arrange(p1, p2, nrow = 2) # this needs gridExtra
 
 ### INDICI DI VEGETAZIONE
 
+# uso library per richiamare i pacchetti che servono nel codice e poterli utilizzare
 library(raster)
 library(RStoolbox)
 library(rasterdiv) # wordlwide NDVI
 library(rasterVis)
 
-setwd("C:/lab/")
+setwd("C:/lab/")  # definisco la wd
 
+# importo le due immagini come oggetti RasterBrick:
 defor1<-brick("defor1.jpg")
 defor2<-brick("defor2.jpg")
 
-### B1=NIR B2=RED B3=GREEN
+# Le bande dell'immagino sono:
+# B1=NIR B2=RED B3=GREEN
 
-par(mfrow=c(2,1))
-plotRGB(defor1, r=1, g=2, b=3, stretch='lin')
+par(mfrow=c(2,1))  # creo un multipanel di due righe dove plottare le immagini
+plotRGB(defor1, r=1, g=2, b=3, stretch='lin')  # plotto le immagini all'interno del multipanel in veri colori
 plotRGB(defor2, r=1, g=2, b=3, stretch='lin')
 
-#le bande dentro defor1 si chiamano defor1.1, defor 1.2, defor1.3
-cl <- colorRampPalette(c('darkblue','yellow','red','black'))(100) # specifying a color scheme
-DVI1<-defor1$defor1.1 - defor1$defor1.2 #calcolo DVI sottraendo B1-B2 (NIR-RED)
-plot(DVI1, col=cl, main="DVI at time 1")
+# Calcolo del DVI = (NIR-RED)
+# I layer del RasteBrick defor1 si chiamano defor1.1, defor 1.2, defor1.3 e corrispondono alle tre bande
+cl <- colorRampPalette(c('darkblue','yellow','red','black'))(100) # definisco una scala colori
+DVI1<-defor1$defor1.1 - defor1$defor1.2 # calcolo il DVI della prima immagine applicando la sottrazione tra matrici B1-B2 (NIR-RED) utilizzando $ per specificare il layer che mi interessa
+plot(DVI1, col=cl, main="DVI at time 1") # plotto il risultato dell'operazione con la scala colori scelta e un titolo
 
-DVI2<-defor2$defor2.1 - defor2$defor2.2 #calcolo DVI sottraendo B1-B2 (NIR-RED)
+DVI2<-defor2$defor2.1 - defor2$defor2.2 # calcolo il DVI della seconda immagine sottraendo B1-B2 (NIR-RED) 
+plot(DVI2, col=cl, main="DVI at time 2") # plotto il DVI ottenuto
+
+par(mfrow=c(2,1)) # creo un multipanel con due righe dove plottare i due DVI
+plot(DVI1, col=cl, main="DVI at time 1")
 plot(DVI2, col=cl, main="DVI at time 2")
 
-par(mfrow=c(2,1))
-plot(DVI1, col=cl, main="DVI at time 1")
-plot(DVI2, col=cl, main="DVI at time 2")
-
-#sottraiamo il secondo DVI al primo per capire di quanto è calato nel tempo
+# sottraggo il secondo DVI al primo per capire di quanto è calato nel tempo e plotto il risultato con una scala di colori scelta
 deltaDVI<- DVI1 - DVI2
 cld <- colorRampPalette(c('blue','white','red'))(100) 
 plot(deltaDVI, col=cld, main="differenza DVI")
 
-## calcolo del NDVI
-## NDVI= (NIR-RED)/(NIR+RED)
-
-NDVI1<-(defor1$defor1.1-defor1$defor1.2)/(defor1$defor1.1+defor1$defor1.2)
+## calcolo del NDVI = (NIR-RED)/(NIR+RED)
+# (normalizzo il DVI per la somma delle due bande)
+NDVI1<-(defor1$defor1.1-defor1$defor1.2)/(defor1$defor1.1+defor1$defor1.2) # applico l'operazione tra matrici specificando i layer corrispondenti alle bande con $
 NDVI2<-(defor2$defor2.1-defor2$defor2.2)/(defor2$defor2.1+defor2$defor2.2)
-par(mfrow=c(2,1))
+par(mfrow=c(2,1))  # creo un multipanel con due righe dove plottare i due NDVI calcolati
 plot(NDVI1, col=cl, main="NDVI at time 1")
 plot(NDVI2, col=cl, main="NDVI at time 2")
 
-deltaNDVI<- NDVI1 - NDVI2
-plot(deltaNDVI, col=cld, main="differenza DVI")
+deltaNDVI<- NDVI1 - NDVI2  # calcolo la differenza tra i due NDVI per valutare quanto è calato nel tempo
+plot(deltaNDVI, col=cld, main="differenza DVI")  # plotto il risultato del deltaNDVI
 
 
 ## RStoolbox:: spectralIndices
 
-vi1<-spectralIndices(defor1, green=3, red=2, nir=1)
-plot(vi1, col=cl)
+vi1<-spectralIndices(defor1, green=3, red=2, nir=1)  # la funzione spectraIndices del pacchetto RStoolbox produce in output una serie di indici multispettrali,
+                                                      # tra cui anche NDVI, calcolati sul raster di input
+plot(vi1, col=cl) # plotto gli indici calcolati 
 
-vi2 <- spectralIndices(defor2, green = 3, red = 2, nir = 1)
-plot(vi2, col=cl)
+vi2 <- spectralIndices(defor2, green = 3, red = 2, nir = 1) # applico la funzione spectralIndices anche sulla seconda immagine per ottenere gli indici
+plot(vi2, col=cl)  # plotto il secondo risultato
 
 ### worldwide NDVI
-plot(copNDVI) #deriva da pacchetto rasterdiv
-copNDVI<-raster::reclassify(copNDVI, cbind(253:255,NA))
-#cbind è funzione che trasforma in NA (non valori) pixel scelti, in questo caso l'acqua
+plot(copNDVI) # copNDVI è un RasterLayer che fa parte del pacchetto rasterdiv e rappresenta l'NDVI a scala globale
+copNDVI<-raster::reclassify(copNDVI, cbind(253:255,NA))  # riclassifico l'immagine trasformando in NA (non valori) i pixel scelti, in questo caso l'acqua, 
+                                                         # tramite la funzione cbind
 
-levelplot(copNDVI)     
+levelplot(copNDVI) # plotto il risultato con i pixel acqua eliminati
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -430,71 +428,73 @@ levelplot(copNDVI)
 
 ### LAND COVER
 
+# uso library per richiamare i pacchetti che servono nel codice e poterli utilizzare
 library(raster)
 library(RStoolbox)
 library(ggplot2) 
 library(gridExtra)
 
-setwd("C:/lab/")
+setwd("C:/lab/")  # definisco la wd
 
+# importo le due immagini come RasterBrick:
 defor1 <- brick("defor1.jpg") 
 defor2 <- brick("defor2.jpg")
 
+# I layer e le corrispondenti bande sono:
 # defor1.1 = NIR
 # defor1.2 = red
 # defor1.3 = green
 
-### GGPLOT2
 
-par(mfrow=c(2,1))
-plotRGB(defor1, r=1, g=2, b=3, stretch="Lin")
-plotRGB(defor2, r=1, g=2, b=3, stretch="Lin")
+par(mfrow=c(2,1)) # creo un multipanel di due righe dove plottare le immagini importate
+plotRGB(defor1, r=1, g=2, b=3, stretch="Lin")  # plotto la prima immagine in falsi colori r=nir g=red b=green
+plotRGB(defor2, r=1, g=2, b=3, stretch="Lin") # plotto la seconda immagine in falsi colori r=nir g=red b=green
 
-## multiframe con ggplot con gridExtra
-p1<-ggRGB(defor1, r=1, g=2, b=3, stretch="Lin") #ggRGB da ggplot2
+# plotto le due immagini in falsi colori ma con la funzione ggRGB e le associo a due variabili p1 e p2
+p1<-ggRGB(defor1, r=1, g=2, b=3, stretch="Lin") 
 p2<-ggRGB(defor2, r=1, g=2, b=3, stretch="Lin")
-grid.arrange(p1,p2,nrow=2) #grid.arrange da gridExtra
+grid.arrange(p1,p2,nrow=2) # con grid.arrange plotto le due immagini insieme su due righe
 
 
-##### CLASSIFICAZIONE
-
-#set.seed() permette di ottenere sempre lo stesso risultato
-
-d1c <- unsuperClass(defor1, nClasses=2)
-cl <- colorRampPalette(c('black','green'))(100)
+set.seed(42)  # la funzione set.seed permette di ottenere sempre lo stesso risultato
+d1c <- unsuperClass(defor1, nClasses=2)  # applico una classificazione a due classi alla prima immagine
+cl <- colorRampPalette(c('black','green'))(100) #definisco due color palette
 cl2 <- colorRampPalette(c('green','black'))(100)
-par(mfrow=c(2,1))
+par(mfrow=c(2,1)) # creo un multipanel di due righe dove plottare la mappa di classificaizone con le due diverse colorpalette
 plot(d1c$map, col=cl)
 plot(d1c$map, col=cl2)
 
+# applico lo stesso procedimento sulla seconda foto:
 d2c<- unsuperClass(defor2, nClasses=2)
 par(mfrow=c(2,1))
 plot(d2c$map, col=cl)
 plot(d2c$map, col=cl2)
 
-d1c3 <- unsuperClass(defor1, nClasses=3)
-d2c3 <- unsuperClass(defor2, nClasses=3)
-par(mfrow=c(2,1))
+d1c3 <- unsuperClass(defor1, nClasses=3) # applico una classificazione a 3 classi sulla prima foto
+d2c3 <- unsuperClass(defor2, nClasses=3)  # applico una classificazione a 3 classi sulla seconda foto
+par(mfrow=c(2,1)) # creo un multipanel a due righe dove plottare le due mapper di classificaizone ottenute
 plot(d1c3$map)
 plot(d2c3$map)
 
-####### CALCOLARE LE AREE DI FORESTA PERSE
-#       (Calcolare la frequenza dei pixel di una certa classe)
+#### CALCOLARE LE AREE DI FORESTA PERSE
 
-freq(d1c$map)
+# Ottenuta la classificazione posso calcolare la frequenza dei pixel nelle diverse classi:
+freq(d1c$map)  # la funzione freq restituisce il numero di pixel che ricade in ogni classe
 #     value  count
 # [1,]     1 305922
 # [2,]     2  35370
-somma1<- 305922+35370
-prop1<-freq(d1c$map)/somma1 #proporzioni delle due classi nella immagine
+
+somma1<- 305922+35370 # sommo i pixel di ogni classe per conoscere il totale
+prop1<-freq(d1c$map)/somma1 # divido i valori di pixel appartenenti ad ogni classe per il totale in modo da ottenere i valori proporzionali delle classi 
 #       value     count
 # [1,] 2.930042e-06 0.8963644
 # [2,] 5.860085e-06 0.1036356
 
-# classe 1 = 89,6%
+# dai valori proporzionali definisco le percentuali di ogni classe:
+# classe 1 = 89,6% 
 # classe 2 = 10,3%
 
-
+# applicp lo stesso procedimento per la classificazione della seconda foto:
 freq(d2c$map)
 #      value  count
 # [1,]     1 178312
@@ -511,22 +511,26 @@ prop2<-freq(d2c$map)/somma2
 
 
 ########## GENERARE UN DATASET (DATAFRAME)
-cover<-c("Forest","Agricolture")
-percent_1992<-c(89.64,10.36)
-percent_2006<-c(52.03,47.97)
-percentages<-data.frame(cover,percent_1992,percent_2006)
-percentages
 
-## usiamo ggplot2 per creare un grafico
+cover<-c("Forest","Agricolture") # applico alla variabile cover le etichette che voglio associare alle due classi
+percent_1992<-c(89.64,10.36) # applico alla variabile percent_1992 i valori percentuali calcolati dalla classificazione della prima immagine
+percent_2006<-c(52.03,47.97) # applico alla variabile percent_2006 i valori percentuali calcolati dalla classificazione della seconda immagine
+percentages<-data.frame(cover,percent_1992,percent_2006)  # con la funzione data.frame creo un dataset contenente le variabili precedentemente definite
+percentages  # richiamando la variabile mi restituisce il dataset costruito
 
-g1<-ggplot(percentages, aes(x=cover,y=percent_1992,color=cover)) + geom_bar(stat="identity", fill="white")   
-g2<-ggplot(percentages, aes(x=cover,y=percent_2006,color=cover)) + geom_bar(stat="identity", fill="white") 
+# creo due grafici con i valori delle due classificazioni all'interno del dataser
+g1<-ggplot(percentages, aes(x=cover,y=percent_1992,color=cover)) +  # con ggplot creo un grafico con i dati del dataset impostando i dati del 1992 sull'asse y 
+                                                                                                                     # e le classi (le loro etichette) sull'asse x
+            geom_bar(stat="identity", fill="white")   # geom_bar permette di relizzare un grafico a barre
+
+g2<-ggplot(percentages, aes(x=cover,y=percent_2006,color=cover)) + geom_bar(stat="identity", fill="white") # creo un secondo grafico a barre con i dati del 2006 sull'asse y
+
 # aes indica l'estetica del grafico
-# geom indica il tipo di geometria per il dato (esempio punto o linea)
+# geom indica il tipo di geometria con cui visualizzare il dato
 # color indica a quali oggetti facciamo discriminare le classi
 # stat="identity" indica che usiamo i dati del nostro dataset
 
-grid.arrange(g1,g2,nrow=2)
+grid.arrange(g1,g2,nrow=2)  # con grid.arrange plotto i due grafici su due righe
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
