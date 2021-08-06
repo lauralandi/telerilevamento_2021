@@ -529,4 +529,4 @@ g2<-ggplot(perc_dan, aes(x=factor(Danno,level = c("Alto", "Intermedio", "Basso o
            legend.title = element_text(size=12, face="bold"),
            legend.text = element_text(size = 10))    # con theme modifico gli elementi del grafico ( titolo, testo dei titoli e valori degli assi, 
                                                                                                   # titolo ed etichette della legenda)
-g2
+g2    
