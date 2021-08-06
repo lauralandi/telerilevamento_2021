@@ -1,4 +1,4 @@
- #--------------------------------------------------------------------#                                                            
+                                                      #--------------------------------------------------------------------#                                                            
                                                       #   ANALISI IN REMOTE SENSING DELL'AREA DEL MONTIFERRU IN SARDEGNA   #
                                                       #                COLPITA DAGLI INCENDI DI LUGLIO 2021                #
                                                       #                                                                    #
