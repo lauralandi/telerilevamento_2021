@@ -23,12 +23,14 @@
 
 # Primo codice in R per telerilevamento
 
-# install.packages("raster") # con installl.packages installo i pacchetti che mi interessano (è sufficiente farlo una volta)
+# con installl.packages installo i pacchetti che mi interessano (è sufficiente farlo una volta)
+# install.packages("raster") 
 # install.packages("RStoolbox")
 # install.packages("ggplot2")
-library(raster) #richiamo il pacchetto raster  # una volta installati i pacchetti uso library per richiamare quelli che servono nel codice e poterli utilizzare
-library(RStoolbox) #richiamo il pacchetto RStoolbox
-library(ggplot2) #richiamo il pacchetto ggplot2
+# una volta installati i pacchetti uso library per richiamare quelli che servono nel codice e poterli utilizzare
+library(raster) # pacchetto con funzioni per elaborare file raster  
+library(RStoolbox) # pacchetto con funzioni per processare le immagini (tra cui unsuperClass)
+library(ggplot2) # pacchetto con diverse funzioni per creare e modificare grafici
 
 setwd("C:/lab/") #imposto la working directory
 
@@ -51,30 +53,30 @@ plot(p224r63_2011,col=cl1) # plotto l'immagine con la nuova scala colore
 dev.off() # pulisco la finestra grafica
 plot(p224r63_2011$B1_sre, col=cl1) # plotto una sola banda a scelta usando $ per definire il layer specifico dell'oggetto RasterBrick che mi interessa
 
-# con la funzione par definisco la visualizzazione di più grafici insieme in righe e colonne a mia scelta:
+# con la funzione par definisco la visualizzazione di più grafici insieme in un multipanel con righe e colonne a mia scelta:
 par(mfrow=c(2,1)) # 2 righe e 1 colonna
-plot(p224r63_2011$B1_sre,col=cl1)
+plot(p224r63_2011$B1_sre,col=cl1) 
 plot(p224r63_2011$B2_sre,col=cl1)
 
 par(mfrow=c(4,1)) # 4 righe e 1 colonna
-plot(p224r63_2011$B1_sre,col=cl1)
+plot(p224r63_2011$B1_sre,col=cl1) # plotto le immagini da inserire nel multipanel
 plot(p224r63_2011$B2_sre,col=cl1)
 plot(p224r63_2011$B3_sre,col=cl1)
 plot(p224r63_2011$B4_sre,col=cl1)
 
 par(mfrow=c(2,2)) # 2 righe e 2 colonne
-plot(p224r63_2011$B1_sre,col=cl1)
+plot(p224r63_2011$B1_sre,col=cl1) # plotto le immagini da inserire nel multipanel
 plot(p224r63_2011$B2_sre,col=cl1)
 plot(p224r63_2011$B3_sre,col=cl1)
 plot(p224r63_2011$B4_sre,col=cl1)
 
 # associo una scala colore diversa ad ogni banda e le plotto in un quadrato 2x2
-par(mfrow=c(2,2))
-clb<- colorRampPalette(c("darkblue", "blue", "lightblue")) (100)
+par(mfrow=c(2,2)) # 2 righe 2 colonne
+clb<- colorRampPalette(c("darkblue", "blue", "lightblue")) (100)  # definisco le scale colori
 clv<- colorRampPalette(c("darkgreen", "green", "lightgreen")) (100)
 clr<- colorRampPalette(c("darkred", "red", "orange")) (100)
 clnir<- colorRampPalette(c("pink", "salmon","magenta")) (100)
-plot(p224r63_2011$B1_sre,col=clb)
+plot(p224r63_2011$B1_sre,col=clb)  # plotto le immagini all'interno del multipanel con le nuove scale colori
 plot(p224r63_2011$B2_sre,col=clv)
 plot(p224r63_2011$B3_sre,col=clr)
 plot(p224r63_2011$B4_sre,col=clnir)
@@ -92,7 +94,7 @@ plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="hist") # le due funzioni stretch d
 
 
 pdf("pdf1") # salvo il risultato come pdf nella working directory
-par(mfrow=c(2,2)) # plotto le immagini in un grafico 2x2
+par(mfrow=c(2,2)) # imposto un multipanel 2x2 dove plottare le immagini
 plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin") # immagine a colori naturali, R=RED G=GREEN B=BLUE
 plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin") # immagine in falsi colori R=NIR G=RED B=GREEN
 plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin") # immagine in falsi colori R=RED G=NIR B=GREEN
@@ -100,7 +102,7 @@ plotRGB(p224r63_2011, r=3, g=2, b=4, stretch="Lin") # immagine in falsi colori R
 dev.off() # pulisco la finestra grafica dopo il procedimento per salvare correttamente il pdf
 
 #confronto le immagin a colori naturali e in falsi colori (nir in verde) con diversi stretch (lin e his)
-par(mfrow=c(3,1))
+par(mfrow=c(3,1))  # imposto un multipanel 1x3 dove plottare le immagini
 plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin") # immagine a colori naturali, R=RED G=GREEN B=BLUE con stretch lin
 plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin") # immagine in falsi colori R=RED G=NIR B=GREEN con stretch lin
 plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="hist") # immagine in falsi colori R=RED G=NIR B=GREEN con stretch his
@@ -108,21 +110,21 @@ plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="hist") # immagine in falsi colori 
 
 ### OSSERVARE CAMBIAMENTI NEL TEMPO DELLA STESSA ZONA
 
-p224r63_1988 <- brick("p224r63_1988_masked.grd") # con la funzione brick importol'immagine del 1988 come oggetto RasterBrick
+p224r63_1988 <- brick("p224r63_1988_masked.grd") # con la funzione brick importo l'immagine del 1988 come oggetto RasterBrick
 plot(p224r63_1988) # plotto tutte le bande separate
 plotRGB(p224r63_1988, r=3, g=2, b=1, stretch="Lin") # plotto l'immagine a colori naturali
 
 # multitemporal set con stretch lineare: plotto su due righe l'immagine del 1988 e del 2011 per confrontarle
-par(mfrow=c(2,1))
+par(mfrow=c(2,1)) # multipanel 1x2
 plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="Lin") # immagine 1988
 plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin") # immagine 2011
 
 # multitemporal set con stretch histogram: plotto su due righe l'immagine del 1988 e del 2011 per confrontarle
-par(mfrow=c(2,1))
+par(mfrow=c(2,1)) # multipanel 1x2
 plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="hist") #immagine 1988
 plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="hist") #immagine 2011
 
-#pdf con set 4x4 delle immagini 1988 e 2011 in stretch lineare e hist
+# creo un pdf con un multipanel 4x4 delle immagini 1988 e 2011 in stretch lineare e hist
 pdf("multitemporal_set_1988_2011_lin_hist") # imposto la creazione del pdf
 par(mfrow=c(2,2)) # imposto righe e colonne 2x2 dove plottare le immagini
 plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="Lin") # plotto immagine 1988
@@ -142,22 +144,21 @@ dev.off() # pulisco la finestra grafica dopo il procedimento per salvare corrett
 # con installl.packages installo i pacchetti che mi interessano (è sufficiente farlo una volta)
 # una volta installati i pacchetti uso library per richiamare quelli che servono nel codice e poterli utilizzare
 # install.packages("raster")
-library(raster)
+library(raster)  # pacchetto con funzioni per elaborare oggetti raster
 # install.packages("RStoolbox")
-library(RStoolbox)
+library(RStoolbox) # pacchetto con funzioni per processare le immagini (tra cui unsuperClass)
 # install.packages("rasterVis")
-library(rasterVis)
-# install.packages("knitr")
-library(knitr)
+library(rasterVis)  # pacchetto con funzioni aggiuntive per elaborare oggetti raster
 
-setwd("C:/lab/greenland/")  # definisco l working directory
+
+setwd("C:/lab/greenland/")  # definisco la working directory
 
 lst_2000<-raster("lst_2000.tif") # con la funzione raster importo un file come oggetto raster
 lst_2005<-raster("lst_2005.tif")
 lst_2010<-raster("lst_2010.tif")
 lst_2015<-raster("lst_2015.tif")
 
-# con la funzione par creo un multipanel 2x2 con le 4 immagini
+# con la funzione par creo un multipanel 2x2 con le 4 immagini importate
 par(mfrow=c(2,2))
 plot(lst_2000)
 plot(lst_2005)
@@ -204,11 +205,11 @@ levelplot(melt_amount,col.regions=cl2) # plotto il risultato della differenza co
 # una volta installati i pacchetti uso library per richiamare quelli che servono nel codice e poterli utilizzare
 
 #install.packages("ncdf4")
-library(raster)
-library(ncdf4)
-library(RStoolbox) #richiamo il pacchetto RStoolbox
-library(ggplot2) #richiamo il pacchetto ggplot2
-library(rasterVis)
+library(raster) # pacchetto con funzioni per elaborare file raster
+library(ncdf4)  # pacchetto che permette di importare ed elaborare file in formato .nc
+library(RStoolbox) # pacchetto con funzioni per processare le immagini (tra cui unsuperClass)
+library(ggplot2) # pacchetto con diverse funzioni per creare e modificare grafici
+library(rasterVis) # pacchetto con funzioni aggiuntive per elaborare oggetti raster
 
 setwd("C:/lab/")  # definisco la working directory
 
@@ -229,12 +230,12 @@ plot(SWIres,col=cl,main="Soil Water Index") # plotto il risultato del ricampiona
 
 ### REPORT IN KNITR
 
-setwd("C:/lab/") # definisco la wd
+setwd("C:/lab/") # definisco la working directory
 
 library(knitr)  # il pacchetto knitr permette di realizzare dei report
 
 stitch("R_code_greenland.r", template=system.file("misc", "knitr-template.Rnw", package="knitr")) # la funzione stitch crea un report automatico sulla base di uno
-                                                                                                  # script R, definito dal suo path, e un template  
+                                                                                                  # script R, salvato nella wd e definito dal suo path, e un template  
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -245,10 +246,10 @@ stitch("R_code_greenland.r", template=system.file("misc", "knitr-template.Rnw", 
 # con installl.packages installo i pacchetti che mi interessano (è sufficiente farlo una volta)
 # una volta installati i pacchetti uso library per richiamare quelli che servono nel codice e poterli utilizzare
 
-library(raster)
-library(RStoolbox) #richiamo il pacchetto RStoolbox
+library(raster)  # pacchetto con funzioni per elaborare file raster
+library(RStoolbox) # pacchetto con funzioni per processare le immagini (tra cui unsuperClass)
 
-setwd("C:/lab/")  #definisco la wd
+setwd("C:/lab/")  #definisco la working directory
 
 p224r63_2011 <- brick("p224r63_2011_masked.grd")  # importo il file come oggetto RasterBrick, ovvero comporto da più layer
 
@@ -261,9 +262,9 @@ pairs(p224r63_2011) # con la funzione pairs creo una matrice di scatterplot che 
 ### resampling (ricampionamento)
 p224r63_2011res <- aggregate(p224r63_2011, fact=10)  # ricampiono il raster con un fattore 10 (in uscita ho 1 pixel ogni 100 del raster di partenza)
 
-par(mfrow=c(2,1))  # plotto insieme su due righe l'immagine originale e l'immagine ricampionata in veri colori RGB
-plotRGB(p224r63_2011, r=4, g=3, b=2, stretch='lin')
-plotRGB(p224r63_2011res, r=4, g=3, b=2, stretch='lin')
+par(mfrow=c(2,1))  # imposto un multipanel con due righe dove plottare le due immagini
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch='lin') # immagine originale in RGB
+plotRGB(p224r63_2011res, r=4, g=3, b=2, stretch='lin')  # immagine ricampionata in RGB
 
 # L'analisi multivariata delle componenti principali PCA (Principal Component Analysis) permette la riduzione del numero di variabili senza perdere troppe informazioni.
 # La PCA consiste nel proiettare le variabili originarie in un nuovo sistema cartesiano nel quale le variabili vengono ordinate in ordine decrescente di varianza: 
@@ -285,9 +286,9 @@ str(p224r63_2011res_PCA) # descrive le struttura dell'oggetto prodotto dall'anal
 ### DATI SOLAR ORBITER
 
 # uso library per richiamare i pacchetti che servono nel codice e poterli utilizzare
-library(raster)
-library(RStoolbox) #richiamo il pacchetto RStoolbox
-library(ggplot2) #richiamo il pacchetto ggplot2
+library(raster)  # pacchetto con funzioni per elaborare file raster
+library(RStoolbox) # pacchetto con funzioni per processare le immagini (tra cui unsuperClass)
+library(ggplot2) # pacchetto con diverse funzioni per creare e modificare grafici
 
 setwd("C:/lab/") # definisco la wd
 
@@ -305,16 +306,16 @@ plot(so_c20$map)
 so2 <- brick("Solar_Orbiter_spots_campfires_on_the_Sun_annotated.jpg") # # importo una seconda immagine come un oggetto RasterBrick
 plotRGB(so2, 1, 2, 3, stretch="lin")  # plotto l'immagine in RGB
 
-# Applico classicicazioni con diverso numero di classi
-so2_c3 <- unsuperClass(so2, nClasses=3) 
-plot(so2_c3$map)
-so2_c20 <- unsuperClass(so2, nClasses=20)
-plot(so2_c20$map)
+# Applico classificazioni con diverso numero di classi
+so2_c3 <- unsuperClass(so2, nClasses=3) # classificazione con 3 classi
+plot(so2_c3$map) # visualizzo la mappa prodotta con 3 classi
+so2_c20 <- unsuperClass(so2, nClasses=20) # calssificazione con 20 classi
+plot(so2_c20$map) # visualizzo la mappa prodotta con 20 classi
 
 
 ### DATI GRAND CANYON
 
-gc<-brick("dolansprings_oli_2013088_canyon_lrg.jpg") # importo l'immagine del grandcanyon
+gc<-brick("dolansprings_oli_2013088_canyon_lrg.jpg") # importo l'immagine del grandcanyon come RasterBrick
 plotRGB(gc,r=1,g=2,b=3,stretch="lin") # plotto l'immagine in RGB
 
 gc_c2 <- unsuperClass(gc, nClasses=2)  # applico una classificazione con 2 classi
@@ -322,10 +323,9 @@ cl <- colorRampPalette(c('blue','yellow'))(100) # definisco una color palette
 plot(gc_c2$map, col=cl) # plotto la mappa di classificazione con la scala di colori scelta
 
 # applico lo stesso procedimento per una seconda classificazione con 4 classi:
-gc_c4 <- unsuperClass(gc, nClasses=4)
-cl2 <- colorRampPalette(c('blue','green', 'orange','yellow'))(100)
-cl3 <- colorRampPalette(c('blue','green', 'pink','orange'))(100)
-plot(gc_c4$map, col=cl2)
+gc_c4 <- unsuperClass(gc, nClasses=4) # classificazione con 4 classi
+cl2 <- colorRampPalette(c('blue','green', 'orange','yellow'))(100) # definisco una color palette
+plot(gc_c4$map, col=cl2)  # plotto la mappa di classificazione con la scala di colori scelta
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -334,20 +334,20 @@ plot(gc_c4$map, col=cl2)
 ##### GGPLOT2
 
 # uso library per richiamare i pacchetti che servono nel codice e poterli utilizzare
-library(raster)
-library(RStoolbox)
-library(ggplot2)
-library(gridExtra)
+library(raster) # pacchetto con funzioni per elaborare file raster
+library(RStoolbox) # pacchetto con funzioni per processare le immagini (tra cui unsuperClass)
+library(ggplot2) # pacchetto con diverse funzioni per creare e modificare grafici
+library(gridExtra) # pacchetto con funzioni per lavorare con grafici (tra cui grid.arrange)
 
 setwd("~/lab/") # definisco la wd
 
-p224r63 <- brick("p224r63_2011_masked.grd")  # importo l'immagine 
+p224r63 <- brick("p224r63_2011_masked.grd")  # importo l'immagine come RasterBrick
 
 ggRGB(p224r63,3,2,1, stretch="lin") # con la funzione ggRGB del pacchetto ggplot2 visualizzo l'immagine in RGB in veri colori
 ggRGB(p224r63,4,3,2, stretch="lin")  # con la funzione ggRGB del pacchetto ggplot2 visualizzo l'immagine in RGB in falsi colori
 
-p1 <- ggRGB(p224r63,3,2,1, stretch="lin")  # associo l'output del plot a una variabile p1
-p2 <- ggRGB(p224r63,4,3,2, stretch="lin")
+p1 <- ggRGB(p224r63,3,2,1, stretch="lin")  # associo l'output del primo plot a una variabile p1
+p2 <- ggRGB(p224r63,4,3,2, stretch="lin")  # associo l'output del secondo plot a una variabile p2
 
 grid.arrange(p1, p2, nrow = 2) # con la funzione grid.arrange del pacchetto gridExtra costruisco un multipanel con due righe dove plottare le due immagini
 
@@ -358,10 +358,10 @@ grid.arrange(p1, p2, nrow = 2) # con la funzione grid.arrange del pacchetto grid
 ### INDICI DI VEGETAZIONE
 
 # uso library per richiamare i pacchetti che servono nel codice e poterli utilizzare
-library(raster)
-library(RStoolbox)
-library(rasterdiv) # wordlwide NDVI
-library(rasterVis)
+library(raster) # pacchetto con funzioni per elaborare file raster
+library(RStoolbox)  # pacchetto con funzioni per processare le immagini (tra cui unsuperClass)
+library(rasterdiv) # pacchetto che permette di calcolare diversi indici (tra cui il wordlwide NDVI)
+library(rasterVis)  # pacchetto con funzioni aggiuntive per elaborare oggetti raster
 
 setwd("C:/lab/")  # definisco la wd
 
@@ -429,16 +429,16 @@ levelplot(copNDVI) # plotto il risultato con i pixel acqua eliminati
 ### LAND COVER
 
 # uso library per richiamare i pacchetti che servono nel codice e poterli utilizzare
-library(raster)
-library(RStoolbox)
-library(ggplot2) 
-library(gridExtra)
+library(raster)  # pacchetto con funzioni per elaborare file raster
+library(RStoolbox)  # pacchetto con funzioni per processare le immagini (tra cui unsuperClass)
+library(ggplot2)   # pacchetto con diverse funzioni per creare e modificare grafici
+library(gridExtra)  # pacchetto con funzioni per lavorare con grafici (tra cui grid.arrange)
 
-setwd("C:/lab/")  # definisco la wd
+setwd("C:/lab/")  # definisco la working directory
 
 # importo le due immagini come RasterBrick:
-defor1 <- brick("defor1.jpg") 
-defor2 <- brick("defor2.jpg")
+defor1 <- brick("defor1.jpg") # immagine più vecchia
+defor2 <- brick("defor2.jpg")  # immagine più recente
 
 # I layer e le corrispondenti bande sono:
 # defor1.1 = NIR
@@ -450,31 +450,34 @@ par(mfrow=c(2,1)) # creo un multipanel di due righe dove plottare le immagini im
 plotRGB(defor1, r=1, g=2, b=3, stretch="Lin")  # plotto la prima immagine in falsi colori r=nir g=red b=green
 plotRGB(defor2, r=1, g=2, b=3, stretch="Lin") # plotto la seconda immagine in falsi colori r=nir g=red b=green
 
-# plotto le due immagini in falsi colori ma con la funzione ggRGB e le associo a due variabili p1 e p2
+# plotto le due immagini in falsi colori con la funzione ggRGB e le associo a due variabili p1 e p2
 p1<-ggRGB(defor1, r=1, g=2, b=3, stretch="Lin") 
 p2<-ggRGB(defor2, r=1, g=2, b=3, stretch="Lin")
 grid.arrange(p1,p2,nrow=2) # con grid.arrange plotto le due immagini insieme su due righe
 
-
+# applico una classificazione alla prima immagine, più vecchia:
 set.seed(42)  # la funzione set.seed permette di ottenere sempre lo stesso risultato
-d1c <- unsuperClass(defor1, nClasses=2)  # applico una classificazione a due classi alla prima immagine
-cl <- colorRampPalette(c('black','green'))(100) #definisco due color palette
-cl2 <- colorRampPalette(c('green','black'))(100)
-par(mfrow=c(2,1)) # creo un multipanel di due righe dove plottare la mappa di classificaizone con le due diverse colorpalette
-plot(d1c$map, col=cl)
-plot(d1c$map, col=cl2)
+d1c <- unsuperClass(defor1, nClasses=2)  # applico una classificazione a due classi
+cl <- colorRampPalette(c('black','green'))(100) # definisco una prima color palette
+cl2 <- colorRampPalette(c('green','black'))(100) # definisco una seconda color palette
+par(mfrow=c(2,1)) # creo un multipanel di due righe dove plottare la mappa di classificazione con le due diverse colorpalette
+plot(d1c$map, col=cl)  # mappa di classificazione con la prima color palette
+plot(d1c$map, col=cl2)  # mappa di classificazione con la seconda color palette
 
-# applico lo stesso procedimento sulla seconda foto:
-d2c<- unsuperClass(defor2, nClasses=2)
-par(mfrow=c(2,1))
-plot(d2c$map, col=cl)
-plot(d2c$map, col=cl2)
+# applico lo stesso procedimento di classificaizone sulla seconda foto, più recente:
+set.seed(42)  # la funzione set.seed permette di ottenere sempre lo stesso risultato
+d2c<- unsuperClass(defor2, nClasses=2)   # applico una classificazione a due classi
+par(mfrow=c(2,1))  # creo un multipanel di due righe dove plottare la mappa di classificazione con le due diverse colorpalette
+plot(d2c$map, col=cl) # mappa di classificazione con la prima color palette
+plot(d2c$map, col=cl2)  # mappa di classificazione con la seconda color palette
 
+
+# applico una classifazione a 3 classi su entrambe le immagini
 d1c3 <- unsuperClass(defor1, nClasses=3) # applico una classificazione a 3 classi sulla prima foto
 d2c3 <- unsuperClass(defor2, nClasses=3)  # applico una classificazione a 3 classi sulla seconda foto
-par(mfrow=c(2,1)) # creo un multipanel a due righe dove plottare le due mapper di classificaizone ottenute
-plot(d1c3$map)
-plot(d2c3$map)
+par(mfrow=c(2,1)) # creo un multipanel a due righe dove plottare le due mappe di classificazione ottenute
+plot(d1c3$map) # mappa di classificazione prima immagine
+plot(d2c3$map) # mappa di classificazione seconda immagine
 
 #### CALCOLARE LE AREE DI FORESTA PERSE
 
@@ -511,6 +514,7 @@ prop2<-freq(d2c$map)/somma2
 
 
 ### GENERARE UN DATASET (DATAFRAME)
+
 # per creare un dataset definisco le variabili che corrisponderanno alle colonne:
 cover<-c("Forest","Agricolture") # applico alla variabile cover le etichette che voglio associare alle due classi
 percent_1992<-c(89.64,10.36) # applico alla variabile percent_1992 i valori percentuali calcolati dalla classificazione della prima immagine
@@ -539,11 +543,11 @@ grid.arrange(g1,g2,nrow=2)  # con grid.arrange plotto i due grafici su due righe
 ### VARIABILITA' SPAZIALE
 
 # uso library per richiamare i pacchetti che servono nel codice e poterli utilizzare
-library(raster)
-library(RStoolbox)
-library(ggplot2)
-library(viridis)
-library(gridExtra)
+library(raster)  # pacchetto con funzioni per elaborare file raster
+library(RStoolbox)  # pacchetto con funzioni per processare le immagini (tra cui unsuperClass)
+library(ggplot2)  # pacchetto con diverse funzioni per creare e modificare grafici
+library(viridis)  # pacchetto con diverse palette di colori
+library(gridExtra) # pacchetto con funzioni per lavorare con grafici (tra cui grid.arrange)
 
 setwd("C:/lab/")  # definisco la working directory
 
@@ -583,15 +587,15 @@ plot(NDVI_sd3, col=cl2)  # plotto il risultato della deviazione standard con la 
 
 # applico la funzione focal per calcolare la media
 NDVI_m3<-focal(NDVI, w=matrix(1/9,nrow=3,ncol=3), fun=mean)
-plot(NDVI_m3, col=cl2)
+plot(NDVI_m3, col=cl2)  # visualizzo il risultato
 
 # applico la funzione focal per calcolare la deviazione standar ma con una finestra mobile di dimensione 9x9
 NDVI_sd9<-focal(NDVI, w=matrix(1/81,nrow=9,ncol=9), fun=sd)
-plot(NDVI_sd9, col=cl2)
+plot(NDVI_sd9, col=cl2)  # visualizzo il risultato
 
 # applico la funzione focal per calcolare la deviazione standar ma con una finestra mobile di dimensione 5x5
 NDVI_sd5<-focal(NDVI, w=matrix(1/25,nrow=5,ncol=5), fun=sd)
-plot(NDVI_sd5, col=cl2)
+plot(NDVI_sd5, col=cl2)  # visualizzo il risultato
 
 # più piccola è la finestra mobile è maggiore è il dettaglio del risultato. A seconda del tipo di analisi che dobbiamo effettuare può esserci utile
 # un grado maggiore o minore di dettaglio
@@ -616,7 +620,7 @@ plot(PC1_sd7, col=cl2, main="PC1 standard deviation")  # visualizzo il risultato
 # il pacchetto viridis contiene otto scale di colori:“viridis”, “magma”, “plasma”, “inferno”, “cividis”, “mako”, “rocket” ,“turbo”
 
 # geom_raster mi permette di plottare un oggetto raster
-# scale_fill_viridis() mi permette di scegliere la palette dal pachetto viridis
+# scale_fill_viridis() mi permette di scegliere la palette dal pacchetto viridis
 # con ggtitle aggiungo un titolo
 
 p0 <- ggplot() + geom_raster(PC1_sd5, mapping = aes(x = x, y = y, fill = layer)) + scale_fill_viridis() +  ggtitle("viridis palette")
@@ -635,7 +639,7 @@ p6 <- ggplot() + geom_raster(PC1_sd5, mapping = aes(x = x, y = y, fill = layer))
 
 p7 <- ggplot() + geom_raster(PC1_sd5, mapping = aes(x = x, y = y, fill = layer)) + scale_fill_viridis(option="turbo") + ggtitle("turbo palette")
 
-grid.arrange(p0, p1, p2, p3, p4, p5, p6, p7, nrow = 2)  # con grid.arrange creo un grafico multiplanel con due righe dove plotto 
+grid.arrange(p0, p1, p2, p3, p4, p5, p6, p7, nrow = 2)  # con grid.arrange creo un grafico multipanel con due righe dove plotto 
                                                          #  tutte le mappe che ho associato alle variabili p0, p1, p2, p3, p4, p5, p6, p7
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -645,9 +649,9 @@ grid.arrange(p0, p1, p2, p3, p4, p5, p6, p7, nrow = 2)  # con grid.arrange creo 
 ## FIRMA SPETTRALE
 
 # uso library per richiamare i pacchetti che servono nel codice e poterli utilizzare
-library(raster)
-library(rgdal)
-library(ggplot2)
+library(raster) # pacchetto con funzioni per elaborare file raster
+library(rgdal) # pacchetto con ulteriori funzioni per elaborare file raster
+library(ggplot2) # pacchetto con diverse funzioni per creare e modificare grafici
 
 setwd("C:/lab/")  # definisco la working directory
 
