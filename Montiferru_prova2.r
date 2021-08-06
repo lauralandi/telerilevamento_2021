@@ -75,7 +75,7 @@ setwd("C:/lab/sardegna2/")  # definire la working directory
 # Per importarle come due singoli oggetti RasterStack contenenti tutte le bande seguo i passaggi:
 
 rlist22<-list.files(pattern="july22") # con la funzione list.files creo una lista di file con le diverse bande con pattern "july10" e associo alla variabile rlist10
-import122<-lapply(rlist22,raster) # con la funzione lapply applico la funzione raster su tutti i file della lista e li importo associati alla variabile import10
+import22<-lapply(rlist22,raster) # con la funzione lapply applico la funzione raster su tutti i file della lista e li importo associati alla variabile import10
 july22<-stack(import22) # con la funzione stack creo un unico oggetto RasterStack che contiene come layer tutte le bande importate
 
 rlist30<-list.files(pattern="july30") # con la funzione list.files creo una lista di file con le diverse bande con pattern "july25" e associo alla variabile rlist25
@@ -84,9 +84,9 @@ july30<-stack(import30) # con la funzione stack creo un unico oggetto RasterStac
 
 # Richiamando le due variabili posso leggere i nomi e la posizione dei layer appena importati:
 july22 
-# names: july10_B01, july10_B02, july10_B03, july10_B04, july10_B05, july10_B06, july10_B07, july10_B08, july10_B09, july10_B11, july10_B12, july10_B8A, july10_TC 
+# names: july22_B01, july22_B02, july22_B03, july22_B04, july22_B05, july22_B06, july22_B07, july22_B08, july22_B09, july22_B11, july22_B12, july22_B8A 
 july30
-# names: july25_B01, july25_B02, july25_B03, july25_B04, july25_B05, july25_B06, july25_B07, july25_B08, july25_B09, july25_B11, july25_B12, july25_B8A, july25_TC
+# names: july30_B01, july30_B02, july30_B03, july30_B04, july30_B05, july30_B06, july30_B07, july30_B08, july30_B09, july30_B11, july30_B12, july30_B8A
 
 
 
@@ -96,13 +96,13 @@ july30
 
 ## PLOT1 - Le due immagini (10 e 25 Luglio) in RGB veri colori: r=red, g=green, b=blue
 
-p1<-ggRGB(july22, 4, 3, 2, stretch="lin", quantiles = c(0.001, 0.999)) + # con ggRGB monto le bande in RGB in veri colori e modificando i quantili regolo lo stretch della foto
+p1<-ggRGB(july22, 4, 3, 2 , stretch="lin") + # con ggRGB monto le bande in RGB in veri colori e modificando i quantili regolo lo stretch della foto
     ggtitle("22 Luglio 2021") +     # titolo dell'immagine
     xlab("Long") + ylab("Lat") +    # titoli degli assi
     theme(panel.background = element_blank(), plot.title = element_text(size=11, face="bold", color="red"), 
           axis.title=element_text(size=10), axis.text= element_text(size=8))   # con theme modifico agli elementi del grafico (sfondo, testo dei titoli e valori degli assi)
         
-p2<-ggRGB(july30, 4, 3, 2, stretch="hist") +  # con ggRGB monto le bande in RGB in veri colori
+p2<-ggRGB(july30, 4, 3, 2 , stretch="lin") +   # con ggRGB monto le bande in RGB in veri colori
     ggtitle("30 Luglio 2021") +   # titolo dell'immagine
     xlab("Long") + ylab("Lat") +  # titoli degli assi
     theme(panel.background = element_blank(), plot.title = element_text(size=11, face="bold", color="red"), 
@@ -116,13 +116,13 @@ grid.arrange(p1, p2, nrow = 2, top=grid.text("Immagini in veri colori", gp=gpar(
 # Questa modalità di visualizzazione esalta in rosso la vegetazione, che ha un'alta riflettanza nella banda del NIR, con valori maggiori per le aree boschive 
 # e minori per le aree a prevalenza di vegetazione erbacea e coltivate
 
-p3<-ggRGB(july22, 8, 3, 2, stretch="lin", quantiles = c(0.001, 0.999)) + # con ggRGB monto le bande in falsi colori e modificando i quantili regolo lo stretch della foto
+p3<-ggRGB(july22, 8, 3, 2, stretch="lin") + # con ggRGB monto le bande in falsi colori e modificando i quantili regolo lo stretch della foto
     ggtitle("22 Luglio 2021") +     # titolo dell'immagine
     xlab("Long") + ylab("Lat") +    # titoli degli assi
     theme(panel.background = element_blank(), plot.title = element_text(size=11, face="bold", color="red"), 
           axis.title=element_text(size=10), axis.text= element_text(size=8))   # con theme modifico agli elementi del grafico (sfondo, testo dei titoli e valori degli assi)
         
-p4<-ggRGB(july30, 8, 3, 2, stretch="hist") +  # con ggRGB monto le bande in falsi colori
+p4<-ggRGB(july30, 8, 3, 2, stretch="lin") +  # con ggRGB monto le bande in falsi colori
     ggtitle("30 Luglio 2021") +   # titolo dell'immagine
     xlab("Long") + ylab("Lat") +  # titoli degli assi
     theme(panel.background = element_blank(), plot.title = element_text(size=11, face="bold", color="red"), 
@@ -135,13 +135,13 @@ grid.arrange(p3, p4, nrow = 2, top=grid.text("Immagini in falsi colori", gp=gpar
 ## PLOT3 - Le due immagini (10 e 25 Luglio) in falsi colori: r=SWIR(B12), g=SWIR(B11), b=red
 # Questa modalità di visualizzazione esalta in rosso le aree bruciate, poichè esse hanno un'alta riflettanza nella banda del SWIR
 
-p5<-ggRGB(july22, 11, 10, 4, stretch="lin", quantiles = c(0.001, 0.999)) +  # con ggRGB monto le bande in falsi colori e modificando i quantili regolo lo stretch della foto
+p5<-ggRGB(july22, 11, 10, 4, stretch="lin") +  # con ggRGB monto le bande in falsi colori e modificando i quantili regolo lo stretch della foto
     ggtitle("22 Luglio 2021") +     # titolo dell'immagine
     xlab("Long") + ylab("Lat") +    # titoli degli assi
     theme(panel.background = element_blank(), plot.title = element_text(size=11, face="bold", color="red"), 
           axis.title=element_text(size=10), axis.text= element_text(size=8))    # con theme modifico agli elementi del grafico (sfondo, testo dei titoli e valori degli assi)
         
-p6<-ggRGB(july30, 11, 10, 4, stretch="hist") +   # con ggRGB monto le bande in falsi colori
+p6<-ggRGB(july30, 11, 10, 4, stretch="lin") +   # con ggRGB monto le bande in falsi colori
     ggtitle("30 Luglio 2021") +     # titolo dell'immagine
     xlab("Long") + ylab("Lat") +  # titoli degli assi
     theme(panel.background = element_blank(), plot.title = element_text(size=11, face="bold", color="red"), 
@@ -159,14 +159,15 @@ grid.arrange(p5, p6, nrow = 2, top=grid.text("Immagini in falsi colori", gp=gpar
 ## Per analizzare meglio l'area bruciata dagli incendi mi focalizzo su un'area più ristretta.
 ## In questo modo limito le interferenze che la presenza del mare e delle nuvole possono avere sull'analisi
 
-p6  # plotto l'immagine del 25 Luglio
+plotRGB(july30, 11, 10, 4, stretch="lin")  # plotto l'immagine del 25 Luglio
 e<- drawExtent(show=TRUE, col="red") # con la funzione drawExtent disegno un riquadro sull'immagine p6 aperta e genero un oggetto extent associato alla variabile e
 e   # richiamando la variabile e ottengo le sue informazioni:
     # class      : Extent 
-    # xmin       : 943072.7 
-    # xmax       : 965034.5 
-    # ymin       : 4882167 
-    # ymax       : 4905410
+    # xmin       : 943140.1 
+    # xmax       : 967073.2 
+    # ymin       : 4881607 
+    # ymax       : 4906605
+
 
 july22_crop<- crop(july22, e)  # con la funzione crop ritaglio le immagini nelle dimensioni definite dalla variabile "e" e le associo a due nuove variabili
 july30_crop<- crop(july30, e)
@@ -174,7 +175,7 @@ july30_crop<- crop(july30, e)
 
 ## PLOT4 - Le due immagini ritagliate, in falsi colori
 
-p7<-ggRGB(july22_crop, 11, 10, 4, stretch="lin", quantiles = c(0.001, 0.999)) +  # con ggRGB monto le bande in falsi colori e modificando i quantili regolo lo stretch della foto
+p7<-ggRGB(july22_crop, 11, 10, 4, stretch="lin") +  # con ggRGB monto le bande in falsi colori e modificando i quantili regolo lo stretch della foto
     ggtitle("22 Luglio 2021") +    # titolo dell'immagine 
     xlab("Long") + ylab("Lat") +    # titoli degli assi
     theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", color="red"), 
@@ -199,14 +200,14 @@ grid.arrange(p7, p8, ncol = 2, top=grid.text("Immagini in falsi colori", gp=gpar
 
 set.seed(60)  # la funzione set.seed fissa il set di pixel di partenza e permette di poter replicare più volte lo stesso risultato, altrimenti il processo randomico porterebbe ogni volta qualche differenza
 july22_c2<-unsuperClass(july22_crop, nClasses=2)  # con la funzione unsuperClass applico una classificazione non supervisionata con un numero di classi definito (qui 2) 
-                                                    # e la associo alla variabile july10_c2
+                                                    # e la associo alla variabile july22_c2
 
 ## PLOT5 - La mappa di classificazione pre-incendio
 
 p9<-ggplot(july22_c2$map, aes(x,y)) +   # con ggplot creo il grafico che contiene la mappa
      geom_raster(aes(fill=factor(layer))) +  # geom_raster permette di plottare nel grafico un elemento raster
-     scale_fill_manual(values=c('green', 'darkgreen'),  # definisco i colori delle classi
-                       name=("Copertura"), labels=c("Erbacea o \nColtivata", "Boschiva")) +  # definisco nome della legenda ed etichette dei colori corrispondenti
+     scale_fill_manual(values=c('darkgreen', 'green'),  # definisco i colori delle classi
+                       name=("Copertura"), labels=c("Boschiva", "Coltivata")) +  # definisco nome della legenda ed etichette dei colori corrispondenti
      ggtitle("Mappa di classificazione pre-incendio") +    # titolo dell'immagine
      xlab("Long") + ylab("Lat") +    #titoli degli assi
      theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold",  hjust=0.5), 
@@ -215,26 +216,26 @@ p9<-ggplot(july22_c2$map, aes(x,y)) +   # con ggplot creo il grafico che contien
            legend.text = element_text(size = 10))  # con theme modifico gli elementi del grafico (sfondo, titolo, testo dei titoli e valori degli assi, 
                                                                                                    # titolo ed etichette della legenda)
 p9
-# La mappa di classificazione mostra un'area prevalentemente boschiva (C2) nella zona SE e una dominata da aree coltivate e vegetazione erbacea (C1) nella zona W e NW
+# La mappa di classificazione mostra un'area prevalentemente boschiva (C1) nella zona SE e una dominata da aree coltivate e vegetazione erbacea (C2) nella zona W e NW
 
 
 ## Ottenuta la classificazione è possibile calcolare le percentuali di area che rientrano nelle diverse classi
 
 freq(july22_c2$map)  # con la funzione freq ricavo il numero di pixel che ricade in ogni classe
 #  value   count
-#    1     428796
-#    2     519096
+#    1     452842
+#    2     658622
 
-pxtot<- 428796 + 519096  # calcolo la somma dei pixel totali dell'immagine
+pxtot<- 452842 + 658622  # calcolo la somma dei pixel totali dell'immagine
 perc_c<-freq(july22_c2$map)/pxtot   # normalizzo il numero di pixel di ogni classe per il numero totale per ottenere i valori proporzionali tra 0 e 1
 perc_c
 #  value   count
-#   1    0.452368
-#   2    0.547632
+#   1    0.4074284
+#   2    0.5925716
 
 # Per cui approssimando si ha:
-# C1 (aree coltivate e vegetazione erbacea): 45.24%
-# C2 (aree boschive): 54.76%
+# C1 (aree boschive): 40.74%
+# C2 (aree coltivate): 59.26%
 
 ## Conoscendo la risoluzione dell'immagine è possibile quantificare le aree classificate:
 
@@ -245,14 +246,14 @@ july22_c2$map # richiamando la variabile della mappa di classificazione ottengo 
 # L'area di un pixel quindi è 
 # 23.20628 * 23.21091 = 538.6389 m2
 # L'area totale dell'immagine è
-# 538.6389 * pxtot = 510571504 m2 = 510.571504 km2
+# 538.6389 * pxtot = 598677746 m2 = 598.677746 km2
 
 ## Inserisco questi dati in un dataset
 
 Classi_<-c("C1","C2") # alla variabile Classi associo i nomi delle classi ottenute
-Copertura<- c( "Erbacea o \nColtivata", "Boschiva")  # alla variabile Copertura associo una descrizione della copertura
-Area_perc_cop<-c(0.4524, 0.5476)  # alla variabile Area_perc_cop associo i valori percentuali ricavati precedentemente
-Area_km2_cop<-Area_perc_cop*510.571504  # moltiplicando l'area percentuale per l'area totale in km2 ottengo le aree in km2 che rientrano nelle 2 classi
+Copertura<- c("Boschiva", "Coltivata")  # alla variabile Copertura associo una descrizione della copertura
+Area_perc_cop<-c(0.4074284, 0.5925716)  # alla variabile Area_perc_cop associo i valori percentuali ricavati precedentemente
+Area_km2_cop<-Area_perc_cop*598.677746  # moltiplicando l'area percentuale per l'area totale in km2 ottengo le aree in km2 che rientrano nelle 2 classi
 
 perc_cop<-data.frame(Classi_, Copertura, Area_perc_cop, Area_km2_cop)  # con data.frame inserisco le variabili all'interno di un dataset che associo alla variabile perc_cop
 perc_cop  # visualizzo il dataframe 
@@ -296,9 +297,9 @@ g1  # visualizzo il grafico
 # Le bande necessarie a calcolare gli indici e i rispettivi layer nelle due immagini sono quindi:
 
 #    BANDA   NOME LAYER JULY10   NOME LAYER JULY25
-#   NIR=B08     july10_B08          july25_B08
-#   RED=B04     july10_B04          july25_B04
-#   SWIR=B12    july10_B12          july25_B12
+#   NIR=B08     july22_B08          july30_B08
+#   RED=B04     july22_B04          july30_B04
+#   SWIR=B12    july22_B12          july30_B12
 
 
 ## Calcolo del NDVI
@@ -307,13 +308,13 @@ NDVI_july22<-(july22_crop$july22_B08-july22_crop$july22_B04)/(july22_crop$july22
 NDVI_july30<-(july30_crop$july30_B08-july30_crop$july30_B04)/(july30_crop$july30_B08+july30_crop$july30_B04) # con il $ scelgo il layer che mi serve all'interno del RasterStack
 
 NDVI_july22
-# -0.3337898, 0.9993358  (min, max)
+# values: -0.987013, 0.9280152  (min, max)
 
 NDVI_july30
-#-0.3251454, 0.7381541  (min, max)
+# values     : -0.6161616, 0.9210305  (min, max)
 
-# Visti i valori max e min dei due NDVI, per definire una scala di colore comune da plottare sui due grafici impongo un range tra -0.35 e 1
-# per entrambi e poi plotto una legenda comune nel grafico
+# Visti i valori max e min dei due NDVI, per definire una scala di colore comune da plottare sui due grafici impongo un range tra -0.99 e 0.93
+# per entrambi e poi plotto una legenda comune nel grafico  ---> MEGLIO LIMITI 0-1 per escludere l'acqua
 
 
 ## PLOT7 - Confronto tra NDVI del 10 Luglio e NDVI del 25 luglio
@@ -322,8 +323,7 @@ clz<-wes_palette("Zissou1", 100, type = c("continuous"))  # associo alla variabi
 
 p10<-ggplot(NDVI_july22, aes(x,y)) +  # con ggplot creo il grafico che contiene la mappa di NDVI calcolata al 10 luglio
      geom_raster(aes(fill=layer)) +  # geom_raster permette di plottare nel grafico un elemento raster
-     scale_fill_gradientn(colors = clz, limits = c(-0.35, 1),  # definisco la scala colore e ne impongo i limiti max e min
-                          breaks = c(0, 0.25, 0.5, 0.75, 1), labels=c(0, 0.25, 0.5, 0.75, 1))  +  # indico gli intervalli (breaks) della scala dove inserire le etichette
+     scale_fill_gradientn(colors = clz, limits = c(0, 0.93))+  # definisco la scala colore e ne impongo i limiti max e min
      guides(fill = guide_colourbar(barwidth= 15)) +  # definisco la lunghezza della barra della scala colori
      ggtitle("NDVI 22 Luglio 2021") +     # titolo del grafico
      xlab("Long") + ylab("Lat") +   # titoli degli assi
@@ -333,8 +333,7 @@ p10<-ggplot(NDVI_july22, aes(x,y)) +  # con ggplot creo il grafico che contiene 
                 
 p11<-ggplot(NDVI_july30, aes(x,y)) +   # con ggplot creo il grafico che contiene la mappa di NDVI calcolata al 25 luglio
      geom_raster(aes(fill=layer)) +   # geom_raster permette di plottare nel grafico un elemento raster
-     scale_fill_gradientn(colors = clz, limits = c(-0.35, 1),   # definisco la scala colore e ne impongo i limiti max e min 
-                          breaks = c(0, 0.25, 0.5, 0.75, 1), labels=c(0, 0.25, 0.5, 0.75, 1))  +  # indico gli intervalli (breaks) della scala dove inserire le etichette
+     scale_fill_gradientn(colors = clz, limits = c(0, 0.93))+   # definisco la scala colore e ne impongo i limiti max e min 
      guides(fill = guide_colourbar(barwidth= 15)) +  # definisco la lunghezza della barra della scala colori
      ggtitle(" NDVI 30 Luglio 2021") +    # titolo del grafico
      xlab("Long") + ylab("Lat") +    # titoli degli assi
@@ -354,7 +353,7 @@ deltaNDVI<- NDVI_july22 - NDVI_july30
 
 p12<-ggplot(deltaNDVI, aes(x,y)) +  # con ggplot creo il grafico che contiene la mappa di deltaNDVI calcolata
      geom_raster(aes(fill=layer)) +  # geom_raster permette di plottare nel grafico un elemento raster
-     scale_fill_gradientn(colors = clz, limits = c(0, 1)) +   # definisco la scala colore e ne impongo i limiti max e min
+     scale_fill_gradientn(colors = clz, limits = c(-0.1, 1)) +   # definisco la scala colore e ne impongo i limiti max e min
      guides(fill = guide_colourbar(barwidth= 15))  +  # definisco la lunghezza della barra della scala colori
      ggtitle("deltaNDVI") +     # titolo del grafico
      xlab("Long") + ylab("Lat") +   # titoli degli assi
@@ -373,12 +372,12 @@ NBR_july22<-(july22_crop$july22_B08-july22_crop$july22_B12)/(july22_crop$july22_
 NBR_july30<-(july30_crop$july30_B08-july30_crop$july30_B12)/(july30_crop$july30_B08+july30_crop$july30_B12)  # con il $ scelgo il layer che mi serve all'interno del RasterStack
 
 NBR_july22
-#-0.4545455, 0.843633  (min, max)
+# values: -0.9692308, 0.8666667  (min, max)
 
 NBR_july30
-#-0.8563125, 0.7879109  (min, max)
+# values: -0.6619545, 0.8108208  (min, max)
 
-# Visti i valori max e min dei due NDVI, per definire una scala di colore comune da plottare sui due grafici impongo un range tra -0.46 e 0.85
+# Visti i valori max e min dei due NBR, per definire una scala di colore comune da plottare sui due grafici impongo un range tra -0.46 e 0.85
 # per entrambi e poi plotto una legenda comune nel grafico
 
 
@@ -386,8 +385,8 @@ NBR_july30
 
 p13<-ggplot(NBR_july22, aes(x,y)) +   # con ggplot creo il grafico che contiene la mappa di NBR calcolata il 10 luglio
      geom_raster(aes(fill=layer)) +  # geom_raster permette di plottare nel grafico un elemento raster
-     scale_fill_gradientn(colors = clz, limits = c(-0.46, 0.85),  # impongo i limiti max e min della scala di colore
-                          breaks = c(-0.45, -0.2, 0.05, 0.3, 0.55, 0.8))  +  # indico gli intervalli (breaks) della scala dove inserire le etichette
+     scale_fill_gradientn(colors = clz)+ #,limits = c(-0.46, 0.85),  # impongo i limiti max e min della scala di colore
+                          #breaks = c(-0.45, -0.2, 0.05, 0.3, 0.55, 0.8))  +  # indico gli intervalli (breaks) della scala dove inserire le etichette
      guides(fill = guide_colourbar(barwidth= 15)) +  # definisco la lunghezza della barra della scala colori
      ggtitle("NBR 10 Luglio 2021") +     # titolo dell'immagine
      xlab("Long") + ylab("Lat") +    #titoli degli assi
@@ -397,8 +396,8 @@ p13<-ggplot(NBR_july22, aes(x,y)) +   # con ggplot creo il grafico che contiene 
         
 p14<-ggplot(NBR_july30, aes(x,y)) +  # con ggplot creo il grafico che contiene la mappa di NBR calcolata il 25 luglio
      geom_raster(aes(fill=layer)) +  # geom_raster permette di plottare nel grafico un elemento raster
-     scale_fill_gradientn(colors = clz, limits = c(-0.46, 0.85),  # impongo i limiti max e min della scala di colore
-                          breaks = c(-0.45, -0.2, 0.05, 0.3, 0.55, 0.8))  +  # indico gli intervalli (breaks) della scala dove inserire le etichette
+     scale_fill_gradientn(colors = clz)+ #,limits = c(-0.46, 0.85),  # impongo i limiti max e min della scala di colore
+                          #breaks = c(-0.45, -0.2, 0.05, 0.3, 0.55, 0.8))  +  # indico gli intervalli (breaks) della scala dove inserire le etichette
      guides(fill = guide_colourbar(barwidth= 15)) +  # definisco la lunghezza della barra della scala colori
      ggtitle(" NBR 25 Luglio 2021") +     # titolo dell'immagine
      xlab("Long") + ylab("Lat") +    #titoli degli assi
@@ -418,7 +417,7 @@ deltaNBR<- NBR_july22 - NBR_july30
 
 p15<-ggplot(deltaNBR, aes(x,y)) +   # con ggplot creo il grafico che contiene la mappa di deltaNBR calcolata
      geom_raster(aes(fill=layer)) +   # geom_raster permette di plottare nel grafico un elemento raster
-     scale_fill_gradientn(colors = clz, limits = c(0, 1)) +    # impongo i limiti max e min della scala di colore
+     scale_fill_gradientn(colors = clz, limits = c(-0.1, 1)) +    # impongo i limiti max e min della scala di colore
      guides(fill = guide_colourbar(barwidth= 15)) +  # definisco la lunghezza della barra della scala colori
      ggtitle("deltaNBR") +     # titolo dell'immagine
      xlab("Long") + ylab("Lat") +    #titoli degli assi
@@ -441,16 +440,16 @@ ggarrange(p12, p15, ncol = 2, common.legend=TRUE, legend="bottom")  # uso ggarra
 
 # Per riconoscere e quantificare le aree più danneggiate dagli incendi applico una classificazione dell'indice deltaNBR 
 
-set.seed(60)  # la funzione set.seed fissa il set di pixel di partenza e permette di poter replicare più volte lo stesso risultato, altrimenti il processo randomico porterebbe ogni volta qualche differenza
-dNBR_c4<-unsuperClass(deltaNBR, nClasses=4) # con unsuperClass applico una classificazione non supervisionata di 4 classi e la associo alla variabile dNBR_c4
+set.seed(53)  # la funzione set.seed fissa il set di pixel di partenza e permette di poter replicare più volte lo stesso risultato, altrimenti il processo randomico porterebbe ogni volta qualche differenza
+dNBR_c3<-unsuperClass(deltaNBR, nClasses=3) # con unsuperClass applico una classificazione non supervisionata di 4 classi e la associo alla variabile dNBR_c3
 
 
 ## PLOT12 - La mappa di classificazione del deltaNBR
 
-p16<-ggplot(dNBR_c4$map, aes(x,y)) +  # con ggplot creo il grafico che contiene la mappa calcolata
+p16<-ggplot(dNBR_c3$map, aes(x,y)) +  # con ggplot creo il grafico che contiene la mappa calcolata
      geom_raster(aes(fill=factor(layer))) +  # geom_raster permette di plottare nel grafico un elemento raster
-     scale_fill_manual(values=c('yellow','red','darkgreen','green'),  # definisco i colori delle classi
-                       name=("Severità di danno"), labels=c("Alta", "Intermedia", "Bassa o Nulla", "Bassa o Nulla")) +   # definisco nome della legenda ed etichette dei colori corrispondenti
+     scale_fill_manual(values=c('red','yellow','darkgreen'),  # definisco i colori delle classi
+                       name=("Severità di danno"), labels=c("Moderata", "Alta", "Nulla")) +   # definisco nome della legenda ed etichette dei colori corrispondenti
      ggtitle("Mappa di classificazione del deltaBNR") +    # titolo del grafico
      xlab("Long") + ylab("Lat") +    # titoli degli assi
      theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold",  hjust=0.5),  
@@ -459,8 +458,8 @@ p16<-ggplot(dNBR_c4$map, aes(x,y)) +  # con ggplot creo il grafico che contiene 
            legend.text = element_text(size = 10)) # con theme modifico gli elementi del grafico (sfondo, titolo, testo dei titoli e valori degli assi, titolo ed etichette della legenda)
 
 p16
-# La mappa di classificazione mette in evidenza due zone riconducibili alle aree non coinvolte dagli incendi (C3 e C4) e altre due alle zone invece colpite, con due 
-# diversi gradi di severità (C1, con i maggiori valori di deltaNBR, e C2). Anche in questo caso bisogna tenere conto di alcune interferenze legate alla nuvolosità.
+# La mappa di classificazione mette in evidenza una zona riconducibili alle aree non coinvolte dagli incendi (C3) e altre due alle zone invece colpite, con due 
+# diversi gradi di severità (C2, con i maggiori valori di deltaNBR, e C1)
 
 ## PLOT13 - Confronto tra classificazione pre-incendio e classificazione deltaNBR
 grid.arrange(p9, p16, ncol = 2)  # con la funzione grid.arrange plotto le due immagini insieme in un unico grafico 
@@ -474,30 +473,28 @@ grid.arrange(p8, p16, ncol = 2)  # con la funzione grid.arrange plotto le due im
 
 ## Ottenuta la classificazione è possibile calcolare le percentuali di area che rientrano nelle diverse classi
 
-freq(dNBR_c4$map)  # con la funzione freq ricavo il numero di pixel che ricade in ogni classe
+freq(dNBR_c3$map)  # con la funzione freq ricavo il numero di pixel che ricade in ogni classe
 #  value   count
-#    1     101603
-#    2     236700
-#    3     364891
-#    4     244698
+#    1     227780
+#    2     139781
+#    3     743903
 
-perc_d<-freq(dNBR_c4$map)/pxtot   # normalizzo il numero di pixel di ogni classe per il numero totale dei pixel per ottenere i valori percentuali
+perc_d<-freq(dNBR_c3$map)/pxtot   # normalizzo il numero di pixel di ogni classe per il numero totale dei pixel per ottenere i valori percentuali
 perc_d
 #  value   count
-#   1    0.1071884
-#   2    0.2497120
-#   3    0.3849500
-#   4    0.2581497
+#   1    0.2049369
+#   2    0.1257630
+#   3    0.6693001
 
 # Per cui approssimando si ha:
-# C1: 10.72%  --> Severità alta
-# C2: 24.97%  --> Severità intermedia
-# C3: 38.50%  --> Severità bassa o nulla
-# C4: 25.81%  --> Severità bassa o nulla
+# C1: 20.49%  --> Severità moderata
+# C2: 12.58%  --> Severità alta
+# C3: 66.93%  --> Severità nulla
+
 
 ## Conoscendo la risoluzione dell'immagine è possibile quantificare le aree di territorio coinvolte dall'incendio
-# Area dell'immagine= 510.571504 km2 
-# (Vedi procedimento per il calcolo dell'area alla riga 245)
+# Area dell'immagine= 598.677746 km2 
+# (Vedi procedimento per il calcolo dell'area alla riga 246)
 
 
 
@@ -507,10 +504,10 @@ perc_d
 
 ## Ottenuti i dati di interesse li inserisco in un dataset
 
-Classi_deltaNBR<-c("C1","C2", "C3", "C4") # alla variabile Classi associo i nomi delle classi ottenute
-Danno<- c( "Alto", "Intermedio", "Basso o Nullo", "Basso o Nullo")  # alla variabile Danno associo una descrizione qualitativa del danno sulla base dei valori di deltaNBR (più alti per danni maggiori)
-Area_perc_dan<-c(0.1072, 0.2497, 0.3850, 0.2581)  # alla variabile Area_perc_dan associo i valori percentuali ricavati precedentemente
-Area_km2_dan<-Area_perc_dan*510.571504  # moltiplicando l'area percentuale per l'area totale in km2 ottengo le aree in km2 che rientrano nelle 4 classi
+Classi_deltaNBR<-c("C1","C2", "C3") # alla variabile Classi associo i nomi delle classi ottenute
+Danno<- c( "Moderato", "Alto", "Nullo")  # alla variabile Danno associo una descrizione qualitativa del danno sulla base dei valori di deltaNBR (più alti per danni maggiori)
+Area_perc_dan<-c(0.2049, 0.1258, 0.6693)  # alla variabile Area_perc_dan associo i valori percentuali ricavati precedentemente
+Area_km2_dan<-Area_perc_dan*598.677746  # moltiplicando l'area percentuale per l'area totale in km2 ottengo le aree in km2 che rientrano nelle 4 classi
 
 perc_dan<-data.frame(Classi_deltaNBR, Danno, Area_perc_dan, Area_km2_dan)  # con data.frame inserisco le variabili all'interno di un dataset che associo alla variabile perc_dan
 perc_dan  # visualizzo il data.frame
@@ -518,7 +515,7 @@ perc_dan  # visualizzo il data.frame
 
 ## PLOT16 - Grafico a barre dei dati presenti nel dataframe
 
-g2<-ggplot(perc_dan, aes(x=factor(Danno,level = c("Alto", "Intermedio", "Basso o Nullo")), y=Area_km2_dan)) +  # con ggplot creo un grafico che contiene i dati del dataset 
+g2<-ggplot(perc_dan, aes(x=factor(Danno,level = c("Alto", "Moderato", "Nullo")), y=Area_km2_dan)) +  # con ggplot creo un grafico che contiene i dati del dataset 
     geom_bar(stat="identity", width=0.5, (aes(fill = Danno))) +  # geom_bar permette di creare un grafico a barre
     ggtitle("Aree danneggiate dall'incendio") +  # titolo del grafico
     xlab("") + ylab("Area (km2)") +  # titoli degli assi
@@ -530,3 +527,4 @@ g2<-ggplot(perc_dan, aes(x=factor(Danno,level = c("Alto", "Intermedio", "Basso o
            legend.text = element_text(size = 10))    # con theme modifico gli elementi del grafico ( titolo, testo dei titoli e valori degli assi, 
                                                                                                   # titolo ed etichette della legenda)
 g2    # visualizzo il grafico
+
