@@ -1,10 +1,13 @@
 # Primo codice in R per telerilevamento
-# install.packages("raster")
+
+# con installl.packages installo i pacchetti che mi interessano (è sufficiente farlo una volta)
+# install.packages("raster") 
 # install.packages("RStoolbox")
 # install.packages("ggplot2")
-library(raster) #richiamo il pacchetto raster
-library(RStoolbox) #richiamo il pacchetto RStoolbox
-library(ggplot2) #richiamo il pacchetto ggplot2
+# una volta installati i pacchetti uso library per richiamare quelli che servono nel codice e poterli utilizzare
+library(raster) # pacchetto con funzioni per elaborare file raster  
+library(RStoolbox) # pacchetto con funzioni per processare le immagini (tra cui unsuperClass)
+library(ggplot2) # pacchetto con diverse funzioni per creare e modificare grafici
 
 setwd("C:/lab/") #imposto la working directory
 
@@ -17,94 +20,92 @@ setwd("C:/lab/") #imposto la working directory
 #B6= infrarosso termico
 #B7= infrarosso medio (altro sensore)
 
-p224r63_2011 <- brick("p224r63_2011_masked.grd") # con la funzione brick estraggo i dati raster e li associo alla variabile
-p224r63_2011 #leggo le informazioni raster
-plot(p224r63_2011) #plotto l'immagine con la scala colori di default
+p224r63_2011 <- brick("p224r63_2011_masked.grd") # con la funzione brick estraggo i dati raster e li associo a una variabile
+p224r63_2011 # leggo le informazioni raster
+plot(p224r63_2011) # plotto l'immagine con la scala colori di default
 
-cl1<-colorRampPalette(c("blue","green","orange","yellow")) (100) #definisco una nuova scala colore
-plot(p224r63_2011,col=cl1) #plotto l'immagine con la nuova scala colore
+cl1<-colorRampPalette(c("blue","green","orange","yellow")) (100) # definisco una nuova scala colore con la funzione colorRampPalette
+plot(p224r63_2011,col=cl1) # plotto l'immagine con la nuova scala colore
 
-dev.off() #pulisco la finestra grafica
-plot(p224r63_2011$B1_sre, col=cl1) #plotto una sola banda a scelta usando $
+dev.off() # pulisco la finestra grafica
+plot(p224r63_2011$B1_sre, col=cl1) # plotto una sola banda a scelta usando $ per definire il layer specifico dell'oggetto RasterBrick che mi interessa
 
-#con la funzione par definisco la visualizzazione dei grafici in righe e colonne a mia scelta:
+# con la funzione par definisco la visualizzazione di più grafici insieme in un multipanel con righe e colonne a mia scelta:
 par(mfrow=c(2,1)) # 2 righe e 1 colonna
-plot(p224r63_2011$B1_sre,col=cl1)
+plot(p224r63_2011$B1_sre,col=cl1) 
 plot(p224r63_2011$B2_sre,col=cl1)
 
 par(mfrow=c(4,1)) # 4 righe e 1 colonna
-plot(p224r63_2011$B1_sre,col=cl1)
+plot(p224r63_2011$B1_sre,col=cl1) # plotto le immagini da inserire nel multipanel
 plot(p224r63_2011$B2_sre,col=cl1)
 plot(p224r63_2011$B3_sre,col=cl1)
 plot(p224r63_2011$B4_sre,col=cl1)
 
 par(mfrow=c(2,2)) # 2 righe e 2 colonne
-plot(p224r63_2011$B1_sre,col=cl1)
+plot(p224r63_2011$B1_sre,col=cl1) # plotto le immagini da inserire nel multipanel
 plot(p224r63_2011$B2_sre,col=cl1)
 plot(p224r63_2011$B3_sre,col=cl1)
 plot(p224r63_2011$B4_sre,col=cl1)
 
-#associo una scala colore diversa ad ogni banda e le plotto in un quadrato 2x2
-par(mfrow=c(2,2))
-clb<- colorRampPalette(c("darkblue", "blue", "lightblue")) (100)
+# associo una scala colore diversa ad ogni banda e le plotto in un quadrato 2x2
+par(mfrow=c(2,2)) # 2 righe 2 colonne
+clb<- colorRampPalette(c("darkblue", "blue", "lightblue")) (100)  # definisco le scale colori
 clv<- colorRampPalette(c("darkgreen", "green", "lightgreen")) (100)
 clr<- colorRampPalette(c("darkred", "red", "orange")) (100)
 clnir<- colorRampPalette(c("pink", "salmon","magenta")) (100)
-plot(p224r63_2011$B1_sre,col=clb)
+plot(p224r63_2011$B1_sre,col=clb)  # plotto le immagini all'interno del multipanel con le nuove scale colori
 plot(p224r63_2011$B2_sre,col=clv)
 plot(p224r63_2011$B3_sre,col=clr)
 plot(p224r63_2011$B4_sre,col=clnir)
 
 
 ### PLOT IN RGB
+# con la funzione plotRGB posso montare sui canali RGB le bande in diverse combinazioni per ottenere visualizzazioni più efficaci delgi elementi che mi interessano
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin") # immagine a colori naturali, R=RED G=GREEN B=BLUE
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin") # immagine in falsi colori R=NIR G=RED B=GREEN
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin") # immagine in falsi colori R=RED G=NIR B=GREEN
+plotRGB(p224r63_2011, r=3, g=2, b=4, stretch="Lin") # immagine in falsi colori R=RED G=GREEN B=NIR
+# la funzione stretch modifica la distribuzione dei valori di riflettanza tra il minimo e il massimo per migliorare il contrasto e la visibilità dell'immagine
 
-plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin") # immagine a colori naturali
-plotRGB(p224r63_2011, r=4, g3=3, b=2, stretch="Lin") # immagine in falsi colori con infrarosso in rosso
-plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin") # immagine in falsi colori con infrarosso in verde
-plotRGB(p224r63_2011, r=3, g=2, b=4, stretch="Lin") # immagine in falsi colori con infrarosso in blu
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="hist") # le due funzioni stretch di default sono linear e histogram
 
-#altre funzioni per stretch:
-plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="hist") #stretch histogram
 
-# plottare in un 2x2 le 4 immagine precedenti
-pdf("pdf1") #salvo il risultato come pdf nella wd
-par(mfrow=c(2,2))
-plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin") # immagine a colori naturali
-plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin") # immagine in falsi colori con infrarosso in rosso
-plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin") # immagine in falsi colori con infrarosso in verde
-plotRGB(p224r63_2011, r=3, g=2, b=4, stretch="Lin") # immagine in falsi colori con infrarosso in blu
-dev.off()
+pdf("pdf1") # salvo il risultato come pdf nella working directory
+par(mfrow=c(2,2)) # imposto un multipanel 2x2 dove plottare le immagini
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin") # immagine a colori naturali, R=RED G=GREEN B=BLUE
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin") # immagine in falsi colori R=NIR G=RED B=GREEN
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin") # immagine in falsi colori R=RED G=NIR B=GREEN
+plotRGB(p224r63_2011, r=3, g=2, b=4, stretch="Lin") # immagine in falsi colori R=RED G=GREEN B=NIR
+dev.off() # pulisco la finestra grafica dopo il procedimento per salvare correttamente il pdf
 
-#plot di immagine a colori naturali e in falsi colori (nir in verde) con stretch lin e his
-par(mfrow=c(3,1))
-plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin") # immagine a colori naturali
-plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin") # immagine in falsi colori con infrarosso in verde
-plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="hist") # immagine in falsi colori con infrarosso in verde con stretch his
+#confronto le immagin a colori naturali e in falsi colori (nir in verde) con diversi stretch (lin e his)
+par(mfrow=c(3,1))  # imposto un multipanel 1x3 dove plottare le immagini
+plotRGB(p224r63_2011, r=3, g=2, b=1, stretch="Lin") # immagine a colori naturali, R=RED G=GREEN B=BLUE con stretch lin
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="Lin") # immagine in falsi colori R=RED G=NIR B=GREEN con stretch lin
+plotRGB(p224r63_2011, r=3, g=4, b=2, stretch="hist") # immagine in falsi colori R=RED G=NIR B=GREEN con stretch his
 
 
 ### OSSERVARE CAMBIAMENTI NEL TEMPO DELLA STESSA ZONA
 
-p224r63_1988 <- brick("p224r63_1988_masked.grd") #carico l'immagine del 1988
-plot(p224r63_1988) #plotta tutte le bande
-plotRGB(p224r63_1988, r=3, g=2, b=1, stretch="Lin") #immagine a colori naturali
+p224r63_1988 <- brick("p224r63_1988_masked.grd") # con la funzione brick importo l'immagine del 1988 come oggetto RasterBrick
+plot(p224r63_1988) # plotto tutte le bande separate
+plotRGB(p224r63_1988, r=3, g=2, b=1, stretch="Lin") # plotto l'immagine a colori naturali
 
-# multitemporal set con stretch lineare
-par(mfrow=c(2,1))
-plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="Lin") #immagine 1988
-plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin") #immagine 2011
+# multitemporal set con stretch lineare: plotto su due righe l'immagine del 1988 e del 2011 per confrontarle
+par(mfrow=c(2,1)) # multipanel 1x2
+plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="Lin") # immagine 1988
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin") # immagine 2011
 
-# multitemporal set con stretch hist
-par(mfrow=c(2,1))
+# multitemporal set con stretch histogram: plotto su due righe l'immagine del 1988 e del 2011 per confrontarle
+par(mfrow=c(2,1)) # multipanel 1x2
 plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="hist") #immagine 1988
 plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="hist") #immagine 2011
 
-#pdf con set 4x4 delle immagini 1988 e 2011 in stretch lineare e hist
-pdf("multitemporal_set_1988_2011_lin_hist")
-par(mfrow=c(2,2))
-plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="Lin") #immagine 1988
-plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin") #immagine 2011
-plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="hist") #immagine 1988
-plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="hist") #immagine 2011
-dev.off()
-
-
+# creo un pdf con un multipanel 4x4 delle immagini 1988 e 2011 in stretch lineare e hist
+pdf("multitemporal_set_1988_2011_lin_hist") # imposto la creazione del pdf
+par(mfrow=c(2,2)) # imposto righe e colonne 2x2 dove plottare le immagini
+plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="Lin") # plotto immagine 1988
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="Lin") # plotto immagine 2011
+plotRGB(p224r63_1988, r=4, g=3, b=2, stretch="hist") #plotto immagine 1988
+plotRGB(p224r63_2011, r=4, g=3, b=2, stretch="hist") #plotto immagine 2011
+dev.off() # pulisco la finestra grafica dopo il procedimento per salvare correttamente il pdf
