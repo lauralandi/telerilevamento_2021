@@ -887,12 +887,14 @@ plot(EN13, col=cl)  # visualizzo l'immagine importata con la color palette scelt
 deltaEN<-EN01-EN13  # calcolo la differenza tra i valori di NO2 di Gennaio (EN01) e Marzo (EN13)
 plot(deltaEN, col=cl)  # visualizzo il risultato ottenuto
 
+
 #----------- 6.  plot everything altogether  -----------#
 
 par(mfrow=c(3,1)) # imposto un multipanel su 3 righe dove plottare le immagini
 plot(EN01,col=cl, main="NO2 in January")  # mappa di NO2 a Gennaio
 plot(EN13,col=cl, main="NO2 in March")  # mappa di NO2 a Marzo
 plot(deltaEN, col=cl, main="Difference between January and march") # mappa della differenza di NO2 tra Gennaio e Marzo
+
 
 #----------- 7. import the all set  -----------#
 
