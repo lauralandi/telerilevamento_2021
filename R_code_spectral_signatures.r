@@ -133,7 +133,7 @@ multitemp<-data.frame(band,defor1_1,defor2_1, defor1_2,defor2_2,
                      defor1_3,defor2_3, defor1_4,defor2_4,
                      defor1_5,defor2_5, defor1_6,defor2_6)   # con data.frame creo il dataset con tutte le variabili definite 
 
-# con ggplot creo un grafico che unica tutte le firme spettrali dei 12 punti analizzati (6 nella immagine più vecchia, in verde, e 6 in quella più recente, in blu)
+# con ggplot creo un grafico che unisca tutte le firme spettrali dei 12 punti analizzati (6 nella immagine più vecchia, in verde, e 6 in quella più recente, in blu)
 ggplot(multitemp, aes(x=band)) +
               geom_line(aes(y=defor1_1), color="green") +  # con geom_line inserisco le curve delle firme spettrali (grafico a linee)
               geom_line(aes(y=defor2_1), color="blue") +
@@ -174,19 +174,19 @@ click(loza, id=T, xy=T, cell=T, type= "p", pch=16, col="yellow")  # con la funzi
 # 1 3040.5 1330.5 13260449    150     89     68
 
 # definisco le variabili con cui costruire il dataset:
-band<-c(1,2,3)
-zona1<-c(43,85,75)
+band<-c(1,2,3) # i numeri delle bande (1=nir 2=red 3=green)
+zona1<-c(43,85,75) # i valori di rflettanza delle tre bande di tutti i punti delle due foto
 zona2<-c(248,223,183)
 zona3<-c(0,19,20)
 zona4<-c(150,89,68)
 tab<-data.frame(band,zona1,zona2,zona3,zona4)  # con data.frame creo il dataset con i valori di riflettanza nelle tre bande dei quattro punti selezionati
 
-# costruisco il grafico a linee con i valori dei quattro punti selezionati
+# con ggplot creo un grafico che unisca tutte le firme spettrali dei quattro punti analizzati
 ggplot(multitemp, aes(x=band)) +
-              geom_line(aes(y=zona1), color="green") +
+              geom_line(aes(y=zona1), color="green") + # con geom_line inserisco le curve delle firme spettrali (grafico a linee)
               geom_line(aes(y=zona2), color="blue") +
               geom_line(aes(y=zona3), color="red") +
                geom_line(aes(y=zona4), color="magenta") +
-              labs(x="bande",y="riflettanza")
+              labs(x="bande",y="riflettanza")  # inserisco i titoli degli assi
 
       
