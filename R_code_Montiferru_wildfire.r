@@ -197,7 +197,7 @@ grid.arrange(p7, p8, ncol = 2, top=grid.text("Immagini in falsi colori", gp=gpar
 # Applicando una classificazione sull'immagine del 10 Luglio definisco due classi che rappresentano tipi di vegetazione, una con una maggiore riflettanza nel NIR (aree boschive)
 # e una con minore riflettanza (aree coltivate o a vegetazione erbacea).
 
-set.seed(60)  # la funzione set.seed mi permette di poter replicare più volte lo stesso processo che altrimenti sarebbe sempre randomico
+set.seed(60)  # la funzione set.seed fissa il set di pixel di partenza e permette di poter replicare più volte lo stesso risultato, altrimenti il processo randomico porterebbe ogni volta qualche differenza
 july10_c2<-unsuperClass(july10_crop, nClasses=2)  # con la funzione unsuperClass applico una classificazione non supervisionata con un numero di classi definito (qui 2) 
                                                     # e la associo alla variabile july10_c2
 
@@ -441,7 +441,7 @@ ggarrange(p12, p15, ncol = 2, common.legend=TRUE, legend="bottom")  # uso ggarra
 
 # Per riconoscere e quantificare le aree più danneggiate dagli incendi applico una classificazione dell'indice deltaNBR 
 
-set.seed(60)  
+set.seed(60)  # la funzione set.seed fissa il set di pixel di partenza e permette di poter replicare più volte lo stesso risultato, altrimenti il processo randomico porterebbe ogni volta qualche differenza
 dNBR_c4<-unsuperClass(deltaNBR, nClasses=4) # con unsuperClass applico una classificazione non supervisionata di 4 classi e la associo alla variabile dNBR_c4
 
 
@@ -497,7 +497,7 @@ perc_d
 
 ## Conoscendo la risoluzione dell'immagine è possibile quantificare le aree di territorio coinvolte dall'incendio
 # Area dell'immagine= 510.571504 km2 
-# (Vedi procedimento per il calcolo dell'area alla riga 243)
+# (Vedi procedimento per il calcolo dell'area alla riga 245)
 
 
 
@@ -513,7 +513,7 @@ Area_perc_dan<-c(0.1072, 0.2497, 0.3850, 0.2581)  # alla variabile Area_perc_dan
 Area_km2_dan<-Area_perc_dan*510.571504  # moltiplicando l'area percentuale per l'area totale in km2 ottengo le aree in km2 che rientrano nelle 4 classi
 
 perc_dan<-data.frame(Classi_deltaNBR, Danno, Area_perc_dan, Area_km2_dan)  # con data.frame inserisco le variabili all'interno di un dataset che associo alla variabile perc_dan
-perc_dan
+perc_dan  # visualizzo il data.frame
 
 
 ## PLOT16 - Grafico a barre dei dati presenti nel dataframe
@@ -529,4 +529,4 @@ g2<-ggplot(perc_dan, aes(x=factor(Danno,level = c("Alto", "Intermedio", "Basso o
            legend.title = element_text(size=12, face="bold"),
            legend.text = element_text(size = 10))    # con theme modifico gli elementi del grafico ( titolo, testo dei titoli e valori degli assi, 
                                                                                                   # titolo ed etichette della legenda)
-g2    
+g2    # visualizzo il grafico
