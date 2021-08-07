@@ -85,7 +85,7 @@ cl=colorRampPalette(c("gray48", "white"))(100)  # definisco una color palette
 
 # con la funzione levelplot visualizzo le bande importate per l'immagine del 22 Luglio
 p0<-levelplot(july22,col.regions=cl,main="Bande dell'immagine 22 Luglio",       # la funzione levelplot permette di arricchire il grafico con la color palette scelta
-          names.attr=c("B01","B02","B03","B04","B05","B06","B07","B08","B09","B11","B12","B8A")) # e il titolo principale e dei layer
+          names.attr=c("B01","B02","B03","B04","B05","B06","B07","B08","B09","B11","B12","B8A"))                                   # e il titolo principale e dei layer
 p0
 
 # con la funzione levelplot visualizzo le bande importate per l'immagine del 30 Luglio
@@ -445,7 +445,7 @@ set.seed(53)  # la funzione set.seed fissa il set di pixel di partenza e permett
 dNBR_c3<-unsuperClass(deltaNBR, nClasses=3) # con la funzione unsuperClass applico una classificazione non supervisionata con un numero di classi definito (qui 3) 
                                                     # e la associo alla variabile dNBR_c3
 
-## PLOT12 - La mappa di classificazione del deltaNBR
+## Visualizzo la mappa di classificazione del deltaNBR:
 
 p16<-ggplot(dNBR_c3$map, aes(x,y)) +  # con ggplot creo il grafico che contiene la mappa calcolata
      geom_raster(aes(fill=factor(layer))) +  # geom_raster permette di plottare nel grafico un elemento raster
