@@ -373,7 +373,7 @@ p13<-ggplot(NBR_july22, aes(x,y)) +   # con ggplot creo il grafico che contiene 
      geom_raster(aes(fill=layer)) +  # geom_raster permette di plottare nel grafico un elemento raster
      scale_fill_gradientn(colors = clz,limits = c(-0.97, 0.87))+  # impongo i limiti max e min della scala di colore
      guides(fill = guide_colourbar(barwidth= 15)) +  # definisco la lunghezza della barra della scala colori
-     ggtitle("NBR 10 Luglio 2021") +     # titolo dell'immagine
+     ggtitle("NBR 22 Luglio 2021") +     # titolo dell'immagine
      xlab("Long") + ylab("Lat") +    #titoli degli assi
      theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", hjust=0.5),  
           axis.title=element_text(size=10), axis.text= element_text(size=8),
@@ -383,7 +383,7 @@ p14<-ggplot(NBR_july30, aes(x,y)) +  # con ggplot creo il grafico che contiene l
      geom_raster(aes(fill=layer)) +  # geom_raster permette di plottare nel grafico un elemento raster
      scale_fill_gradientn(colors = clz,limits = c(-0.97, 0.87))+  # impongo i limiti max e min della scala di colore
      guides(fill = guide_colourbar(barwidth= 15)) +  # definisco la lunghezza della barra della scala colori
-     ggtitle(" NBR 25 Luglio 2021") +     # titolo dell'immagine
+     ggtitle(" NBR 30 Luglio 2021") +     # titolo dell'immagine
      xlab("Long") + ylab("Lat") +    #titoli degli assi
      theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", hjust=0.5),  
           axis.title=element_text(size=10), axis.text= element_text(size=8),
