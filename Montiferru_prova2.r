@@ -169,9 +169,9 @@ grid.arrange(p5, p6, nrow = 2, top=grid.text("Immagini in falsi colori", gp=gpar
 
 ## Per analizzare meglio l'area bruciata dagli incendi mi focalizzo su un'area più ristretta.
 
-plotRGB(july30, 11, 10, 4, stretch="lin")  # plotto l'immagine del 30 Luglio in falsi colori r=SWIR(B12), g=SWIR(B11), b=red
-e<- drawExtent(show=TRUE, col="red") # con la funzione drawExtent disegno un riquadro sull'immagine aperta e genero un oggetto extent associato alla variabile e
-e   # richiamando la variabile e ottengo le sue informazioni:
+#plotRGB(july30, 11, 10, 4, stretch="lin")  # plotto l'immagine del 30 Luglio in falsi colori r=SWIR(B12), g=SWIR(B11), b=red
+#e<- drawExtent(show=TRUE, col="red") # con la funzione drawExtent disegno un riquadro sull'immagine aperta e genero un oggetto extent associato alla variabile e
+#e   # richiamando la variabile e ottengo le sue informazioni:
     # class      : Extent 
     # xmin       : 943140.1 
     # xmax       : 967073.2 
@@ -387,24 +387,7 @@ ggarrange(p10, p11, ncol = 2, common.legend=TRUE, legend="bottom")  # uso ggarra
 # Da questo plot si osserva bene il calo drastico di NDVI nella zona colpita dagli incendi
 
 
-## Calcolando la differenza tra i due NDVI se ne può quantificare il calo
-deltaNDVI<- NDVI_july22 - NDVI_july30  
 
-
-## PLOT8 - Il deltaNDVI 
-
-p12<-ggplot(deltaNDVI, aes(x,y)) +  # con ggplot creo il grafico che contiene la mappa di deltaNDVI calcolata
-     geom_raster(aes(fill=layer)) +  # geom_raster permette di plottare nel grafico un elemento raster
-     scale_fill_gradientn(colors = clz, limits = c(-0.1, 1)) +   # definisco la scala colore e ne impongo i limiti max e min
-     guides(fill = guide_colourbar(barwidth= 15))  +  # definisco la lunghezza della barra della scala colori
-     ggtitle("deltaNDVI") +     # titolo del grafico
-     xlab("Long") + ylab("Lat") +   # titoli degli assi
-     theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", hjust=0.5), 
-          axis.title=element_text(size=10), axis.text= element_text(size=8),
-          legend.title = element_blank())    # con theme modifico gli elementi del grafico ( titolo, testo dei titoli e valori degli assi, titolo ed etichette della legenda)
-
-p12
-# Dal plot si osserva come all'interno dell'area incendiata il calo di NDVI più drastico sia nella porziona a sud, corrispondente alla zona boschiva
 
           
 ## Calcolo del NBR
@@ -418,7 +401,7 @@ NBR_july22
 NBR_july30
 # values: -0.6619545, 0.8108208  (min, max)
 
-# Visti i valori max e min dei due NBR, per definire una scala di colore comune da plottare sui due grafici impongo un range tra -0.46 e 0.85
+# Visti i valori max e min dei due NBR, per definire una scala di colore comune da plottare sui due grafici impongo un range tra -0.97 e 0.87
 # per entrambi e poi plotto una legenda comune nel grafico
 
 
@@ -426,8 +409,7 @@ NBR_july30
 
 p13<-ggplot(NBR_july22, aes(x,y)) +   # con ggplot creo il grafico che contiene la mappa di NBR calcolata il 10 luglio
      geom_raster(aes(fill=layer)) +  # geom_raster permette di plottare nel grafico un elemento raster
-     scale_fill_gradientn(colors = clz)+ #,limits = c(-0.46, 0.85),  # impongo i limiti max e min della scala di colore
-                          #breaks = c(-0.45, -0.2, 0.05, 0.3, 0.55, 0.8))  +  # indico gli intervalli (breaks) della scala dove inserire le etichette
+     scale_fill_gradientn(colors = clz,limits = c(-0.97, 0.87))+  # impongo i limiti max e min della scala di colore
      guides(fill = guide_colourbar(barwidth= 15)) +  # definisco la lunghezza della barra della scala colori
      ggtitle("NBR 10 Luglio 2021") +     # titolo dell'immagine
      xlab("Long") + ylab("Lat") +    #titoli degli assi
@@ -437,8 +419,7 @@ p13<-ggplot(NBR_july22, aes(x,y)) +   # con ggplot creo il grafico che contiene 
         
 p14<-ggplot(NBR_july30, aes(x,y)) +  # con ggplot creo il grafico che contiene la mappa di NBR calcolata il 25 luglio
      geom_raster(aes(fill=layer)) +  # geom_raster permette di plottare nel grafico un elemento raster
-     scale_fill_gradientn(colors = clz)+ #,limits = c(-0.46, 0.85),  # impongo i limiti max e min della scala di colore
-                          #breaks = c(-0.45, -0.2, 0.05, 0.3, 0.55, 0.8))  +  # indico gli intervalli (breaks) della scala dove inserire le etichette
+     scale_fill_gradientn(colors = clz,limits = c(-0.97, 0.87))+  # impongo i limiti max e min della scala di colore
      guides(fill = guide_colourbar(barwidth= 15)) +  # definisco la lunghezza della barra della scala colori
      ggtitle(" NBR 25 Luglio 2021") +     # titolo dell'immagine
      xlab("Long") + ylab("Lat") +    #titoli degli assi
@@ -450,15 +431,36 @@ ggarrange(p13, p14, ncol = 2, common.legend=TRUE, legend="bottom")   # uso ggarr
 # Anche in questo caso il calo di NBR nella seconda foto indica un aumento della riflettanza nello SWIR simultaneamente a un calo nel NIR dovuti all'incendio
 
 
-## Calcolando la differenza tra i due NBR se ne può quantificare il calo dopo gli incendi
-deltaNBR<- NBR_july22 - NBR_july30
+## Per quantificare il calo di entrambi gli indici dovuto all'incendio se ne calcola la differenza
+
+deltaNDVI<- NDVI_july22 - NDVI_july30  # differenza tra NDVI pre-incendio e NDVI post-incendio
+deltaNBR<- NBR_july22 - NBR_july30  # differenza tra NBR pre-incendio e NBR post-incendio
+
+deltaNDVI
+# values: -1.126814, 0.8725326  (min, max)
+
+deltaNBR
+# values: -1.162757, 1.347663  (min, max)
+
+# Visti i valori max e min dei due NDVI, definisco un range comune [-1.16 , 1.35] per confrontare i due grafici con un'unica scala colore.
+# Nel plot escludo poi i valori minori di -0.1 legati all'acqua e valorizzare l'area vegetata
 
 
-## PLOT10 - Il deltaNBR
+## PLOT - Il deltaNDVI e il deltaNBR
+
+p12<-ggplot(deltaNDVI, aes(x,y)) +  # con ggplot creo il grafico che contiene la mappa di deltaNDVI calcolata
+     geom_raster(aes(fill=layer)) +  # geom_raster permette di plottare nel grafico un elemento raster
+     scale_fill_gradientn(colors = clz, limits = c(-0.1, 1.35)) +   # definisco la scala colore e ne impongo i limiti max e min
+     guides(fill = guide_colourbar(barwidth= 15))  +  # definisco la lunghezza della barra della scala colori
+     ggtitle("deltaNDVI") +     # titolo del grafico
+     xlab("Long") + ylab("Lat") +   # titoli degli assi
+     theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", hjust=0.5), 
+          axis.title=element_text(size=10), axis.text= element_text(size=8),
+          legend.title = element_blank())    # con theme modifico gli elementi del grafico ( titolo, testo dei titoli e valori degli assi, titolo ed etichette della legenda)
 
 p15<-ggplot(deltaNBR, aes(x,y)) +   # con ggplot creo il grafico che contiene la mappa di deltaNBR calcolata
      geom_raster(aes(fill=layer)) +   # geom_raster permette di plottare nel grafico un elemento raster
-     scale_fill_gradientn(colors = clz, limits = c(-0.1, 1)) +    # impongo i limiti max e min della scala di colore
+     scale_fill_gradientn(colors = clz, limits = c(-0.1, 1.35)) +    # impongo i limiti max e min della scala di colore
      guides(fill = guide_colourbar(barwidth= 15)) +  # definisco la lunghezza della barra della scala colori
      ggtitle("deltaNBR") +     # titolo dell'immagine
      xlab("Long") + ylab("Lat") +    # titoli degli assi
@@ -466,11 +468,6 @@ p15<-ggplot(deltaNBR, aes(x,y)) +   # con ggplot creo il grafico che contiene la
           axis.title=element_text(size=10), axis.text= element_text(size=8),
           legend.title = element_blank())   # con theme modifico gli elementi del grafico ( titolo, testo dei titoli e valori degli assi, titolo ed etichette della legenda)
 
-p15
-# Anche in questo caso i valori maggiori di delta NBR sono nella porzione sud dell'area incendiata, ovvero la zona boschiva, dove il danno è quindi stato maggiore
-
-
-## PLOT11 - Confronto tra il deltNDVI e il deltaNBR
 ggarrange(p12, p15, ncol = 2, common.legend=TRUE, legend="bottom")  # uso ggarrange per plottare le due mappe in un unico grafico e inserire una legenda comune
 
 
