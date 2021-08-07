@@ -452,7 +452,7 @@ dNBR_c3<-unsuperClass(deltaNBR, nClasses=3) # con la funzione unsuperClass appli
 p16<-ggplot(dNBR_c3$map, aes(x,y)) +  # con ggplot creo il grafico che contiene la mappa calcolata
      geom_raster(aes(fill=factor(layer))) +  # geom_raster permette di plottare nel grafico un elemento raster
      scale_fill_manual(values=c('red','yellow','darkgreen'),  # definisco i colori delle classi
-                       name=("Severità di danno"), labels=c("Moderata", "Alta", "Nulla")) +   # definisco nome della legenda ed etichette dei colori corrispondenti
+                       name=("Danno"), labels=c("Moderato", "Alto", "Nullo")) +   # definisco nome della legenda ed etichette dei colori corrispondenti
      ggtitle("Mappa di classificazione del deltaBNR") +    # titolo del grafico
      xlab("Long") + ylab("Lat") +    # titoli degli assi
      theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold",  hjust=0.5),  
@@ -523,49 +523,3 @@ g2<-ggplot(perc_dan, aes(x=factor(Danno,level = c("Alto", "Moderato", "Nullo")),
            legend.text = element_text(size = 10))    # con theme modifico gli elementi del grafico ( titolo, testo dei titoli e valori degli assi, 
                                                                                                   # titolo ed etichette della legenda)
 g2    # visualizzo il grafico
-
-
-
-
-########################################################################################################
-
-
-## PLOT2 - Le due immagini (22 e 30 Luglio) in falsi colori: r=NIR, g=green, b=blue
-# Questa modalità di visualizzazione esalta in rosso la vegetazione, che ha un'alta riflettanza nella banda del NIR, con valori maggiori per le aree boschive 
-# e minori per le aree a prevalenza di vegetazione erbacea e coltivate
-
-p3<-ggRGB(july22, 8, 3, 2, stretch="lin") + # con ggRGB monto le bande in falsi colori e applico uno stretch lineare per migliorare il contrasto
-    ggtitle("22 Luglio 2021") +     # titolo dell'immagine
-    xlab("Long") + ylab("Lat") +    # titoli degli assi
-    theme(panel.background = element_blank(), plot.title = element_text(size=11, face="bold", color="red"), 
-          axis.title=element_text(size=10), axis.text= element_text(size=8))   # con theme modifico agli elementi del grafico (sfondo, testo dei titoli e valori degli assi)
-        
-p4<-ggRGB(july30, 8, 3, 2, stretch="lin") +  # con ggRGB monto le bande in falsi colori e applico uno stretch lineare per migliorare il contrasto
-    ggtitle("30 Luglio 2021") +   # titolo dell'immagine
-    xlab("Long") + ylab("Lat") +  # titoli degli assi
-    theme(panel.background = element_blank(), plot.title = element_text(size=11, face="bold", color="red"), 
-          axis.title=element_text(size=10), axis.text= element_text(size=8))   # con theme modifico agli elementi del grafico (sfondo, testo dei titoli e valori degli assi)
-
-grid.arrange(p3, p4, nrow = 2, top=grid.text("Immagini in falsi colori", gp=gpar(fontsize=15,font=2))) 
-# con la funzione grid.arrange plotto le due immagini insieme in un unico grafico aggiungendo un titolo
-# Questa visualizzazione mostra come il 30 Luglio si sia formata una grossa area scura dove la vegetazione è stata distrutta a causa degli incendi
-
-
-## PLOT3 - Le due immagini (22 e 30 Luglio) in falsi colori: r=SWIR(B12), g=SWIR(B11), b=red
-# Questa modalità di visualizzazione esalta in rosso le aree bruciate, poichè esse hanno un'alta riflettanza nella banda del SWIR
-
-p5<-ggRGB(july22, 11, 10, 4, stretch="lin") +  # con ggRGB monto le bande in falsi colori e applico uno stretch lineare per migliorare il contrasto
-    ggtitle("22 Luglio 2021") +     # titolo dell'immagine
-    xlab("Long") + ylab("Lat") +    # titoli degli assi
-    theme(panel.background = element_blank(), plot.title = element_text(size=11, face="bold", color="red"), 
-          axis.title=element_text(size=10), axis.text= element_text(size=8))    # con theme modifico agli elementi del grafico (sfondo, testo dei titoli e valori degli assi)
-        
-p6<-ggRGB(july30, 11, 10, 4, stretch="lin") +   # con ggRGB monto le bande in falsi colori e applico uno stretch lineare per migliorare il contrasto
-    ggtitle("30 Luglio 2021") +     # titolo dell'immagine
-    xlab("Long") + ylab("Lat") +  # titoli degli assi
-    theme(panel.background = element_blank(), plot.title = element_text(size=11, face="bold", color="red"), 
-          axis.title=element_text(size=10), axis.text= element_text(size=8))    # con theme modifico agli elementi del grafico (sfondo, testo dei titoli e valori degli assi)
-
-grid.arrange(p5, p6, nrow = 2, top=grid.text("Immagini in falsi colori", gp=gpar(fontsize=15,font=2)))  
-# con la funzione grid.arrange plotto le due immagini insieme in un unico grafico aggiungendo un titolo
-# Questa visualizzazione evidenzia in rosso l'area bruciata e le zone in essa più colpite
