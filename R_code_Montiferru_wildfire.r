@@ -268,14 +268,14 @@ perc_cop  # visualizzo il dataframe
 
 ## Visualizzo il grafico a barre dei dati presenti nel dataframe:
 
-g1<-ggplot(perc_cop, aes(x=Classi_, y=Area_km2_cop)) +  # con ggplot creo un grafico che contiene i dati del dataset 
-    geom_bar(stat="identity", width=0.5, (aes(fill = Copertura))) +  # geom_bar permette di creare un grafico a barre
+g1<-ggplot(perc_cop, aes(x=Copertura, y=Area_km2_cop)) +  # con ggplot creo un grafico che contiene i dati del dataset 
+    geom_bar(stat="identity", width=0.5, (aes(fill = Copertura))) + # geom_bar permette di creare un grafico a barre
+    scale_fill_manual(values=c("darkgreen", "green")) +  # definisco i colori di riempimento delle barre
     ggtitle("Aree di copertura vegetale pre-incendi") +  # titolo del grafico
-    xlab("Classi") + ylab("Area (km2)") +  # titoli degli assi
+    xlab("Copertura") + ylab("Area (km2)") +  # titoli degli assi
     theme(plot.title = element_text(size=16, face="bold",  hjust=0.5), 
-           axis.title=element_text(size=10), axis.text= element_text(size=10),
-           legend.title = element_text(size=12, face="bold"),
-           legend.text = element_text(size = 10))  # con theme modifico gli elementi del grafico ( titolo, testo dei titoli e valori degli assi, 
+           axis.title=element_text(size=12), axis.text= element_text(size=10),
+           legend.position = "none")  # con theme modifico gli elementi del grafico ( titolo, testo dei titoli e valori degli assi, 
                                                                                                   # titolo ed etichette della legenda)
 g1  # visualizzo il grafico
 
@@ -511,13 +511,11 @@ perc_dan  # visualizzo il data.frame
 
 g2<-ggplot(perc_dan, aes(x=factor(Danno,level = c("Alto", "Moderato", "Nullo")), y=Area_km2_dan)) +  # con ggplot creo un grafico che contiene i dati del dataset 
     geom_bar(stat="identity", width=0.5, (aes(fill = Danno))) +  # geom_bar permette di creare un grafico a barre
+    scale_fill_manual(values=c("yellow", "red", "darkgreen")) +  # definisco i colori di riempimento delle barre
     ggtitle("Aree danneggiate dall'incendio") +  # titolo del grafico
-    xlab("") + ylab("Area (km2)") +  # titoli degli assi
+    xlab("Danno") + ylab("Area (km2)") +  # titoli degli assi
     theme(plot.title = element_text(size=16, face="bold",  hjust=0.5), 
-           axis.title=element_text(size=10), axis.text= element_text(size=10),
-          axis.text.x=element_blank(),
-           axis.ticks.x=element_blank(),
-           legend.title = element_text(size=12, face="bold"),
-           legend.text = element_text(size = 10))    # con theme modifico gli elementi del grafico ( titolo, testo dei titoli e valori degli assi, 
+           axis.title=element_text(size=12), axis.text= element_text(size=10),
+           legend.position = "none")    # con theme modifico gli elementi del grafico ( titolo, testo dei titoli e valori degli assi, 
                                                                                                   # titolo ed etichette della legenda)
 g2    # visualizzo il grafico
