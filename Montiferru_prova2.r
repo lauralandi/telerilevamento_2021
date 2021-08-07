@@ -33,6 +33,7 @@ library(ggpubr) # pacchetto che aggiunge ulteriori funzioni per personalizzare i
 library(grid)  # pacchetto che aggiunge ulteriori funzioni per personalizzare i grafici ( tra cui gpar)
 library(gridExtra) # pacchetto con funzioni per lavorare con grafici (tra cui grid.arrange)
 library(wesanderson) # pacchetto con diverse palette di colori ispirate a Wes Anderson
+library(rasterVis)
 
 setwd("C:/lab/sardegna2/")  # definire la working directory
 
@@ -82,9 +83,13 @@ rlist30<-list.files(pattern="july30") # con la funzione list.files creo una list
 import30<-lapply(rlist30,raster) # con la funzione lapply applico la funzione raster su tutti i file della lista e li importo associati alla variabile import25
 july30<-stack(import30) # con la funzione stack creo un unico oggetto RasterStack che contiene come layer tutte le bande importate
 
-plot(july22, main="Bande dell'immagine 22 Luglio") # visualizzo le bande importate per l'immagine del 22 Luglio
-
-plot(july30, main="Bande dell'immagine 30 Luglio") # visualizzo le bande importate per l'immagine del 30 Luglio
+cl=colorRampPalette(c("gray48", "white"))(100)
+ # visualizzo le bande importate per l'immagine del 22 Luglio
+p0<-levelplot(july22,col.regions=cl,main="Bande dell'immagine 22 Luglio",       # la funzione levelplot permette di arricchire il grafico la color palette scelta,
+          names.attr=c("B01","B02","B03","B04","B05","B06","B07","B08","B09","B11","B12","B8A"))
+p00<-plot(july30, main="Bande dell'immagine 30 Luglio") # visualizzo le bande importate per l'immagine del 30 Luglio
+p00<-levelplot(july30,col.regions=cl,main="Bande dell'immagine 30 Luglio",       # la funzione levelplot permette di arricchire il grafico la color palette scelta,
+          names.attr=c("B01","B02","B03","B04","B05","B06","B07","B08","B09","B11","B12","B8A"))
 
 # Richiamando le due variabili posso leggere i nomi e la posizione dei layer appena importati:
 july22 
@@ -172,29 +177,60 @@ e   # richiamando la variabile e ottengo le sue informazioni:
     # xmax       : 967073.2 
     # ymin       : 4881607 
     # ymax       : 4906605
-
+e<-extent(943140.1, 967073.2, 4881607, 4906605)
 
 july22_crop<- crop(july22, e)  # con la funzione crop ritaglio le immagini nelle dimensioni definite dalla variabile "e" e le associo a due nuove variabili
 july30_crop<- crop(july30, e)
 
 
-## PLOT4 - Le due immagini ritagliate, in falsi colori
+## PLOT4 - Le due immagini ritagliate, in veri colori
 
-p7<-ggRGB(july22_crop, 11, 10, 4, stretch="lin") +  # con ggRGB monto le bande in falsi colori e applico uno stretch lineare per migliorare il contrasto
+p7<-ggRGB(july22_crop, 4, 3, 2, stretch="lin") +  # con ggRGB monto le bande in falsi colori e applico uno stretch lineare per migliorare il contrasto
     ggtitle("22 Luglio 2021") +    # titolo dell'immagine 
     xlab("Long") + ylab("Lat") +    # titoli degli assi
     theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", color="red"), 
           axis.title=element_text(size=10), axis.text= element_text(size=8))   # con theme modifico agli elementi del grafico (sfondo, testo dei titoli e valori degli assi)
         
-p8<-ggRGB(july30_crop, 11, 10, 4, stretch="lin") +   # con ggRGB monto le bande in falsi colori e applico uno stretch lineare per migliorare il contrasto
+p8<-ggRGB(july30_crop, 4, 3, 2, stretch="lin") +   # con ggRGB monto le bande in falsi colori e applico uno stretch lineare per migliorare il contrasto
     ggtitle("30 Luglio 2021") +     # titolo dell'immagine
     xlab("Long") + ylab("Lat") +  # titoli degli assi
     theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", color="red"), 
           axis.title=element_text(size=10), axis.text= element_text(size=8))  # con theme modifico agli elementi del grafico (sfondo, testo dei titoli e valori degli assi)
 
-grid.arrange(p7, p8, ncol = 2, top=grid.text("Immagini in falsi colori", gp=gpar(fontsize=18,font=2)))  
+grid.arrange(p7, p8, ncol = 2, top=grid.text("Immagini in veri colori", gp=gpar(fontsize=18,font=2)))  
 # con la funzione grid.arrange plotto le due immagini insieme in un unico grafico aggiungendo un titolo
 
+## PLOT5 - Le due immagini ritagliate, in falsi colori r=NIR, g=green, b=blue
+
+p7.1<-ggRGB(july22_crop, 8, 3, 2, stretch="lin") +  # con ggRGB monto le bande in falsi colori e applico uno stretch lineare per migliorare il contrasto
+    ggtitle("22 Luglio 2021") +    # titolo dell'immagine 
+    xlab("Long") + ylab("Lat") +    # titoli degli assi
+    theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", color="red"), 
+          axis.title=element_text(size=10), axis.text= element_text(size=8))   # con theme modifico agli elementi del grafico (sfondo, testo dei titoli e valori degli assi)
+        
+p8.1<-ggRGB(july30_crop, 8, 3, 2, stretch="lin") +   # con ggRGB monto le bande in falsi colori e applico uno stretch lineare per migliorare il contrasto
+    ggtitle("30 Luglio 2021") +     # titolo dell'immagine
+    xlab("Long") + ylab("Lat") +  # titoli degli assi
+    theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", color="red"), 
+          axis.title=element_text(size=10), axis.text= element_text(size=8))  # con theme modifico agli elementi del grafico (sfondo, testo dei titoli e valori degli assi)
+
+grid.arrange(p7.1, p8.1, ncol = 2, top=grid.text("Immagini in falsi colori", gp=gpar(fontsize=18,font=2)))  
+
+## PLOT6 - Le due immagini ritagliate, in falsi colori r=SWIR(B12), g=SWIR(B11), b=red
+
+p7.2<-ggRGB(july22_crop, 11, 10, 4, stretch="lin") +  # con ggRGB monto le bande in falsi colori e applico uno stretch lineare per migliorare il contrasto
+    ggtitle("22 Luglio 2021") +    # titolo dell'immagine 
+    xlab("Long") + ylab("Lat") +    # titoli degli assi
+    theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", color="red"), 
+          axis.title=element_text(size=10), axis.text= element_text(size=8))   # con theme modifico agli elementi del grafico (sfondo, testo dei titoli e valori degli assi)
+        
+p8.2<-ggRGB(july30_crop, 11, 10, 4, stretch="lin") +   # con ggRGB monto le bande in falsi colori e applico uno stretch lineare per migliorare il contrasto
+    ggtitle("30 Luglio 2021") +     # titolo dell'immagine
+    xlab("Long") + ylab("Lat") +  # titoli degli assi
+    theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold", color="red"), 
+          axis.title=element_text(size=10), axis.text= element_text(size=8))  # con theme modifico agli elementi del grafico (sfondo, testo dei titoli e valori degli assi)
+
+grid.arrange(p7.2, p8.2, ncol = 2, top=grid.text("Immagini in falsi colori", gp=gpar(fontsize=18,font=2)))  
 
 
 #-------------------------------------------------------------#
