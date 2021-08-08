@@ -1,22 +1,21 @@
-# R code complete
-# TELERILEVAMENTO GEO-ECOLOGICO 2021
+#                                                                TELERILEVAMENTO GEO-ECOLOGICO 2021                                
+#                                                                          R Code Complete                                                      
 
-#------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#---------  SUMMARY: -----------#
+                                                                  #----------  SUMMARY: -----------#
 
-# 1. Remote sensing - First Code
-# 2. R Code - Time series
-# 3. R Code - Copernicus
-# 4. R Code - Knitr
-# 5. R Code - Multivariate analysis
-# 6. R Code - Classification
-# 7. R Code - ggplot2
-# 8. R Code - Vegetation Indices
-# 9. R Code - Land Cover
-# 10. R Code - Variability
-# 11. R Code - Spectral Signatures
-# 12. R Code - NO2
+#                                                                  1. Remote sensing - First Code
+#                                                                  2. R Code - Time series
+#                                                                  3. R Code - Copernicus
+#                                                                  4. R Code - Knitr
+#                                                                  5. R Code - Multivariate analysis
+#                                                                  6. R Code - Classification
+#                                                                  7. R Code - ggplot2
+#                                                                  8. R Code - Vegetation Indices
+#                                                                  9. R Code - Land Cover
+#                                                                 10. R Code - Variability
+#                                                                 11. R Code - Spectral Signatures
+#                                                                 12. R Code - NO2
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -24,7 +23,7 @@
 
 # Primo codice in R per telerilevamento
 
-# con installl.packages installo i pacchetti che mi interessano (è sufficiente farlo una volta)
+# con install.packages installo i pacchetti che mi interessano (è sufficiente farlo una volta)
 # install.packages("raster") 
 # install.packages("RStoolbox")
 # install.packages("ggplot2")
@@ -142,7 +141,7 @@ dev.off() # pulisco la finestra grafica dopo il procedimento per salvare corrett
 ### GREENLAND INCREASE OF TEMPERATURE
 ### Data and code from Emanuela Cosma
 
-# con installl.packages installo i pacchetti che mi interessano (è sufficiente farlo una volta)
+# con install.packages installo i pacchetti che mi interessano (è sufficiente farlo una volta)
 # una volta installati i pacchetti uso library per richiamare quelli che servono nel codice e poterli utilizzare
 # install.packages("raster")
 library(raster)  # pacchetto con funzioni per elaborare oggetti raster
@@ -202,7 +201,7 @@ levelplot(melt_amount,col.regions=cl2) # plotto il risultato della differenza co
 
 ### VISUALIZZAZIONE DATI COPERNICUS
 
-# con installl.packages installo i pacchetti che mi interessano (è sufficiente farlo una volta)
+# con install.packages installo i pacchetti che mi interessano (è sufficiente farlo una volta)
 # una volta installati i pacchetti uso library per richiamare quelli che servono nel codice e poterli utilizzare
 
 #install.packages("ncdf4")
@@ -244,8 +243,7 @@ stitch("R_code_greenland.r", template=system.file("misc", "knitr-template.Rnw", 
 
 ### ANALISI MULTIVARIATA
 
-# con installl.packages installo i pacchetti che mi interessano (è sufficiente farlo una volta)
-# una volta installati i pacchetti uso library per richiamare quelli che servono nel codice e poterli utilizzare
+# uso library per richiamare i pacchetti che servono nel codice e poterli utilizzare
 
 library(raster)  # pacchetto con funzioni per elaborare file raster
 library(RStoolbox) # pacchetto con funzioni per processare le immagini (tra cui unsuperClass)
