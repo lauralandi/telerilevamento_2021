@@ -46,19 +46,19 @@ setwd("C:/lab/sardegna2/")  # definire la working directory
 
 ## Le diverse bande in cui Sentinel-2 fornisce le immagini sono:
 
-##       BANDA                  LUNGHEZZA D'ONDA (micrometri)      RISOLUZIONE SPAZIALE (metri)
-##   B01= coastal aerosol                 0.443                           60
-##   B02= blue                            0.490                           10
-##   B03= green                           0.560                           10
-##   B04= red                             0.665                           10
-##   B05= vegetation red edge             0.705                           20
-##   B06= vegetation red edge             0.740                           20
-##   B07= vegetation red edge             0.783                           20
-##   B08= NIR                             0.842                           10
-##   B08A= vegetation red edge            0.865                           20
-##   B09= water vapour                    0.945                           60
-##   B11= SWIR                            1.610                           20
-##   B12= SWIR                            2.190                           20
+##       BANDA                  LUNGHEZZA D'ONDA (micrometri)      
+##   B01= coastal aerosol                 0.443                           
+##   B02= blue                            0.490                           
+##   B03= green                           0.560                           
+##   B04= red                             0.665                           
+##   B05= vegetation red edge             0.705                           
+##   B06= vegetation red edge             0.740                           
+##   B07= vegetation red edge             0.783                           
+##   B08= NIR                             0.842                           
+##   B08A= vegetation red edge            0.865                           
+##   B09= water vapour                    0.945                           
+##   B11= SWIR                            1.610                           
+##   B12= SWIR                            2.190                           
 
 
 ## Nello specifico per questa analisi sono state sfruttate le bande:
