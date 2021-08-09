@@ -525,7 +525,10 @@ g2    # visualizzo il grafico
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 
-#                                                                TELERILEVAMENTO GEO-ECOLOGICO 2021                                
+#                                                                              Corso di
+#                                                                  TELERILEVAMENTO GEO-ECOLOGICO
+#                                                                           A.A. 2020-2021
+
 #                                                                          R Code Complete                                                      
 
 
