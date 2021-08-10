@@ -449,7 +449,7 @@ p16<-ggplot(dNBR_c3$map, aes(x,y)) +  # con ggplot creo il grafico che contiene 
      geom_raster(aes(fill=factor(layer))) +  # geom_raster permette di plottare nel grafico un elemento raster
      scale_fill_manual(values=c('red','yellow','darkgreen'),  # definisco i colori delle classi
                        name=("Danno"), labels=c("Moderato", "Alto", "Nullo")) +   # definisco nome della legenda ed etichette dei colori corrispondenti
-     ggtitle("Mappa di classificazione del deltaBNR") +    # titolo del grafico
+     ggtitle("Mappa di classificazione del deltaNBR") +    # titolo del grafico
      xlab("Long") + ylab("Lat") +    # titoli degli assi
      theme(panel.background = element_blank(), plot.title = element_text(size=13, face="bold",  hjust=0.5),  
            axis.title=element_text(size=10), axis.text= element_text(size=8),                                                                                
