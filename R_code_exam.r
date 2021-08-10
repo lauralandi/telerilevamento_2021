@@ -11,7 +11,7 @@
 
                                     #----- INDICE -----#
 
-#  STEP 1  -  Richiamare le library necessarie al codice e definire la working directory  ......... 024
+#  STEP 1  -  Richiamare i pacchetti necessari al codice e definire la working directory  ......... 024
 #  STEP 2  -  Scelta delle immagini e importazione  ............................................... 041
 #  STEP 3  -  Elaborazione delle immagini  ........................................................ 123
 #  STEP 4 -   Classificazione della vegetazione pre-incendio  ..................................... 201
@@ -21,7 +21,7 @@
 
 
 #-------------------------------------------------------------------------------------------#
-#   STEP 1  -  Richiamare le library necessarie al codice e definire la working directory   #
+#   STEP 1  -  Richiamare i pacchetti necessari al codice e definire la working directory   #
 #-------------------------------------------------------------------------------------------#
 
 library(raster) # pacchetto con funzioni per elaborare file raster
